@@ -75,7 +75,7 @@ _Note to myself:_
 The R-image files used here consist of the co2online data and are also available at my github repo.
 
 ```{r}
-setwd("D:/20190219_Ulm_co2Balance")
+setwd("/home/kbhaskar/CO2ONLINE/co2emissions_github")
 load("MFH20022018.RData")
 load("SFH20022018.RData")
 #In SFH20022018, abrechnungsjahr and verbrauch_gesamt_kwh are character - change then to int and numeric

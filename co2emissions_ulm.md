@@ -69,7 +69,7 @@ Now the report starts.
 The R-image files used here consist of the co2online data and are also available at my github repo.
 
 ``` r
-setwd("D:/20190219_Ulm_co2Balance")
+setwd("/home/kbhaskar/CO2ONLINE/co2emissions_github")
 load("MFH20022018.RData")
 load("SFH20022018.RData")
 #In SFH20022018, abrechnungsjahr and verbrauch_gesamt_kwh are character - change then to int and numeric
@@ -342,7 +342,7 @@ c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","waermepumpe")
 ) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-11-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 #### Save some of the graphs
 
@@ -359,7 +359,7 @@ ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=e
 )+scale_color_manual(name="legend",values=cols) + labs(x="Abrechnungsjahr",y="Energietraeger Anteile von Verbrauch",title="Ulm, 1-2FH")+theme_bw()
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 #### Cumulative Energietraeger Anteile, filled plot:
 
@@ -381,7 +381,7 @@ ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=e
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Abrechnungsjahr",y="Energietraeger Anteile von Verbrauch",title="Ulm, 1-2FH")
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-13-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 ``` r
 #ggsave("01_energieanteile_rawdata.jpg")
@@ -752,7 +752,7 @@ if (b<0) {
 ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title="Ulm, 1-2FH")+ylim(0,max(co2_emissions_in_kilo_tons$total))+geom_smooth(method="lm",data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))),x=2008,y=60)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-25-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-25-1.png)
 
 ``` r
 #https://stackoverflow.com/questions/15633714/adding-a-regression-line-on-a-ggplot  
@@ -818,7 +818,7 @@ ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color
 )+scale_color_manual(name="legend",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))) + labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title="Ulm, 1-2FH")+theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-27-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-27-1.png)
 
 ##### filled graph:
 
@@ -839,7 +839,7 @@ ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color
 )+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-28-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-28-1.png)
 
 ``` r
 #ggsave("co2emissions_absolute.jpg")
@@ -909,7 +909,7 @@ ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2
 )+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-30-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-30-1.png)
 
 ``` r
 #ggsave("co2emissions_relative.jpg")
@@ -934,7 +934,7 @@ ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2
 )+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-31-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-31-1.png)
 
 ``` r
 #ggsave("04_co2emissions_proportions_rawdata.jpg")
@@ -1092,7 +1092,7 @@ ggplot()+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),colo
 )+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-35-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-35-1.png)
 
 ``` r
 ggsave("co2emissions_absolute_real_and_linearized.jpg")
@@ -1116,7 +1116,7 @@ ggplot()+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[
 )+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-36-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-36-1.png)
 
 ``` r
 ggsave("co2emissions_absolute_real_and_linearized.jpg")
@@ -1142,7 +1142,7 @@ ggplot()+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[2]
 )+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (kilo tonnes)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-37-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-37-1.png)
 
 ``` r
 #ggsave("co2emissions_absolute_linearized.jpg")
@@ -1168,7 +1168,7 @@ ggplot()+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et
 )+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (relative)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](Ulm_co2Balance_v07_github_files/figure-markdown_github/unnamed-chunk-38-1.png)
+![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-38-1.png)
 
 ``` r
 #ggsave("co2emissions_relative_linearized.jpg")
