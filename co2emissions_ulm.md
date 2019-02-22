@@ -1,4 +1,4 @@
-Ulm CO<sub>2</sub> Bilanz for 1-2FH
+CO<sub>2</sub> emissions in Ulm for 1-2FH
 ================
 Bhaskar Kamble and Johannes Hengstenberg
 20 Februar 2019
