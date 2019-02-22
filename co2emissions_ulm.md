@@ -356,7 +356,10 @@ ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=e
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name="legend",values=cols) + labs(x="Abrechnungsjahr",y="Energietraeger Anteile von Verbrauch",title="Ulm, 1-2FH")+theme_bw()
+)+scale_color_manual(name="legend",values=cols,breaks=rev(
+c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","waermepumpe"))) + labs(
+x="Abrechnungsjahr",y="energy consumption (relative)",title="Ulm, 1-2FH")+theme_bw(
+)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 ![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-12-1.png)
@@ -371,21 +374,19 @@ ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=e
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name=" ",values=cols
+)+scale_color_manual(name=" ",values=cols,breaks=rev(
+c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","waermepumpe"))
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[7])),fill=col_list[7]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Abrechnungsjahr",y="Energietraeger Anteile von Verbrauch",title="Ulm, 1-2FH")
+)+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Abrechnungsjahr",y="Energietraeger Anteile von Verbrauch",title="Ulm, 1-2FH"
+)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 ![](co2emissions_ulm_files/figure-markdown_github/unnamed-chunk-13-1.png)
-
-``` r
-#ggsave("01_energieanteile_rawdata.jpg")
-```
 
 3. Now for the CO<sub>2</sub> emissions
 ---------------------------------------
