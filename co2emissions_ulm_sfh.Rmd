@@ -629,7 +629,7 @@ ggplot()+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),colo
 )+geom_abline(intercept=intercepts_co2[6],slope=slopes_co2[6],colour=col_list[7]
 )+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)"
 )+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
-ggsave("co2emissions_absolute_real_and_linearized.jpg")
+#ggsave("co2emissions_absolute_real_and_linearized.jpg")
 ```
 
 
@@ -649,7 +649,7 @@ ggplot()+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[
 )+geom_abline(intercept=intercepts_co2_anteile[6],slope=slopes_co2_anteile[6],colour=col_list[7]
 )+labs(x="Abrechnungsjahr",y="co2 emissions (relative)"
 )+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
-ggsave("co2emissions_absolute_real_and_linearized.jpg")
+#ggsave("co2emissions_absolute_real_and_linearized.jpg")
 ```
 
 

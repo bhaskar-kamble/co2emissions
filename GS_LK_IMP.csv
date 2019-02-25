@@ -1,0 +1,403 @@
+Gemeindeschluessel;Landkreis
+1001000;Flensburg, Stadt
+1002000;Kiel, Stadt
+1003000;Lübeck, Stadt
+1004000;Neumünster, Stadt
+1051000;Dithmarschen
+1053000;Herzogtum Lauenburg
+1054000;Nordfriesland
+1055000;Ostholstein
+1056000;Pinneberg
+1057000;Plön
+1058000;Rendsburg-Eckernförde
+1059000;Schleswig-Flensburg
+1060000;Segeberg
+1061000;Steinburg
+1062000;Stormarn
+2000000;Hamburg, Stadt
+3101000;Braunschweig, Stadt
+3102000;Salzgitter, Stadt
+3103000;Wolfsburg, Stadt
+3151000;Gifhorn
+3152000;Göttingen
+3153000;Goslar
+3154000;Helmstedt
+3155000;Northeim
+3156000;Osterode am Harz
+3157000;Peine
+3158000;Wolfenbüttel
+3241000;Region Hannover
+3251000;Diepholz
+3252000;Hameln-Pyrmont
+3254000;Hildesheim
+3255000;Holzminden
+3256000;Nienburg (Weser)
+3257000;Schaumburg
+3351000;Celle
+3352000;Cuxhaven
+3353000;Harburg
+3354000;Lüchow-Dannenberg
+3355000;Lüneburg
+3356000;Osterholz
+3357000;Rotenburg (Wümme)
+3358000;Heidekreis
+3359000;Stade
+3360000;Uelzen
+3361000;Verden
+3401000;Delmenhorst, Stadt
+3402000;Emden, Stadt
+3403000;Oldenburg (Oldenburg), Stadt
+3404000;Osnabrück, Stadt
+3405000;Wilhelmshaven, Stadt
+3451000;Ammerland
+3452000;Aurich
+3453000;Cloppenburg
+3454000;Emsland
+3455000;Friesland
+3456000;Grafschaft Bentheim
+3457000;Leer
+3458000;Oldenburg
+3459000;Osnabrück
+3460000;Vechta
+3461000;Wesermarsch
+3462000;Wittmund
+4011000;Bremen, Stadt
+4012000;Bremerhaven, Stadt
+5111000;Düsseldorf, Stadt
+5112000;Duisburg, Stadt
+5113000;Essen, Stadt
+5114000;Krefeld, Stadt
+5116000;Mönchengladbach, Stadt
+5117000;Mülheim an der Ruhr, Stadt
+5119000;Oberhausen, Stadt
+5120000;Remscheid, Stadt
+5122000;Solingen, Stadt
+5124000;Wuppertal, Stadt
+5154000;Kleve
+5158000;Mettmann
+5162000;Rhein-Kreis Neuss
+5166000;Viersen
+5170000;Wesel
+5314000;Bonn, Stadt
+5315000;Köln, Stadt
+5316000;Leverkusen, Stadt
+5334000;Städteregion Aachen
+5358000;Düren
+5362000;Rhein-Erft-Kreis
+5366000;Euskirchen
+5370000;Heinsberg
+5374000;Oberbergischer Kreis
+5378000;Rheinisch-Bergischer Kreis
+5382000;Rhein-Sieg-Kreis
+5512000;Bottrop, Stadt
+5513000;Gelsenkirchen, Stadt
+5515000;Münster, Stadt
+5554000;Borken
+5558000;Coesfeld
+5562000;Recklinghausen
+5566000;Steinfurt
+5570000;Warendorf
+5711000;Bielefeld, Stadt
+5754000;Gütersloh
+5758000;Herford
+5762000;Höxter
+5766000;Lippe
+5770000;Minden-Lübbecke
+5774000;Paderborn
+5911000;Bochum, Stadt
+5913000;Dortmund, Stadt
+5914000;Hagen, Stadt
+5915000;Hamm, Stadt
+5916000;Herne, Stadt
+5954000;Ennepe-Ruhr-Kreis
+5958000;Hochsauerlandkreis
+5962000;Märkischer Kreis
+5966000;Olpe
+5970000;Siegen-Wittgenstein
+5974000;Soest
+5978000;Unna
+6411000;Darmstadt, Stadt
+6412000;Frankfurt am Main, Stadt
+6413000;Offenbach am Main, Stadt
+6414000;Wiesbaden, Stadt
+6431000;Bergstraße
+6432000;Darmstadt-Dieburg
+6433000;Groß-Gerau
+6434000;Hochtaunuskreis
+6435000;Main-Kinzig-Kreis
+6436000;Main-Taunus-Kreis
+6437000;Odenwaldkreis
+6438000;Offenbach
+6439000;Rheingau-Taunus-Kreis
+6440000;Wetteraukreis
+6531000;Gießen
+6532000;Lahn-Dill-Kreis
+6533000;Limburg-Weilburg
+6534000;Marburg-Biedenkopf
+6535000;Vogelsbergkreis
+6611000;Kassel, Stadt
+6631000;Fulda
+6632000;Hersfeld-Rotenburg
+6633000;Kassel
+6634000;Schwalm-Eder-Kreis
+6635000;Waldeck-Frankenberg
+6636000;Werra-Meißner-Kreis
+7111000;Koblenz, Stadt
+7131000;Ahrweiler
+7132000;Altenkirchen (Westerwald)
+7133000;Bad Kreuznach
+7134000;Birkenfeld
+7135000;Cochem-Zell
+7137000;Mayen-Koblenz
+7138000;Neuwied
+7140000;Rhein-Hunsrück-Kreis
+7141000;Rhein-Lahn-Kreis
+7143000;Westerwaldkreis
+7211000;Trier, Stadt
+7231000;Bernkastel-Wittlich
+7232000;Eifelkreis Bitburg-Prüm
+7233000;Vulkaneifel
+7235000;Trier-Saarburg
+7311000;Frankenthal (Pfalz), Stadt
+7312000;Kaiserslautern, Stadt
+7313000;Landau in der Pfalz, Stadt
+7314000;Ludwigshafen am Rhein, Stadt
+7315000;Mainz, kreisfreie Stadt
+7316000;Neustadt an der Weinstraße, Stadt
+7317000;Pirmasens, Stadt
+7318000;Speyer, Stadt
+7319000;Worms, Stadt
+7320000;Zweibrücken, Stadt
+7331000;Alzey-Worms
+7332000;Bad Dürkheim
+7333000;Donnersbergkreis
+7334000;Germersheim
+7335000;Kaiserslautern
+7336000;Kusel
+7337000;Südliche Weinstraße
+7338000;Rhein-Pfalz-Kreis
+7339000;Mainz-Bingen
+7340000;Südwestpfalz
+8111000;Stuttgart
+8115000;Böblingen
+8116000;Esslingen
+8117000;Göppingen
+8118000;Ludwigsburg
+8119000;Rems-Murr-Kreis
+8121000;Heilbronn
+8125000;Heilbronn
+8126000;Hohenlohekreis
+8127000;Schwäbisch Hall
+8128000;Main-Tauber-Kreis
+8135000;Heidenheim
+8136000;Ostalbkreis
+8211000;Baden-Baden
+8212000;Karlsruhe
+8215000;Karlsruhe
+8216000;Rastatt
+8221000;Heidelberg
+8222000;Mannheim
+8225000;Neckar-Odenwald-Kreis
+8226000;Rhein-Neckar-Kreis
+8231000;Pforzheim
+8235000;Calw
+8236000;Enzkreis
+8237000;Freudenstadt
+8311000;Freiburg im Breisgau
+8315000;Breisgau-Hochschwarzwald
+8316000;Emmendingen
+8317000;Ortenaukreis
+8325000;Rottweil
+8326000;Schwarzwald-Baar-Kreis
+8327000;Tuttlingen
+8335000;Konstanz
+8336000;Lörrach
+8337000;Waldshut
+8415000;Reutlingen
+8416000;Tübingen
+8417000;Zollernalbkreis
+8421000;Ulm
+8425000;Alb-Donau-Kreis
+8426000;Biberach
+8435000;Bodenseekreis
+8436000;Ravensburg
+8437000;Sigmaringen
+9161000;Ingolstadt, Stadt
+9162000;München, Stadt
+9163000;Rosenheim, Stadt
+9171000;Altötting
+9172000;Berchtesgadener Land
+9173000;Bad Tölz-Wolfratshausen
+9174000;Dachau
+9175000;Ebersberg
+9176000;Eichstätt
+9177000;Erding
+9178000;Freising
+9179000;Fürstenfeldbruck
+9180000;Garmisch-Partenkirchen
+9181000;Landsberg am Lech
+9182000;Miesbach
+9183000;Mühldorf a.Inn
+9184000;München
+9185000;Neuburg-Schrobenhausen
+9186000;Pfaffenhofen a.d.Ilm
+9187000;Rosenheim
+9188000;Starnberg
+9189000;Traunstein
+9190000;Weilheim-Schongau
+9261000;Landshut, Stadt
+9262000;Passau, Stadt
+9263000;Straubing, Stadt
+9271000;Deggendorf
+9272000;Freyung-Grafenau
+9273000;Kelheim
+9274000;Landshut
+9275000;Passau
+9276000;Regen
+9277000;Rottal-Inn
+9278000;Straubing-Bogen
+9279000;Dingolfing-Landau
+9361000;Amberg, Stadt
+9362000;Regensburg, Stadt
+9363000;Weiden i.d.OPf., Stadt
+9371000;Amberg-Sulzbach
+9372000;Cham
+9373000;Neumarkt i.d.OPf.
+9374000;Neustadt a.d.Waldnaab
+9375000;Regensburg
+9376000;Schwandorf
+9377000;Tirschenreuth
+9461000;Bamberg, Stadt
+9462000;Bayreuth, Stadt
+9463000;Coburg, Stadt
+9464000;Hof, Stadt
+9471000;Bamberg
+9472000;Bayreuth
+9473000;Coburg
+9474000;Forchheim
+9475000;Hof
+9476000;Kronach
+9477000;Kulmbach
+9478000;Lichtenfels
+9479000;Wunsiedel i.Fichtelgebirge
+9561000;Ansbach, Stadt
+9562000;Erlangen, Stadt
+9563000;Fürth, Stadt
+9564000;Nürnberg, Stadt
+9565000;Schwabach, Stadt
+9571000;Ansbach
+9572000;Erlangen-Höchstadt
+9573000;Fürth
+9574000;Nürnberger Land
+9575000;Neustadt a.d.Aisch-Bad Windsheim
+9576000;Roth
+9577000;Weißenburg-Gunzenhausen
+9661000;Aschaffenburg, Stadt
+9662000;Schweinfurt, Stadt
+9663000;Würzburg, Stadt
+9671000;Aschaffenburg
+9672000;Bad Kissingen
+9673000;Rhön-Grabfeld
+9674000;Haßberge
+9675000;Kitzingen
+9676000;Miltenberg
+9677000;Main-Spessart
+9678000;Schweinfurt
+9679000;Würzburg
+9761000;Augsburg, Stadt
+9762000;Kaufbeuren, Stadt
+9763000;Kempten (Allgäu), Stadt
+9764000;Memmingen, Stadt
+9771000;Aichach-Friedberg
+9772000;Augsburg
+9773000;Dillingen a.d.Donau
+9774000;Günzburg
+9775000;Neu-Ulm
+9776000;Lindau (Bodensee)
+9777000;Ostallgäu
+9778000;Unterallgäu
+9779000;Donau-Ries
+9780000;Oberallgäu
+10041000;Regionalverband Saarbrücken
+10042000;Merzig-Wadern
+10043000;Neunkirchen
+10044000;Saarlouis
+10045000;Saarpfalz-Kreis
+10046000;St. Wendel
+11000000;Berlin, Stadt
+12051000;Brandenburg an der Havel, Stadt
+12052000;Cottbus, Stadt
+12053000;Frankfurt (Oder), Stadt
+12054000;Potsdam, Stadt
+12060000;Barnim
+12061000;Dahme-Spreewald
+12062000;Elbe-Elster
+12063000;Havelland
+12064000;Märkisch-Oderland
+12065000;Oberhavel
+12066000;Oberspreewald-Lausitz
+12067000;Oder-Spree
+12068000;Ostprignitz-Ruppin
+12069000;Potsdam-Mittelmark
+12070000;Prignitz
+12071000;Spree-Neiße
+12072000;Teltow-Fläming
+12073000;Uckermark
+13003000;Rostock, Stadt
+13004000;Schwerin, Stadt
+13071000;Mecklenburgische Seenplatte
+13072000;Landkreis Rostock
+13073000;Vorpommern-Rügen
+13074000;Nordwestmecklenburg
+13075000;Vorpommern-Greifswald
+13076000;Ludwigslust-Parchim
+14511000;Chemnitz, Stadt
+14521000;Erzgebirgskreis
+14522000;Mittelsachsen
+14523000;Vogtlandkreis
+14524000;Zwickau
+14612000;Dresden, Stadt
+14625000;Bautzen
+14626000;Görlitz
+14627000;Meißen
+14628000;Sächsische Schweiz-Osterzgebirge
+14713000;Leipzig, Stadt
+14729000;Leipzig
+14730000;Nordsachsen
+15001000;Dessau-Roßlau, Stadt
+15002000;Halle (Saale), Stadt
+15003000;Magdeburg, Stadt
+15081000;Altmarkkreis Salzwedel
+15082000;Anhalt-Bitterfeld
+15083000;Börde
+15084000;Burgenlandkreis
+15085000;Harz
+15086000;Jerichower Land
+15087000;Mansfeld-Südharz
+15088000;Saalekreis
+15089000;Salzlandkreis
+15090000;Stendal
+15091000;Wittenberg
+16051000;Erfurt, Stadt
+16052000;Gera, Stadt
+16053000;Jena, Stadt
+16054000;Suhl, Stadt
+16055000;Weimar, Stadt
+16056000;Eisenach, Stadt
+16061000;Eichsfeld
+16062000;Nordhausen
+16063000;Wartburgkreis
+16064000;Unstrut-Hainich-Kreis
+16065000;Kyffhäuserkreis
+16066000;Schmalkalden-Meiningen
+16067000;Gotha
+16068000;Sömmerda
+16069000;Hildburghausen
+16070000;Ilm-Kreis
+16071000;Weimarer Land
+16072000;Sonneberg
+16073000;Saalfeld-Rudolstadt
+16074000;Saale-Holzland-Kreis
+16075000;Saale-Orla-Kreis
+16076000;Greiz
+16077000;Altenburger Land

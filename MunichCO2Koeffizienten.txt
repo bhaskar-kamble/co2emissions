@@ -1,5 +1,5 @@
-Jahr	Erdgas	Waerme	Fluessiggas	Heizoel	Holzpellets	Strom
-2002	 203   	 156   	 230   	     266    	 6   	 654   
+Jahr	Erdgas	Waerme	Fluessiggas  Heizoel	Holzpellets	Strom
+2002	 203   	 156   	 230   	     266    	     6   	 654   
 2003	 203   	 156   	 230   	     266   	     6   	 635   
 2004	 203   	 156   	 230   	     266   	     6   	 615   
 2005	 203   	 156   	 230   	     266   	     6   	 611   
