@@ -82,7 +82,7 @@ The R-image files used here consist of the co2online data and are also available
 
 ```{r}
 setwd("/home/kbhaskar/CO2ONLINE/co2emissions_github")
-load("MFH20022018.RData")
+load("MFH20022018_v2.RData")
 #load("SFH20022018.RData")
 #In SFH20022018, abrechnungsjahr and verbrauch_gesamt_kwh are character - change then to int and numeric
 #SFH20022018$abrechnungsjahr <- as.integer(SFH20022018$abrechnungsjahr)
@@ -165,7 +165,7 @@ Okay so in this case for Ulm MFH, there is no data for 2017 and this creates an 
 *_OTOH, this is a good point to introduce data for the missing years by taking the average. Then all years must be included in `years_for_which_data_exists`_*
 
 ```{r}
-ignore_missing_years <- FALSE
+ignore_missing_years <- TRUE
 if (ignore_missing_years) {
   years_for_which_data_exists <- ET_shares_by_year_wide$abrechnungsjahr
 } else {
