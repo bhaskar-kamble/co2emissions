@@ -8,7 +8,7 @@ output: rmarkdown::github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,cache=TRUE,message=FALSE)
+knitr::opts_chunk$set(echo = TRUE,cache=FALSE,message=FALSE)
 ```
 
 The aim of this report is to calculate CO<sub>2</sub> emissions in the city of Ulm, Germany, caused by energy consumption for heating by MFH buildings. The calculations are primarily  based on the data from [co2online](www.co2online.de). Official statistics from Ulm are also used in the calculations. The data from [co2online](www.co2online.de) is available at [my github repo](https://github.com/bhaskar-kamble/co2online_stats) as R-images.
@@ -385,7 +385,7 @@ I'm using the preliminary coefficients from https://www.dropbox.com/s/j63ednj6tm
 I've saved the above as `MunichCO2Koeffizienten.txt`.
 
 ```{r}
-co2_coeff <- read.table("MunichCO2Koeffizienten.txt",header=TRUE)
+co2_coeff <- read.table("UlmCO2Koeffizienten.txt",header=TRUE)
 names(co2_coeff) <- c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
 co2_coeff
 ```
