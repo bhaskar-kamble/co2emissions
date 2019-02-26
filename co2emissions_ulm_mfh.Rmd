@@ -160,9 +160,9 @@ ET_shares_by_year_wide$Yearlysum <- rowSums(ET_shares_by_year_wide[ , !(names(ET
 ET_shares_by_year_wide
 ```
 
-Okay so in this case for Ulm MFH, there is no data for 2017 and this creates an error with the command `final_prop_table$abrechnungsjahr <- 2002:2018` in the following `R` block. Hence I must automatically get the years from the `ET_shares_by_year_wide` dataframe.
+Sometimes it can be that there is no data for certain years - this can happen for especially small regions. This can create an error with the command `final_prop_table$abrechnungsjahr <- 2002:2018`, hence the years must be obtained from the `ET_shares_by_year_wide` dataframe if you want to ignore the missing years.
 
-*_OTOH, this is a good point to introduce data for the missing years by taking the average. Then all years must be included in `years_for_which_data_exists`_*
+On the other hand, if you don't want to ignore the missing years, the missing years must be filled with the average (or median, or previous value, whatever). In this case all the years (2002-2018) must be included in `years_for_which_data_exists`.*
 
 ```{r}
 ignore_missing_years <- TRUE
