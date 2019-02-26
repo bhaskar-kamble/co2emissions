@@ -1236,12 +1236,12 @@ Save the data
 -------------
 
 ``` r
-write.csv(final_prop_table , file = "./data/ulm/sfh/ET_anteile_verbrauch_sfh.csv") #comes from co2online data
-write.csv(spz_verbrauch_mean , file = "./data/ulm/sfh/spz_verbrauch_sfh.csv")      #comes from co2online data
-# total area: wohngebaeude_2002_2018.txt contains the total area
-write.csv(totalConsumption , file = "./data/ulm/sfh/gesamt_verbrauch_sfh.csv")     #comes from co2online and area data
-write.csv(co2_emissions_in_kilo_tons , file = "./data/ulm/sfh/co2_emissions_kilo_tons_sfh.csv") #comes from co2online, coeff. and area data
-write.csv(energy_shares_absolute , file = "./data/ulm/sfh/energy_shares_absolute_sfh.csv")
+write.csv2(co2_emissions_in_kilo_tons,file="./data/ulm/sfh/01_SFH_absolut_nachET.csv",row.names=FALSE)
+write.csv2(co2cumsums,file="./data/ulm/sfh/02_SFH_absolut_nachET_kumulativ.csv",row.names=FALSE)
+write.csv2(co2anteile_cumsums,file="./data/ulm/sfh/03_SFH_relativ_nachET_kumulativ.csv",row.names=FALSE)
+write.csv2(spez_co2_emission,file="./data/ulm/sfh/04_SFH_co2_spez.csv",row.names=FALSE)
+write.csv2(co2anteile_cumsums_linear,file="./data/ulm/sfh/05_SFH_relativ_nachET_kumulativ_linear.csv",row.names=FALSE)
+write.csv2(co2cumsums_linear,file="./data/ulm/sfh/06_SFH_absolut_nachET_kumulativ_linear.csv",row.names=FALSE)
 ```
 
 <https://ggplot2.tidyverse.org/reference/scale_manual.html> <https://stackoverflow.com/questions/14762181/adding-a-y-axis-label-to-secondary-y-axis-in-matplotlib>
