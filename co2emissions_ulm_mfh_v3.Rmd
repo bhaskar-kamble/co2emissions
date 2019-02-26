@@ -1,5 +1,5 @@
 ---
-title: "CO<sub>2</sub> emissions in Ulm for 1-2FH"
+title: "CO<sub>2</sub> emissions in Ulm for MFH buildings"
 
 author: "Bhaskar Kamble and Johannes Hengstenberg"
 
@@ -11,7 +11,7 @@ output: rmarkdown::github_document
 knitr::opts_chunk$set(echo = TRUE,cache=FALSE,message=FALSE)
 ```
 
-The aim of this report is to calculate CO<sub>2</sub> emissions in the city of Ulm, Germany, caused by energy consumption for heating by 1-2FH. The calculations are primarily  based on the data from [co2online](www.co2online.de). Official statistics from Ulm are also used in the calculations. The data from [co2online](www.co2online.de) is available at [my github repo](https://github.com/bhaskar-kamble/co2online_stats) as R-images.
+The aim of this report is to calculate CO<sub>2</sub> emissions in the city of Ulm, Germany, caused by energy consumption for heating by MFH buildings. The calculations are primarily  based on the data from [co2online](www.co2online.de). Official statistics from Ulm are also used in the calculations. The data from [co2online](www.co2online.de) is available at [my github repo](https://github.com/bhaskar-kamble/co2online_stats) as R-images.
 
 _Notes to myself:_
 
@@ -76,8 +76,6 @@ _Note to myself:_
 
 - _These calculations come from the `03_linearmodels.R` file in the same folder._
 
-- _I've used the R-images `MFH20022018_v2.RData` and `MFH20022018_v2.RData` as these contain more data compared to `MFH20022018.RData` and `MFH20022018.RData`._
-
 ### 1a. Get the data:
 
 The R-image files used here consist of the co2online data and are also available at my github repo.
@@ -85,12 +83,12 @@ The R-image files used here consist of the co2online data and are also available
 ```{r}
 setwd("/home/kbhaskar/CO2ONLINE/co2emissions_github")
 load("MFH20022018_v2.RData")
-load("SFH20022018_v2.RData")
+#load("SFH20022018.RData")
 #In SFH20022018, abrechnungsjahr and verbrauch_gesamt_kwh are character - change then to int and numeric
-SFH20022018$abrechnungsjahr <- as.integer(SFH20022018$abrechnungsjahr)
-SFH20022018$verbrauch_gesamt_kwh <- gsub("," , "." , SFH20022018$verbrauch_gesamt_kwh)
-SFH20022018$verbrauch_gesamt_kwh <- as.numeric(SFH20022018$verbrauch_gesamt_kwh)
-SFH20022018$gtype <- "SFH"
+#SFH20022018$abrechnungsjahr <- as.integer(SFH20022018$abrechnungsjahr)
+#SFH20022018$verbrauch_gesamt_kwh <- gsub("," , "." , SFH20022018$verbrauch_gesamt_kwh)
+#SFH20022018$verbrauch_gesamt_kwh <- as.numeric(SFH20022018$verbrauch_gesamt_kwh)
+#SFH20022018$gtype <- "SFH"
 MFH20022018$gtype <- "MFH"
 ```
 
@@ -123,16 +121,25 @@ readweather <- function(filename) {
 }
 ```
 
-### 1c. Get weather data and subset the data for Ulm and 1-2FH
+### 1c. Get weather data and subset the data for Ulm and MFH
 
 _This weather data is not used at present_
 
 ```{r}
 weather_ulm <- readweather("ulm_weather.csv")
-ulm_sfh <- subset_data_by_region(SFH20022018,"Ulm")
-ulm_sfh$energietraeger[ulm_sfh$energietraeger=="fernwaerme"] <- "waerme"
-et_list <- find_et_list(ulm_sfh)
-#et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","waermepumpe")
+ulm_mfh <- subset_data_by_region(MFH20022018,"Ulm")
+ulm_mfh$energietraeger[ulm_mfh$energietraeger=="fernwaerme"] <- "waerme"
+ulm_mfh$energietraeger[ulm_mfh$energietraeger=="nahwaerme"] <- "waerme"
+ulm_mfh$energietraeger[ulm_mfh$energietraeger=="waermepumpe"] <- "strom"
+et_list <- find_et_list(ulm_mfh)
+et_list
+```
+
+A quick look into how many data are there for each year and energietraeger:
+
+```{r}
+xtabs(~abrechnungsjahr , data=ulm_mfh)
+xtabs(~abrechnungsjahr+energietraeger , data=ulm_mfh)
 ```
 
 ## 2. Absolute and relative shares of energy split according to energy sources (`energietraeger`) per year
@@ -141,7 +148,7 @@ et_list <- find_et_list(ulm_sfh)
 
 ```{r}
 #get the data:
-ET_shares_by_year <- find_ET_shares_by_year(ulm_sfh)
+ET_shares_by_year <- find_ET_shares_by_year(ulm_mfh)
 names(ET_shares_by_year) <- c("abrechnungsjahr" ,"energietraeger" ,"sum_verbrauch_gesamt_kwh")
 #change to wide format
 detach(package:dplyr)
@@ -153,12 +160,37 @@ ET_shares_by_year_wide$Yearlysum <- rowSums(ET_shares_by_year_wide[ , !(names(ET
 ET_shares_by_year_wide
 ```
 
+Sometimes it can be that there is no data for certain years - this can happen for especially small regions. This can create an error with the command `final_prop_table$abrechnungsjahr <- 2002:2018`, hence the years must be obtained from the `ET_shares_by_year_wide` dataframe if you want to ignore the missing years.
+
+On the other hand, if you don't want to ignore the missing years, the missing years must be filled with the average (or median, or previous value, whatever). In this case all the years (2002-2018) must be included in `years_for_which_data_exists`.*
+
+```{r}
+ignore_missing_years <- TRUE
+if (ignore_missing_years) {
+  years_for_which_data_exists <- ET_shares_by_year_wide$abrechnungsjahr
+} else {
+  years_for_which_data_exists <- 2002:2018
+  #ET_shares_by_year_wide - fill in missing years by the mean
+  years_present <- ET_shares_by_year_wide$abrechnungsjahr
+  years_absent <- years_for_which_data_exists[!(years_for_which_data_exists %in% years_present)]
+  
+  for (y in years_absent) {
+    dtemp <- c(y,colMeans(ET_shares_by_year_wide[ , names(ET_shares_by_year_wide)!="abrechnungsjahr"]) )
+    ET_shares_by_year_wide <- rbind(ET_shares_by_year_wide , dtemp)
+    #df1 <- df1[order(df1$year) , ]
+  }
+  ET_shares_by_year_wide <- ET_shares_by_year_wide[order(ET_shares_by_year_wide$abrechnungsjahr) , ]
+}
+ET_shares_by_year_wide
+```
+
+
 ### 2b. Get the relative shares of energy consumption of each `energietraeger` per year
 
 ```{r}
 drop_cols <- c("abrechnungsjahr","Yearlysum")
 final_prop_table <- as.data.frame(sapply(ET_shares_by_year_wide[ , !(names(ET_shares_by_year_wide) %in% drop_cols)],function(obj) obj/ET_shares_by_year_wide$Yearlysum))
-final_prop_table$abrechnungsjahr <- 2002:2018
+final_prop_table$abrechnungsjahr <- years_for_which_data_exists
 ```
 
 This is what it looks like:
@@ -166,10 +198,12 @@ This is what it looks like:
 final_prop_table
 ```
 
+
+
 ### 2c. Find the cumulative sums of the relative shares of energy consumption according to energietraeger per year
 
 ```{r}
-final_prop_table <- final_prop_table[,c("waermepumpe","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","abrechnungsjahr")]
+final_prop_table <- final_prop_table[,c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","abrechnungsjahr")]
 final_prop_table_cumsums <- t(apply(final_prop_table[, !(names(final_prop_table)=="abrechnungsjahr")] 
                                     , 1 , cumsum))
 final_prop_table_cumsums <- as.data.frame(final_prop_table_cumsums)
@@ -181,7 +215,6 @@ final_prop_table_cumsums
 
 
 ```{r}
-#final_prop_table_cumsums_omit2018 <- final_prop_table_cumsums[final_prop_table_cumsums$abrechnungsjahr!=2018 , ]
 et_list <- names(final_prop_table_cumsums)[names(final_prop_table_cumsums)!="abrechnungsjahr"]
 storage <- list()
 for (et in et_list) {
@@ -207,18 +240,22 @@ for (et in et_list) {
 
 ### 2f. Plotting preparations
 
-Define the color scheme:
+Define the color scheme and plot title:
 
 ```{r}
 datawide <- final_prop_table_cumsums
-col_list <- c("black","royalblue4","orangered1","gray59","orange","blue","olivedrab4")
-cols <- c("waermepumpe" = "black",
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
           "erdgas"      = "royalblue4",
           "waerme"      = "orangered1",
           "fluessiggas" = "gray59",
           "heizoel"     = "orange",
           "holzpellets" = "blue",
-          "strom"       = "olivedrab4")
+          "strom"       = "olivedrab4"
+          )
+plot_title <- "Ulm, MFH"
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
 ```
 
 Test plot:
@@ -231,17 +268,14 @@ ggplot()+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=
 )+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
 )+geom_abline(intercept=intercepts[1],slope=slopes[1],colour=col_list[1]
 )+geom_abline(intercept=intercepts[2],slope=slopes[2],colour=col_list[2]
 )+geom_abline(intercept=intercepts[3],slope=slopes[3],colour=col_list[3]
 )+geom_abline(intercept=intercepts[4],slope=slopes[4],colour=col_list[4]
 )+geom_abline(intercept=intercepts[5],slope=slopes[5],colour=col_list[5]
-)+geom_abline(intercept=intercepts[6],slope=slopes[6],colour=col_list[6]
-)+geom_abline(intercept=intercepts[7],slope=slopes[7],colour=col_list[7])+labs(
-x="Abrechnungsjahr",y="energy consumption (relative)",title="Ulm, 1-2FH"
-)+scale_color_manual(name="legend",values=cols,breaks=rev(
-c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","waermepumpe"))
+)+geom_abline(intercept=intercepts[6],slope=slopes[6],colour=col_list[6])+labs(
+x="Abrechnungsjahr",y="energy consumption (relative)",title=plot_title
+)+scale_color_manual(labels=order_labels, name=" ",values=cols,breaks=order_legend
 ) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
@@ -256,10 +290,8 @@ ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=e
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name="legend",values=cols,breaks=rev(
-c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","waermepumpe"))) + labs(
-x="Abrechnungsjahr",y="energy consumption (relative)",title="Ulm, 1-2FH")+theme_bw(
+)+scale_color_manual(labels=order_labels,name="legend",values=cols,breaks=order_legend) + labs(
+x="Abrechnungsjahr",y="energy consumption (relative)",title=plot_title)+theme_bw(
 )+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
@@ -271,16 +303,13 @@ ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=e
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name=" ",values=cols,breaks=rev(
-c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","waermepumpe"))
-)+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[7])),fill=col_list[7]
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Abrechnungsjahr",y="energy consumption (relative)",title="Ulm, 1-2FH"
+)+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Abrechnungsjahr",y="energy consumption (relative)",title=plot_title
 )+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
@@ -302,7 +331,7 @@ c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","waermepumpe")
 #detach(package:dplyr)
 #detach(package:reshape2)
 library(dplyr)
-by_year <- group_by(ulm_sfh , abrechnungsjahr)
+by_year <- group_by(ulm_mfh , abrechnungsjahr)
 spz_verbrauch_mean <- as.data.frame(summarize(by_year,mean(verbrauch_gesamt_kwh_spez)))
 names(spz_verbrauch_mean) <- c("abrechnungsjahr" , "mean_spz_verberauch")
 #nutzflaeche_mean <- as.data.frame(summarize(by_year,mean(gebaeude_nutzflaeche)))
@@ -320,11 +349,13 @@ spz_verbrauch_mean
 
 ### 3b. Find the total area in Ulm - New Method from official data
 
-`Wohngebaeude 2002 - 2018.xlsx` - the sheet `result` contains data on areas for each year.
+`Wohngebaeude 2002 - 2018.xlsx` - the sheet `result` contains data on areas for each year. I saved this file as `Ulm_wohngebaeude_zahl_flaeche.csv`.
 
 ```{r}
-totalArea <- read.table("wohngebaeude_2002_2018.txt",header=TRUE)
-totalArea <- totalArea[ , c("abrechnungsjahr","totArea")]
+totalArea <- read.csv("Ulm_wohngebaeude_zahl_flaeche.csv",sep=";")
+totalArea <- totalArea[ , c("Year","Flaeche_MFH")]
+names(totalArea) <-  c("abrechnungsjahr","totArea")
+totalArea <- totalArea[totalArea$abrechnungsjahr %in% years_for_which_data_exists , ]
 totalArea
 ```
 
@@ -332,7 +363,7 @@ totalArea
 
 ### 3c. Find the total energy consumption (total area times spezifischer verbrauch)
 ```{r}
-totalConsumption <- data.frame(abrechnungsjahr = 2002:2018,gesamtVerbrauch = totalArea$totArea*spz_verbrauch_mean$mean_spz_verberauch)
+totalConsumption <- data.frame(abrechnungsjahr = years_for_which_data_exists , gesamtVerbrauch = totalArea$totArea*spz_verbrauch_mean$mean_spz_verberauch)
 totalConsumption$inTWh <- totalConsumption$gesamtVerbrauch/1e9
 totalConsumption
 #ggplot()+geom_point(data=totalConsumption,aes(x=abrechnungsjahr,y=gesamtVerbrauch))+theme_bw()+labs(y="Energy consumption in kWh")
@@ -349,7 +380,7 @@ The shares are in the `final_prop_table`.
 #final_prop_table_omit2018 <- final_prop_table[final_prop_table$abrechnungsjahr!=2018 , ]
 is_not_year <- names(final_prop_table) != "abrechnungsjahr"
 energy_shares_absolute <- totalConsumption$gesamtVerbrauch * final_prop_table[,is_not_year]
-energy_shares_absolute$abrechnungsjahr <- 2002:2018
+energy_shares_absolute$abrechnungsjahr <- years_for_which_data_exists
 energy_shares_absolute
 ```
 
@@ -370,21 +401,23 @@ The units for the above coefficients are $g/kWh$.
 
 ### 3f. The CO<sub>2</sub> emissions - coefficients $\times$ energy
 
-
 ```{r}
-co2_coeff_subset <- co2_coeff#[ , names(co2_coeff)!="waerme"]
-co2_coeff_subset
-```
-
-```{r}
+names(co2_coeff)
 names(energy_shares_absolute)
 ```
 
+The names of columns common to `co2_coeff` and `energy_shares_absolute` must be the same. The above command lets you check this. Next, extract only the common columns from `co2_coeff` and retain only the years which are present in the data
+
 ```{r}
-names(co2_coeff_subset)
+co2_coeff_subset <- co2_coeff[ , names(co2_coeff) %in% names(energy_shares_absolute)]
+co2_coeff_subset <- co2_coeff_subset[co2_coeff_subset$abrechnungsjahr %in% years_for_which_data_exists , ]
+co2_coeff_subset
 ```
 
-So you have to multiply the coefficents with the energy consumption:
+
+
+
+An now you have to multiply the coefficents with the energy consumption:
 
 ```{r}
 ###########multiply coefficients with energy consumption##################
@@ -406,7 +439,7 @@ The above answer is in grams. Divide by 1e9 to get the answer in kilo tonnes.
 
 ```{r}
 co2_emissions_in_kilo_tons <- co2_emissions/1e9
-co2_emissions_in_kilo_tons$abrechnungsjahr <- 2002:2018
+co2_emissions_in_kilo_tons$abrechnungsjahr <- years_for_which_data_exists
 co2_emissions_in_kilo_tons$total <- rowSums(co2_emissions_in_kilo_tons[,names(co2_emissions_in_kilo_tons)!="abrechnungsjahr"])
 co2_emissions_in_kilo_tons
 ```
@@ -430,7 +463,7 @@ if (a<0) {
 if (b<0) {
   bsign <- " "
 } else {bsign <- " "}
-ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title="Ulm, 1-2FH")+ylim(0,max(co2_emissions_in_kilo_tons$total))+geom_smooth(method="lm",data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))),x=2008,y=60)+scale_x_continuous(breaks=seq(2002,2018,2))
+ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+ylim(0,max(co2_emissions_in_kilo_tons$total))+geom_smooth(method="lm",data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))),x=2008,y=60)+scale_x_continuous(breaks=seq(2002,2018,2))
 #https://stackoverflow.com/questions/15633714/adding-a-regression-line-on-a-ggplot  
 #ggsave("total_co2_emission.jpg")
 ```
@@ -442,39 +475,39 @@ ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total
 co2cumsums <- co2_emissions_in_kilo_tons
 #co2cumsums <- co2cumsums[,c("abrechnungsjahr","holzpellets","strom","fluessiggas","erdgas","heizoel")]
 co2cumsums <- as.data.frame(t(apply(co2cumsums[,!(names(co2cumsums)%in%c("abrechnungsjahr","total"))],1,cumsum)))
-co2cumsums$abrechnungsjahr <- 2002:2018
+co2cumsums$abrechnungsjahr <- years_for_which_data_exists
 co2cumsums
 ```
 
 ##### simple line curve:
 
 ```{r}
-ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
 )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
 )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name="legend",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))) + labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title="Ulm, 1-2FH")+theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
+)+scale_color_manual(labels=order_labels,name="legend",values=cols,breaks=order_legend) + labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 ##### filled graph:
 
 ```{r}
-ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
 )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
 )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
-)+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[7])),fill=col_list[7]
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
+)+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
+)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 #ggsave("co2emissions_absolute.jpg")
 ```
 
@@ -482,49 +515,33 @@ ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color
 
 **do the witterungsbereinigung later. 1. first address these issues: Area in 2018 (see email from Johannes) and 2. the skype chat regarding waerme, fernwaerme and nahwaerme and 3. linearizing the graphs**
 
+
+
 ```{r}
 co2anteile_cumsums <- as.data.frame(sapply(co2cumsums[,names(co2cumsums)!="abrechnungsjahr"] , function(obj) obj/co2cumsums$strom))
-co2anteile_cumsums$abrechnungsjahr <- 2002:2018
+co2anteile_cumsums$abrechnungsjahr <- years_for_which_data_exists
 co2anteile_cumsums
 ```
 
 ```{r}
-ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
 )+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
 )+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[7])),fill=col_list[7]
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
+)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
+)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 #ggsave("co2emissions_relative.jpg")
 ```
 
-### changing the order of items in the legend:
 
-```{r}
-ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[7])),fill=col_list[7]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
-#ggsave("04_co2emissions_proportions_rawdata.jpg")
-```
 
 
 ### 3j. Specific CO<sub>2</sub> emissions
@@ -532,7 +549,7 @@ ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2
 Now we calculate the total CO<sub>2</sub> emissions per square meter for each year in kg/m<sup>2</sup>
 
 ```{r}
-spez_co2_emission <- data.frame(abrechnungsjahr = 2002:2018 , spez_co2 = 0.001*rowSums(co2_emissions)/totalArea$totArea)
+spez_co2_emission <- data.frame(abrechnungsjahr = years_for_which_data_exists , spez_co2 = 0.001*rowSums(co2_emissions)/totalArea$totArea)
 spez_co2_emission
 ```
 
@@ -548,7 +565,7 @@ if (b_spez<0) {
 } else {bsign_spez <- " "}
 ggplot()+geom_line(data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+geom_point(
   data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",
-  y="co2 emissions (kg/sq. m)",title="Ulm, 1-2FH")+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
+  y="co2 emissions (kg/sq. m)",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
   method="lm",data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),se=FALSE)+annotate(
   geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
   ),x=2008,y=30)+scale_x_continuous(breaks=seq(2002,2018,2))
@@ -617,41 +634,39 @@ for (et in et_list_2) {
 
 ```{r}
 require(ggplot2)
-ggplot()+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+ggplot()+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
 )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
 )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+geom_abline(intercept=intercepts_co2[1],slope=slopes_co2[1],colour=col_list[2]
-)+geom_abline(intercept=intercepts_co2[2],slope=slopes_co2[2],colour=col_list[3]
-)+geom_abline(intercept=intercepts_co2[3],slope=slopes_co2[3],colour=col_list[4]
-)+geom_abline(intercept=intercepts_co2[4],slope=slopes_co2[4],colour=col_list[5]
-)+geom_abline(intercept=intercepts_co2[5],slope=slopes_co2[5],colour=col_list[6]
-)+geom_abline(intercept=intercepts_co2[6],slope=slopes_co2[6],colour=col_list[7]
-)+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)"
-)+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
-#ggsave("co2emissions_absolute_real_and_linearized.jpg")
+)+geom_abline(intercept=intercepts_co2[1],slope=slopes_co2[1],colour=col_list[1]
+)+geom_abline(intercept=intercepts_co2[2],slope=slopes_co2[2],colour=col_list[2]
+)+geom_abline(intercept=intercepts_co2[3],slope=slopes_co2[3],colour=col_list[3]
+)+geom_abline(intercept=intercepts_co2[4],slope=slopes_co2[4],colour=col_list[4]
+)+geom_abline(intercept=intercepts_co2[5],slope=slopes_co2[5],colour=col_list[5]
+)+geom_abline(intercept=intercepts_co2[6],slope=slopes_co2[6],colour=col_list[6]
+)+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 
 ```{r}
 require(ggplot2)
-ggplot()+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+ggplot()+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
 )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
 )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+geom_abline(intercept=intercepts_co2_anteile[1],slope=slopes_co2_anteile[1],colour=col_list[2]
-)+geom_abline(intercept=intercepts_co2_anteile[2],slope=slopes_co2_anteile[2],colour=col_list[3]
-)+geom_abline(intercept=intercepts_co2_anteile[3],slope=slopes_co2_anteile[3],colour=col_list[4]
-)+geom_abline(intercept=intercepts_co2_anteile[4],slope=slopes_co2_anteile[4],colour=col_list[5]
-)+geom_abline(intercept=intercepts_co2_anteile[5],slope=slopes_co2_anteile[5],colour=col_list[6]
-)+geom_abline(intercept=intercepts_co2_anteile[6],slope=slopes_co2_anteile[6],colour=col_list[7]
-)+labs(x="Abrechnungsjahr",y="co2 emissions (relative)"
-)+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
-#ggsave("co2emissions_absolute_real_and_linearized.jpg")
+)+geom_abline(intercept=intercepts_co2_anteile[1],slope=slopes_co2_anteile[1],colour=col_list[1]
+)+geom_abline(intercept=intercepts_co2_anteile[2],slope=slopes_co2_anteile[2],colour=col_list[2]
+)+geom_abline(intercept=intercepts_co2_anteile[3],slope=slopes_co2_anteile[3],colour=col_list[3]
+)+geom_abline(intercept=intercepts_co2_anteile[4],slope=slopes_co2_anteile[4],colour=col_list[4]
+)+geom_abline(intercept=intercepts_co2_anteile[5],slope=slopes_co2_anteile[5],colour=col_list[5]
+)+geom_abline(intercept=intercepts_co2_anteile[6],slope=slopes_co2_anteile[6],colour=col_list[6]
+)+labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title=plot_title
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 
@@ -668,51 +683,52 @@ ggplot()+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[
 ## Graph of linear trends of absolute CO<sub>2</sub> emissions:
 
 ```{r}
-ggplot()+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+ggplot()+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
 )+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
 )+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
-)+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[7])),fill=col_list[7]
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (kilo tonnes)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
+)+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
+)+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (kilo tonnes)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 #ggsave("co2emissions_absolute_linearized.jpg")
 ```
 
 ## Graph of linear trends of relative CO<sub>2</sub> emissions:
 
 ```{r}
-ggplot()+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+ggplot()+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
 )+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
 )+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
 )+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
 )+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[7]),color=et_list[7])
-)+scale_color_manual(name=" ",values=cols,breaks=rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
-)+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[7])),fill=col_list[7]
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (relative)",title="Ulm, 1-2FH")+scale_x_continuous(breaks=seq(2002,2018,2))
+)+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
+)+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (relative)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 #ggsave("co2emissions_relative_linearized.jpg")
 ```
 
 ## Save the data
 
 ```{r}
-write.csv(final_prop_table , file = "./data/ulm/sfh/ET_anteile_verbrauch_sfh.csv") #comes from co2online data
-write.csv(spz_verbrauch_mean , file = "./data/ulm/sfh/spz_verbrauch_sfh.csv")      #comes from co2online data
+write.csv(final_prop_table , file = "./data/ulm/mfh/ET_anteile_verbrauch_mfh.csv") #comes from co2online data
+write.csv(spz_verbrauch_mean , file = "./data/ulm/mfh/spz_verbrauch_mfh.csv")      #comes from co2online data
 # total area: wohngebaeude_2002_2018.txt contains the total area
-write.csv(totalConsumption , file = "./data/ulm/sfh/gesamt_verbrauch_sfh.csv")     #comes from co2online and area data
-write.csv(co2_emissions_in_kilo_tons , file = "./data/ulm/sfh/co2_emissions_kilo_tons_sfh.csv") #comes from co2online, coeff. and area data
+write.csv(totalConsumption , file = "./data/ulm/mfh/gesamt_verbrauch_mfh.csv")     #comes from co2online and area data
+write.csv(co2_emissions_in_kilo_tons , file = "./data/ulm/mfh/co2_emissions_kilo_tons_mfh.csv") #comes from co2online, coeff. and area data
+write.csv(energy_shares_absolute , file = "./data/ulm/mfh/energy_shares_absolute_mfh.csv")
 ```
 
 https://ggplot2.tidyverse.org/reference/scale_manual.html

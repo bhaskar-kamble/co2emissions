@@ -731,11 +731,11 @@ ggplot()+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et
 ## Save the data
 
 ```{r}
-write.csv(final_prop_table , file = "./data/ulm/all/ET_anteile_verbrauch_mfh.csv") #comes from co2online data
-write.csv(spz_verbrauch_mean , file = "./data/ulm/all/spz_verbrauch_mfh.csv")      #comes from co2online data
+write.csv(final_prop_table , file = "./data/ulm/all/ET_anteile_verbrauch_all.csv") #comes from co2online data
+write.csv(spz_verbrauch_mean , file = "./data/ulm/all/spz_verbrauch_all.csv")      #comes from co2online data
 # total area: wohngebaeude_2002_2018.txt contains the total area
-write.csv(totalConsumption , file = "./data/ulm/all/gesamt_verbrauch_mfh.csv")     #comes from co2online and area data
-write.csv(co2_emissions_in_kilo_tons , file = "./data/ulm/all/co2_emissions_kilo_tons_mfh.csv") #comes from co2online, coeff. and area data
+write.csv(totalConsumption , file = "./data/ulm/all/gesamt_verbrauch_all.csv")     #comes from co2online and area data
+write.csv(co2_emissions_in_kilo_tons , file = "./data/ulm/all/co2_emissions_kilo_tons_all.csv") #comes from co2online, coeff. and area data
 ```
 
 https://ggplot2.tidyverse.org/reference/scale_manual.html
