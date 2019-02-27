@@ -330,55 +330,48 @@ cols <- c(
           "holzpellets" = "blue",
           "strom"       = "olivedrab4"
           )
-plot_title <- "Ulm, 1-2FH"
+plot_title <- "Ulm, 1-2 FH"
 order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
 order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
 ```
 
 Test plot:
 
-``` r
-require(ggplot2)
-ggplot()+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
-)+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
-)+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
-)+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
-)+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
-)+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_abline(intercept=intercepts[1],slope=slopes[1],colour=col_list[1]
-)+geom_abline(intercept=intercepts[2],slope=slopes[2],colour=col_list[2]
-)+geom_abline(intercept=intercepts[3],slope=slopes[3],colour=col_list[3]
-)+geom_abline(intercept=intercepts[4],slope=slopes[4],colour=col_list[4]
-)+geom_abline(intercept=intercepts[5],slope=slopes[5],colour=col_list[5]
-)+geom_abline(intercept=intercepts[6],slope=slopes[6],colour=col_list[6])+labs(
-x="Abrechnungsjahr",y="energy consumption (relative)",title=plot_title
-)+scale_color_manual(labels=order_labels, name=" ",values=cols,breaks=order_legend
-) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
-```
-
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-11-1.png)
+    require(ggplot2)
+    ggplot()+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+    )+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+    )+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+    )+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+    )+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+    )+geom_point(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+    )+geom_abline(intercept=intercepts[1],slope=slopes[1],colour=col_list[1]
+    )+geom_abline(intercept=intercepts[2],slope=slopes[2],colour=col_list[2]
+    )+geom_abline(intercept=intercepts[3],slope=slopes[3],colour=col_list[3]
+    )+geom_abline(intercept=intercepts[4],slope=slopes[4],colour=col_list[4]
+    )+geom_abline(intercept=intercepts[5],slope=slopes[5],colour=col_list[5]
+    )+geom_abline(intercept=intercepts[6],slope=slopes[6],colour=col_list[6])+labs(
+    x="Abrechnungsjahr",y="energy consumption (relative)",title=plot_title
+    )+scale_color_manual(labels=order_labels, name=" ",values=cols,breaks=order_legend
+    ) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 
 #### Save some of the graphs
 
 #### Cumulative Energietraeger Anteile, simple line-plot:
 
-``` r
-ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
-)+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
-)+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
-)+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
-)+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
-)+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+scale_color_manual(labels=order_labels,name="legend",values=cols,breaks=order_legend) + labs(
-x="Abrechnungsjahr",y="energy consumption (relative)",title=plot_title)+theme_bw(
-)+scale_x_continuous(breaks=seq(2002,2018,2))
-```
-
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-12-1.png)
+    ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+    )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+    )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+    )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+    )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+    )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+    )+scale_color_manual(labels=order_labels,name="legend",values=cols,breaks=order_legend) + labs(
+    x="Abrechnungsjahr",y="energy consumption (relative)",title=plot_title)+theme_bw(
+    )+scale_x_continuous(breaks=seq(2002,2018,2))
 
 #### Cumulative Energietraeger Anteile, filled plot:
 
 ``` r
+require(ggplot2)
 ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
 )+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
@@ -395,7 +388,7 @@ ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=e
 )+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-13-1.png)
+![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 3. Now for the CO<sub>2</sub> emissions
 ---------------------------------------
@@ -759,10 +752,10 @@ if (a<0) {
 if (b<0) {
   bsign <- " "
 } else {bsign <- " "}
-ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+ylim(0,max(co2_emissions_in_kilo_tons$total))+geom_smooth(method="lm",data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))),x=2008,y=60)+scale_x_continuous(breaks=seq(2002,2018,2))
+ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",y="kilo tonnes",title=plot_title)+ylim(0,max(co2_emissions_in_kilo_tons$total))+geom_smooth(method="lm",data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))),x=2008,y=60)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-25-1.png)
+![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-23-1.png)
 
 ``` r
 #https://stackoverflow.com/questions/15633714/adding-a-regression-line-on-a-ggplot  
@@ -818,17 +811,13 @@ co2cumsums
 
 ##### simple line curve:
 
-``` r
-ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
-)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
-)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
-)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
-)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
-)+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+scale_color_manual(labels=order_labels,name="legend",values=cols,breaks=order_legend) + labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
-```
-
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-27-1.png)
+    ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+    )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+    )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+    )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+    )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+    )+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+    )+scale_color_manual(labels=order_labels,name="legend",values=cols,breaks=order_legend) + labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
 
 ##### filled graph:
 
@@ -846,10 +835,10 @@ ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+)+theme_bw()+ labs(x="Abrechnungsjahr",y="kilo tonne",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-28-1.png)
+![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-25-1.png)
 
 ``` r
 #ggsave("co2emissions_absolute.jpg")
@@ -916,38 +905,13 @@ ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 Anteile (relativ)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-30-1.png)
+![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-27-1.png)
 
 ``` r
 #ggsave("co2emissions_relative.jpg")
-```
-
-### changing the order of items in the legend:
-
-``` r
-ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
-)+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
-```
-
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-31-1.png)
-
-``` r
-#ggsave("04_co2emissions_proportions_rawdata.jpg")
 ```
 
 ### 3j. Specific CO<sub>2</sub> emissions
@@ -990,13 +954,13 @@ if (b_spez<0) {
 } else {bsign_spez <- " "}
 ggplot()+geom_line(data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+geom_point(
   data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",
-  y="co2 emissions (kg/sq. m)",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
+  y="kg/q.m.",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
   method="lm",data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),se=FALSE)+annotate(
   geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
   ),x=2008,y=30)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-33-1.png)
+![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-29-1.png)
 
 Make linear trends
 ==================
@@ -1132,53 +1096,39 @@ for (et in et_list_2) {
 }
 ```
 
-``` r
-require(ggplot2)
-ggplot()+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
-)+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
-)+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
-)+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
-)+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
-)+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_abline(intercept=intercepts_co2[1],slope=slopes_co2[1],colour=col_list[1]
-)+geom_abline(intercept=intercepts_co2[2],slope=slopes_co2[2],colour=col_list[2]
-)+geom_abline(intercept=intercepts_co2[3],slope=slopes_co2[3],colour=col_list[3]
-)+geom_abline(intercept=intercepts_co2[4],slope=slopes_co2[4],colour=col_list[4]
-)+geom_abline(intercept=intercepts_co2[5],slope=slopes_co2[5],colour=col_list[5]
-)+geom_abline(intercept=intercepts_co2[6],slope=slopes_co2[6],colour=col_list[6]
-)+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title
-)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
-```
+    require(ggplot2)
+    ggplot()+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+    )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+    )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+    )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+    )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+    )+geom_point(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+    )+geom_abline(intercept=intercepts_co2[1],slope=slopes_co2[1],colour=col_list[1]
+    )+geom_abline(intercept=intercepts_co2[2],slope=slopes_co2[2],colour=col_list[2]
+    )+geom_abline(intercept=intercepts_co2[3],slope=slopes_co2[3],colour=col_list[3]
+    )+geom_abline(intercept=intercepts_co2[4],slope=slopes_co2[4],colour=col_list[4]
+    )+geom_abline(intercept=intercepts_co2[5],slope=slopes_co2[5],colour=col_list[5]
+    )+geom_abline(intercept=intercepts_co2[6],slope=slopes_co2[6],colour=col_list[6]
+    )+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title
+    )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
+    #ggsave("co2emissions_absolute_real_and_linearized.jpg")
 
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-37-1.png)
-
-``` r
-#ggsave("co2emissions_absolute_real_and_linearized.jpg")
-```
-
-``` r
-require(ggplot2)
-ggplot()+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
-)+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
-)+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
-)+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
-)+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
-)+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
-)+geom_abline(intercept=intercepts_co2_anteile[1],slope=slopes_co2_anteile[1],colour=col_list[1]
-)+geom_abline(intercept=intercepts_co2_anteile[2],slope=slopes_co2_anteile[2],colour=col_list[2]
-)+geom_abline(intercept=intercepts_co2_anteile[3],slope=slopes_co2_anteile[3],colour=col_list[3]
-)+geom_abline(intercept=intercepts_co2_anteile[4],slope=slopes_co2_anteile[4],colour=col_list[4]
-)+geom_abline(intercept=intercepts_co2_anteile[5],slope=slopes_co2_anteile[5],colour=col_list[5]
-)+geom_abline(intercept=intercepts_co2_anteile[6],slope=slopes_co2_anteile[6],colour=col_list[6]
-)+labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title=plot_title
-)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
-```
-
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-38-1.png)
-
-``` r
-#ggsave("co2emissions_absolute_real_and_linearized.jpg")
-```
+    require(ggplot2)
+    ggplot()+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+    )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+    )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+    )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+    )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+    )+geom_point(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+    )+geom_abline(intercept=intercepts_co2_anteile[1],slope=slopes_co2_anteile[1],colour=col_list[1]
+    )+geom_abline(intercept=intercepts_co2_anteile[2],slope=slopes_co2_anteile[2],colour=col_list[2]
+    )+geom_abline(intercept=intercepts_co2_anteile[3],slope=slopes_co2_anteile[3],colour=col_list[3]
+    )+geom_abline(intercept=intercepts_co2_anteile[4],slope=slopes_co2_anteile[4],colour=col_list[4]
+    )+geom_abline(intercept=intercepts_co2_anteile[5],slope=slopes_co2_anteile[5],colour=col_list[5]
+    )+geom_abline(intercept=intercepts_co2_anteile[6],slope=slopes_co2_anteile[6],colour=col_list[6]
+    )+labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title=plot_title
+    )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend) + theme_bw()+scale_x_continuous(breaks=seq(2002,2018,2))
+    #ggsave("co2emissions_absolute_real_and_linearized.jpg")
 
 Graph of linear trends of absolute CO<sub>2</sub> emissions:
 ------------------------------------------------------------
@@ -1197,10 +1147,10 @@ ggplot()+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[1]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (kilo tonnes)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+)+theme_bw()+ labs(x="Abrechnungsjahr",y="kilo tonnes",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-39-1.png)
+![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-33-1.png)
 
 ``` r
 #ggsave("co2emissions_absolute_linearized.jpg")
@@ -1223,10 +1173,10 @@ ggplot()+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (relative)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 Anteile (relativ)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-40-1.png)
+![](co2emissions_ulm_sfh_v3_files/figure-markdown_github/unnamed-chunk-34-1.png)
 
 ``` r
 #ggsave("co2emissions_relative_linearized.jpg")
