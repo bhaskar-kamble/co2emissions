@@ -1705,24 +1705,34 @@ names(spez_co2_emission)
 is_not_year <- names(final_prop_table)!="abrechnungsjahr"
 write.csv(final_prop_table[,c("abrechnungsjahr",names(final_prop_table)[is_not_year])],
           file="./data/ulm/mfh/01_energyshares_by_ET.csv",row.names=FALSE)
+write.csv2(final_prop_table[,c("abrechnungsjahr",names(final_prop_table)[is_not_year])],
+          file="./data/ulm/mfh/01_energyshares_by_ET_2.csv",row.names=FALSE)
 
 is_not_year <- names(area_prop_table)!="abrechnungsjahr"
 write.csv(area_prop_table[,c("abrechnungsjahr",names(area_prop_table)[is_not_year])],
           file="./data/ulm/mfh/02_areashares_by_ET.csv",row.names=FALSE)
+write.csv2(area_prop_table[,c("abrechnungsjahr",names(area_prop_table)[is_not_year])],
+          file="./data/ulm/mfh/02_areashares_by_ET_2.csv",row.names=FALSE)
 
 is_not_year <- names(area_shares_absolute)!="abrechnungsjahr"
 write.csv(area_shares_absolute[,c("abrechnungsjahr",names(area_shares_absolute)[is_not_year])],
           file="./data/ulm/mfh/03_area_absolute_by_ET.csv",row.names=FALSE)
+write.csv2(area_shares_absolute[,c("abrechnungsjahr",names(area_shares_absolute)[is_not_year])],
+          file="./data/ulm/mfh/03_area_absolute_by_ET_2.csv",row.names=FALSE)
 
 is_not_year <- names(co2_emissions_in_kilo_tons)!="abrechnungsjahr"
 write.csv(co2_emissions_in_kilo_tons[,c("abrechnungsjahr",names(co2_emissions_in_kilo_tons)[is_not_year])],
           file="./data/ulm/mfh/04_co2_absolut_nachET.csv",row.names=FALSE)
+write.csv2(co2_emissions_in_kilo_tons[,c("abrechnungsjahr",names(co2_emissions_in_kilo_tons)[is_not_year])],
+          file="./data/ulm/mfh/04_co2_absolut_nachET_2.csv",row.names=FALSE)
 
 write.csv(spez_co2_emission,file="./data/ulm/mfh/05_co2_spez.csv",row.names=FALSE)
+write.csv2(spez_co2_emission,file="./data/ulm/mfh/05_co2_spez_2.csv",row.names=FALSE)
 
 is_not_year <- names(co2_emissions_in_kilo_tons)!="abrechnungsjahr"
 co2_shares <- co2_emissions_in_kilo_tons[,names(co2_emissions_in_kilo_tons)[is_not_year]]/co2_emissions_in_kilo_tons$total
 write.csv(co2_shares,file="./data/ulm/mfh/06_co2_shares.csv",row.names=FALSE)
+write.csv2(co2_shares,file="./data/ulm/mfh/06_co2_shares_2.csv",row.names=FALSE)
 
 #write.csv(co2cumsums,file="./data/ulm/mfh/02_co2_MFH_absolut_nachET_kumulativ.csv",row.names=FALSE)
 #write.csv(co2anteile_cumsums,file="./data/ulm/mfh/03_co2_MFH_relativ_nachET_kumulativ.csv",row.names=FALSE)
