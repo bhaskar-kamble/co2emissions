@@ -244,6 +244,7 @@ Define the color scheme and plot title:
 
 ```{r}
 datawide <- final_prop_table_cumsums
+datawide[,names(datawide)!="abrechnungsjahr"] <- 100.0*datawide[,names(datawide)!="abrechnungsjahr"]
 col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
 cols <- c(
           "erdgas"      = "royalblue4",
@@ -255,7 +256,7 @@ cols <- c(
           )
 plot_title <- "Ulm, MFH"
 order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
-order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+order_labels <- rev(c("Erdgas","W�??¤rme (N+F)","Fl�??¼ssiggas","Heiz�??¶l","Holzpellets","Strom (D+WP)"))
 ```
 
 Test plot:
@@ -310,11 +311,131 @@ ggplot()+geom_line(data=datawide,aes(x=abrechnungsjahr,y=get(et_list[1]),color=e
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
-)+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Abrechnungsjahr",y="energy consumption (relative)",title=plot_title
+)+geom_ribbon(data=datawide,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Jahr",y="Anteile in Prozent",title=plot_title
 )+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 
+#### *Introduce the variable "datawide_linear" and make the filled plots for linearized energietraegers...*
+
+```{r}
+datawide_linear <- datawide[,grep("lm",names(datawide),value=TRUE)]
+names(datawide_linear) <- gsub("_lm", "" , names(datawide_linear))
+datawide_linear$abrechnungsjahr <- years_for_which_data_exists
+```
+
+```{r}
+ggplot()+geom_line(data=datawide_linear,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=datawide_linear,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+)+geom_line(data=datawide_linear,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+)+geom_line(data=datawide_linear,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+)+geom_line(data=datawide_linear,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+)+geom_line(data=datawide_linear,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+)+geom_ribbon(data=datawide_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+)+geom_ribbon(data=datawide_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+)+geom_ribbon(data=datawide_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+)+geom_ribbon(data=datawide_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+)+geom_ribbon(data=datawide_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+)+geom_ribbon(data=datawide_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
+)+theme_bw()+ labs(x="Jahr",y="Anteile in Prozent",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+```
+
+#### Now find out from the total area, what percent of the area is heated by heizoel , erdgas etc. Extrapolate it to Ulm.
+
+```{r}
+require(dplyr)
+by_year_ETArea <- group_by(ulm_mfh,abrechnungsjahr,energietraeger)
+ET_areas_by_year <- as.data.frame(summarize(by_year_ETArea,sum(gebaeude_nutzflaeche)))
+names(ET_areas_by_year) <- c("abrechnungsjahr" ,"energietraeger" ,"sum_nutzflaeche")
+#change to wide format
+detach(package:dplyr)
+library(reshape2)
+ET_areas_by_year_wide <- dcast(ET_areas_by_year , abrechnungsjahr ~ energietraeger , value.var = "sum_nutzflaeche")
+ET_areas_by_year_wide[is.na(ET_areas_by_year_wide)]=0.0
+drop_cols <- "abrechnungsjahr"
+ET_areas_by_year_wide$Yearlysum <- rowSums(ET_areas_by_year_wide[ , !(names(ET_areas_by_year_wide) %in% drop_cols)])
+ET_areas_by_year_wide
+
+```
+
+#### Get the relative shares of area of each ET per year
+
+```{r}
+drop_cols <- c("abrechnungsjahr","Yearlysum")
+area_prop_table <- as.data.frame(sapply(ET_areas_by_year_wide[ , !(names(ET_areas_by_year_wide) %in% drop_cols)],function(obj) obj/ET_areas_by_year_wide$Yearlysum))
+area_prop_table$abrechnungsjahr <- 2002:2018
+area_prop_table
+```
+
+#### Find the cumulative sums:
+
+```{r}
+area_prop_table <- area_prop_table[,c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","abrechnungsjahr")]
+area_prop_table_cumsums <- t(apply(area_prop_table[, !(names(area_prop_table)=="abrechnungsjahr")] 
+                                    , 1 , cumsum))
+area_prop_table_cumsums <- as.data.frame(area_prop_table_cumsums)
+area_prop_table_cumsums$abrechnungsjahr <- area_prop_table$abrechnungsjahr
+area_prop_table_cumsums
+area_prop_table_cumsums[,names(area_prop_table_cumsums)!="abrechnungsjahr"] <- 100*area_prop_table_cumsums[,names(area_prop_table_cumsums)!="abrechnungsjahr"]
+area_prop_table_cumsums
+```
+
+#### Plot the cumulative sums
+
+```{r}
+ggplot()+geom_line(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+)+geom_line(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+)+geom_line(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+)+geom_line(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+)+geom_line(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+)+geom_ribbon(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+)+geom_ribbon(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+)+geom_ribbon(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+)+geom_ribbon(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+)+geom_ribbon(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+)+geom_ribbon(data=area_prop_table_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Jahr",y="Area anteile",title=plot_title
+)+scale_x_continuous(breaks=seq(2002,2018,2))
+```
+
+
+#### Find the linear trends
+
+```{r}
+#final_prop_table_cumsums_omit2018 <- final_prop_table_cumsums[final_prop_table_cumsums$abrechnungsjahr!=2018 , ]
+et_list <- names(area_prop_table_cumsums)[names(area_prop_table_cumsums)!="abrechnungsjahr"]
+storage <- list()
+slopes <- NULL
+intercepts <- NULL
+area_prop_cumsum_linear <- area_prop_table_cumsums
+
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = area_prop_table_cumsums)
+  intercepts <- c(intercepts , as.numeric(coefficients(storage[[et]])[1]))
+  slopes <- c(slopes , as.numeric(coefficients(storage[[et]])[2]))
+  area_prop_cumsum_linear[[et]] <- predict(storage[[et]] , newdata = area_prop_table_cumsums)
+}
+```
+
+
+```{r}
+ggplot()+geom_line(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+)+geom_line(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+)+geom_line(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+)+geom_line(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+)+geom_line(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+)+geom_ribbon(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+)+geom_ribbon(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+)+geom_ribbon(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+)+geom_ribbon(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+)+geom_ribbon(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+)+geom_ribbon(data=area_prop_cumsum_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Jahr",y="Anteile in Prozent",title=plot_title
+)+scale_x_continuous(breaks=seq(2002,2018,2))
+```
 
 
 ## 3. Now for the CO<sub>2</sub> emissions
@@ -359,6 +480,80 @@ names(totalArea) <-  c("abrechnungsjahr","totArea")
 totalArea <- totalArea[totalArea$abrechnungsjahr %in% years_for_which_data_exists , ]
 totalArea
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Find the ET breakup according to area
+
+```{r}
+is_not_year <- names(area_prop_table) != "abrechnungsjahr"
+area_shares_absolute <- totalArea$totArea * area_prop_table[,is_not_year]
+area_shares_absolute$abrechnungsjahr <- 2002:2018
+area_shares_absolute
+```
+
+
+```{r}
+area_shares_absolute_cumsums <- t(apply(area_shares_absolute[, !(names(area_shares_absolute)=="abrechnungsjahr")] 
+                                    , 1 , cumsum))
+area_shares_absolute_cumsums <- as.data.frame(area_shares_absolute_cumsums)
+area_shares_absolute_cumsums$abrechnungsjahr <- area_shares_absolute$abrechnungsjahr
+area_shares_absolute_cumsums
+```
+
+```{r}
+ggplot()+geom_line(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+)+geom_line(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+)+geom_line(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+)+geom_line(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+)+geom_line(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+)+geom_line(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+)+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+)+geom_ribbon(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+)+geom_ribbon(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+)+geom_ribbon(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+)+geom_ribbon(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+)+geom_ribbon(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+)+geom_ribbon(data=area_shares_absolute_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x="Jahr",y="Area",title=plot_title
+)+scale_x_continuous(breaks=seq(2002,2018,2))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -464,7 +659,7 @@ if (a<0) {
 if (b<0) {
   bsign <- " "
 } else {bsign <- " "}
-ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+ylim(0,max(co2_emissions_in_kilo_tons$total))+geom_smooth(method="lm",data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))),x=2008,y=60)+scale_x_continuous(breaks=seq(2002,2018,2))
+ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Jahr",y="1.000 Tonnen",title=plot_title)+ylim(0,max(co2_emissions_in_kilo_tons$total))+geom_smooth(method="lm",data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))),x=2008,y=60)+scale_x_continuous(breaks=seq(2002,2018,2))
 #https://stackoverflow.com/questions/15633714/adding-a-regression-line-on-a-ggplot  
 #ggsave("total_co2_emission.jpg")
 ```
@@ -508,7 +703,7 @@ ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
 )+geom_ribbon(data=co2cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (kilo tonnes)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+)+theme_bw()+ labs(x="Jahr",y="1.000 Tonnen",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 #ggsave("co2emissions_absolute.jpg")
 ```
 
@@ -521,6 +716,7 @@ ggplot()+geom_line(data=co2cumsums,aes(x=abrechnungsjahr,y=get(et_list[1]),color
 ```{r}
 co2anteile_cumsums <- as.data.frame(sapply(co2cumsums[,names(co2cumsums)!="abrechnungsjahr"] , function(obj) obj/co2cumsums$strom))
 co2anteile_cumsums$abrechnungsjahr <- years_for_which_data_exists
+co2anteile_cumsums[,names(co2anteile_cumsums)!="abrechnungsjahr"] <- 100.0*co2anteile_cumsums[,names(co2anteile_cumsums)!="abrechnungsjahr"]
 co2anteile_cumsums
 ```
 
@@ -538,7 +734,7 @@ ggplot()+geom_line(data=co2anteile_cumsums,aes(x=abrechnungsjahr,y=get(et_list[1
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
 )+geom_ribbon(data=co2anteile_cumsums,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="co2 emissions (relative)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+)+theme_bw()+ labs(x="Jahr",y="Prozent in Anteile",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 #ggsave("co2emissions_relative.jpg")
 ```
 
@@ -565,8 +761,8 @@ if (b_spez<0) {
   bsign_spez <- " "
 } else {bsign_spez <- " "}
 ggplot()+geom_line(data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+geom_point(
-  data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Abrechnungsjahr",
-  y="co2 emissions (kg/sq. m)",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
+  data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Jahr",
+  y="kg/qm",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
   method="lm",data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),se=FALSE)+annotate(
   geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
   ),x=2008,y=30)+scale_x_continuous(breaks=seq(2002,2018,2))
@@ -697,7 +893,7 @@ ggplot()+geom_line(data=co2cumsums_linear,aes(x=abrechnungsjahr,y=get(et_list[1]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
 )+geom_ribbon(data=co2cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (kilo tonnes)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+)+theme_bw()+ labs(x="Jahr",y="1.000 Tonnen",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 #ggsave("co2emissions_absolute_linearized.jpg")
 ```
 
@@ -717,7 +913,7 @@ ggplot()+geom_line(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,y=get(et
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
 )+geom_ribbon(data=co2anteile_cumsums_linear,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1]
-)+theme_bw()+ labs(x="Abrechnungsjahr",y="linearized co2 emissions (relative)",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
+)+theme_bw()+ labs(x="Jahr",y="Prozent in Anteile",title=plot_title)+scale_x_continuous(breaks=seq(2002,2018,2))
 #ggsave("co2emissions_relative_linearized.jpg")
 ```
 
