@@ -333,7 +333,7 @@ cols <- c(
           )
 plot_title <- "Ulm, 1-2 FH"
 order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
-order_labels <- rev(c("Erdgas","WÃÂ¤rme (N+F)","FlÃÂ¼ssiggas","HeizÃÂ¶l","Holzpellets","Strom (D+WP)"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
 ```
 
 Test plot:

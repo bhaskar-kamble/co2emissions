@@ -2,7 +2,7 @@
 title: "Ulm co2 balance all buildings"
 author: "Bhaskar Kamble"
 date: "1 März 2019"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 
