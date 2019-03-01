@@ -1582,12 +1582,33 @@ Save the data
 -------------
 
 ``` r
-write.csv2(co2_emissions_in_kilo_tons,file="./data/ulm/sfh/01_SFH_absolut_nachET.csv",row.names=FALSE)
-write.csv2(co2cumsums,file="./data/ulm/sfh/02_SFH_absolut_nachET_kumulativ.csv",row.names=FALSE)
-write.csv2(co2anteile_cumsums,file="./data/ulm/sfh/03_SFH_relativ_nachET_kumulativ.csv",row.names=FALSE)
-write.csv2(spez_co2_emission,file="./data/ulm/sfh/04_SFH_co2_spez.csv",row.names=FALSE)
-write.csv2(co2anteile_cumsums_linear,file="./data/ulm/sfh/05_SFH_relativ_nachET_kumulativ_linear.csv",row.names=FALSE)
-write.csv2(co2cumsums_linear,file="./data/ulm/sfh/06_SFH_absolut_nachET_kumulativ_linear.csv",row.names=FALSE)
+is_not_year <- names(final_prop_table)!="abrechnungsjahr"
+write.csv(final_prop_table[,c("abrechnungsjahr",names(final_prop_table)[is_not_year])],
+          file="./data/ulm/sfh/01_energyshares_by_ET.csv",row.names=FALSE)
+
+is_not_year <- names(area_prop_table)!="abrechnungsjahr"
+write.csv(area_prop_table[,c("abrechnungsjahr",names(area_prop_table)[is_not_year])],
+          file="./data/ulm/sfh/02_areashares_by_ET.csv",row.names=FALSE)
+
+is_not_year <- names(area_shares_absolute)!="abrechnungsjahr"
+write.csv(area_shares_absolute[,c("abrechnungsjahr",names(area_shares_absolute)[is_not_year])],
+          file="./data/ulm/sfh/03_area_absolute_by_ET.csv",row.names=FALSE)
+
+is_not_year <- names(co2_emissions_in_kilo_tons)!="abrechnungsjahr"
+write.csv(co2_emissions_in_kilo_tons[,c("abrechnungsjahr",names(co2_emissions_in_kilo_tons)[is_not_year])],
+          file="./data/ulm/sfh/04_co2_absolut_nachET.csv",row.names=FALSE)
+
+write.csv(spez_co2_emission,file="./data/ulm/sfh/05_co2_spez.csv",row.names=FALSE)
+
+is_not_year <- names(co2_emissions_in_kilo_tons)!="abrechnungsjahr"
+co2_shares <- co2_emissions_in_kilo_tons[,names(co2_emissions_in_kilo_tons)[is_not_year]]/co2_emissions_in_kilo_tons$total
+write.csv(co2_shares,file="./data/ulm/sfh/06_co2_shares.csv",row.names=FALSE)
+
+#write.csv(co2cumsums,file="./data/ulm/mfh/02_co2_MFH_absolut_nachET_kumulativ.csv",row.names=FALSE)
+#write.csv(co2anteile_cumsums,file="./data/ulm/mfh/03_co2_MFH_relativ_nachET_kumulativ.csv",row.names=FALSE)
+
+#write.csv(co2anteile_cumsums_linear,file="./data/ulm/mfh/05_co2_MFH_relativ_nachET_kumulativ_linear.csv",row.names=FALSE)
+#write.csv(co2cumsums_linear,file="./data/ulm/mfh/06_co2_MFH_absolut_nachET_kumulativ_linear.csv",row.names=FALSE)
 ```
 
 <https://ggplot2.tidyverse.org/reference/scale_manual.html> <https://stackoverflow.com/questions/14762181/adding-a-y-axis-label-to-secondary-y-axis-in-matplotlib>
