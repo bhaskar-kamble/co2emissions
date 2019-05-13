@@ -1,0 +1,218 @@
+---
+title: "CO$_2$ Emissionen im Bezirk Pankow"
+author: "Bhaskar Kamble"
+date: "13 Mai 2019"
+output:
+  beamer_presentation:
+    includes:
+      in_header: ../header_pagenrs.tex
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,cache=FALSE,message=FALSE)
+```
+
+```{r}
+bezirk <- "pankow"
+```
+
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+source("../mainScriptCO2Emissions.R")
+co2_SFH <- main_function("SFH" , bezirk)
+co2_MFH <- main_function("MFH" , bezirk)
+co2_ALL <- co2_SFH + co2_MFH
+co2_ALL$abrechnungsjahr <- 2002:2018
+co2_SFH <- co2_SFH/1e7
+co2_MFH <- co2_MFH/1e7
+co2_ALL <- co2_ALL/1e7
+co2_SFH$abrechnungsjahr <- 2002:2018
+co2_MFH$abrechnungsjahr <- 2002:2018
+co2_ALL$abrechnungsjahr <- 2002:2018
+```
+
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+co2_MFH_rel <- find_proportions(co2_MFH , c("abrechnungsjahr" , "total"))
+co2_MFH_rel <- getRowSums(co2_MFH_rel , "abrechnungsjahr")
+co2_SFH_rel <- find_proportions(co2_SFH , c("abrechnungsjahr" , "total"))
+co2_SFH_rel <- getRowSums(co2_SFH_rel , "abrechnungsjahr")
+co2_ALL_rel <- find_proportions(co2_ALL , c("abrechnungsjahr" , "total"))
+co2_ALL_rel <- getRowSums(co2_ALL_rel , "abrechnungsjahr")
+```
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+source("../getCumSums.R")
+co2_SFH_cumsums <- getCumSums(co2_SFH , c("abrechnungsjahr","total"))
+co2_MFH_cumsums <- getCumSums(co2_MFH , c("abrechnungsjahr","total"))
+co2_ALL_cumsums <- getCumSums(co2_ALL , c("abrechnungsjahr","total"))
+co2_SFH_rel_cumsums <- getCumSums(co2_SFH_rel , c("abrechnungsjahr","total"))
+co2_MFH_rel_cumsums <- getCumSums(co2_MFH_rel , c("abrechnungsjahr","total"))
+co2_ALL_rel_cumsums <- getCumSums(co2_ALL_rel , c("abrechnungsjahr","total"))
+```
+
+
+
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+et_list <- names(co2_SFH)[!(names(co2_SFH) %in% c("abrechnungsjahr","total"))]
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+plot_title <- NULL
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+```
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+require(ggplot2)
+plot_byET <- function(obj,xlabel,ylabel,plottitle) {
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle) + theme(plot.title=element_text(size=30), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"), legend.text = element_text(size=15), axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"), legend.key.size=unit(2, "lines")
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+
+## CO2 Emissionen (1-2 Familienhäuser)
+
+```{r}
+plot_byET(co2_SFH_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+
+## CO2 Emissionen Anteile (1-2 Familienhäuser)
+
+```{r}
+plot_byET(co2_SFH_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```
+
+## CO2 Emissionen (Mehrfamilienhäuser)
+
+```{r}
+plot_byET(co2_MFH_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+## CO2 Emissionen Anteile (Mehrfamilienhäuser)
+
+```{r}
+plot_byET(co2_MFH_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```
+
+
+## CO2 Emissionen (1-2 + Mehrfamilienhäuser)
+
+```{r}
+plot_byET(co2_ALL_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+## CO2 Emissionen Anteile (1-2 + Mehrfamilienhäuser)
+
+```{r}
+plot_byET(co2_ALL_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```
+
+
+## Linear Graphs
+
+
+
+```{r}
+linearizer <- function(obj,dropCols,xVar) {
+  obj_new <- obj[ , !(names(obj) %in% dropCols)]
+  feature_list <- names(obj_new)[ !(names(obj_new) %in% c(dropCols,xVar)) ]
+  storage <- list()
+  for (feature in feature_list) {
+    storage[[feature]] <- lm(get(feature) ~ get(xVar) , data = obj)
+    obj_new[[feature]] <- as.numeric(predict(storage[[feature]] , newdata = obj))
+  }
+  return(obj_new)
+}
+```
+
+## CO2 Emissionen (1-2 Familienhäuser)
+
+```{r}
+co2_SFH_linear <- linearizer(co2_SFH,"total","abrechnungsjahr")
+co2_SFH_linear_cumsums <- getCumSums(co2_SFH_linear , "abrechnungsjahr")
+plot_byET(co2_SFH_linear_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+## CO2 Emissionen Anteile (1-2 Familienhäuser)
+
+```{r}
+co2_SFH_linear_rel <- find_proportions(co2_SFH_linear , "abrechnungsjahr")
+co2_SFH_linear_rel_cumsums <- getCumSums(co2_SFH_linear_rel , "abrechnungsjahr")
+plot_byET(co2_SFH_linear_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```
+
+
+
+
+
+## CO2 Emissionen (Mehrfamilienhäuser)
+
+```{r}
+co2_MFH_linear <- linearizer(co2_MFH,"total","abrechnungsjahr")
+co2_MFH_linear_cumsums <- getCumSums(co2_MFH_linear , "abrechnungsjahr")
+plot_byET(co2_MFH_linear_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+## CO2 Emissionen Anteile (Mehrfamilienhäuser)
+
+```{r}
+co2_MFH_linear_rel <- find_proportions(co2_MFH_linear , "abrechnungsjahr")
+co2_MFH_linear_rel_cumsums <- getCumSums(co2_MFH_linear_rel , "abrechnungsjahr")
+plot_byET(co2_MFH_linear_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 Emissionen (1-2FH + Mehrfamilienhäuser)
+
+```{r}
+co2_ALL_linear <- linearizer(co2_ALL,"total","abrechnungsjahr")
+co2_ALL_linear_cumsums <- getCumSums(co2_ALL_linear , "abrechnungsjahr")
+plot_byET(co2_ALL_linear_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+## CO2 Emissionen (1-2FH + Mehrfamilienhäuser)
+
+```{r}
+co2_ALL_linear_rel <- find_proportions(co2_ALL_linear , "abrechnungsjahr")
+co2_ALL_linear_rel_cumsums <- getCumSums(co2_ALL_linear_rel , "abrechnungsjahr")
+plot_byET(co2_ALL_linear_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```

@@ -1,0 +1,212 @@
+---
+title: "CO$_2$ emissions for Berlin for all buildings"
+author: "Bhaskar Kamble"
+date: "18 März 2019"
+output:
+  beamer_presentation:
+    includes:
+      in_header: header_pagenrs.tex
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,cache=FALSE,message=FALSE)
+```
+
+
+## \textcolor{black}{Introduction}
+
+CO<sub>2</sub> emissions for berlin...
+
+```{r}
+setwd("D:/GITHUB_REPOS/co2emissions/Berlin/")
+co2_abs_mfh <- read.csv("./data/presentations/mfh/co2_abs_ET_MFH.csv")
+co2_abs_sfh <- read.csv("./data/presentations/sfh/co2_abs_ET_SFH.csv")
+```
+
+```{r}
+is_no_year <- names(co2_abs_mfh)[names(co2_abs_mfh)!="abrechnungsjahr"]
+co2_abs_all <- co2_abs_mfh[,is_no_year] + co2_abs_sfh[,is_no_year]
+co2_abs_all$abrechnungsjahr <- 2002:2018
+```
+
+
+## \textcolor{black}{Berlin, alle Geb�ude, CO$_2$-Emission}
+
+
+
+```{r,warning=FALSE}
+require(ggplot2)
+#plot_title <- "Berlin, alle Gebäude (MFH + 1-2 FH)"
+plot_title <- NULL
+linmod <- lm(data=co2_abs_all,formula=total~abrechnungsjahr)
+a <- as.numeric(coefficients(linmod)[1])
+b <- as.numeric(coefficients(linmod)[2])
+if (a<0) {
+  asign <- " "
+} else {asign <- "+"}
+if (b<0) {
+  bsign <- " "
+} else {bsign <- " "}
+ggplot()+geom_line(data=co2_abs_all,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_abs_all,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Jahr",y="1.000 Tonnen",title=plot_title)+ylim(0,max(co2_abs_all$total))+geom_smooth(method="lm",data=co2_abs_all,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,0)),"x",asign,as.character(round(a,0))),x=2008,y=4000,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=30), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+
+## \textcolor{black}{Berlin, alle Geb�ude, CO$_2$-Emission nach Energieträger}
+
+```{r}
+#plot_title <- "Berlin, alle Gebäude (MFH + 1-2 FH)"
+plot_title <- NULL
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","W�rme (N+F)","Fl�ssiggas","Heiz�l","Holzpellets","Strom (D+WP)"))
+```
+
+```{r}
+require(ggplot2)
+plot_byET <- function(obj,xlabel,ylabel,plottitle) {
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle) + theme(plot.title=element_text(size=30), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"), legend.text = element_text(size=15), axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"), legend.key.size=unit(2, "lines")
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+
+```{r}
+drop_cols <- c("abrechnungsjahr","total")
+co2_abs_cumsums <- t(apply(co2_abs_all[,!(names(co2_abs_all)%in%drop_cols)],1,cumsum))
+co2_abs_cumsums <- as.data.frame(co2_abs_cumsums)
+co2_abs_cumsums$abrechnungsjahr <- 2002:2018
+et_list <- names(co2_abs_cumsums)[names(co2_abs_cumsums)!="abrechnungsjahr"]
+plot_byET(co2_abs_cumsums,"Jahr","1.000 Tonnen", plot_title)
+```
+
+
+```{r}
+linearizer <- function(obj) {
+  obj_new <- obj
+  storage <- list()
+  for (et in et_list) {
+    storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = obj)
+    obj_new[[et]] <- as.numeric(predict(storage[[et]] , newdata = obj))
+  }
+  return(obj_new)
+}
+```
+
+## \textcolor{black}{Berlin, alle Gebäude, CO$_2$-Emission nach Energieträger}
+```{r}
+co2_abs_linear <- linearizer(co2_abs_cumsums)
+plot_byET(co2_abs_linear,"Jahr","1.000 Tonnen", plot_title)
+```
+
+
+## \textcolor{black}{Berlin, alle Gebäude, CO$_2$-Anteile nach Energieträger}
+```{r}
+drop_cols <- "abrechnungsjahr"
+co2_relative <- as.data.frame(sapply(co2_abs_cumsums[,!(names(co2_abs_cumsums) == drop_cols)],function(obj) obj/co2_abs_cumsums$strom))
+co2_relative$abrechnungsjahr <- 2002:2018
+co2_relative[,names(co2_relative)!="abrechnungsjahr"] <- 100*co2_relative[,names(co2_relative)!="abrechnungsjahr"]
+```
+
+```{r}
+plot_byET(co2_relative,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+## \textcolor{black}{Berlin, alle Gebäude, CO$_2$-Anteile nach Energieträger}
+
+```{r}
+co2_rel_linear <- linearizer(co2_relative)
+```
+
+```{r}
+plot_byET(co2_rel_linear,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+## \textcolor{black}{Berlin, alle Gebäude, spezifische CO$_2$-Emission}
+
+```{r}
+totalArea <- read.table("berlin_wohnflaeche.txt",header=TRUE)
+totalArea <- totalArea*1000000
+totalArea$totArea <- rowSums(totalArea)
+totalArea$abrechnungsjahr <- 2002:2018
+totalArea <- totalArea[ , c("abrechnungsjahr","totArea")]
+spz_co2 <- 1e6*co2_abs_all$total/totalArea$totArea
+spez_co2_emission <- data.frame(abrechnungsjahr=2002:2018 , spez_co2 = spz_co2 )
+```
+
+```{r,warning=FALSE}
+linmod_spez <- lm(data=spez_co2_emission,formula=spez_co2~abrechnungsjahr)
+a_spez <- as.numeric(coefficients(linmod_spez)[1])
+b_spez <- as.numeric(coefficients(linmod_spez)[2])
+if (a_spez<0) {
+  asign_spez <- " "
+} else {asign_spez <- "+"}
+if (b_spez<0) {
+  bsign_spez <- " "
+} else {bsign_spez <- " "}
+ggplot()+geom_line(data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+geom_point(
+  data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Jahr",
+  y="kg/qm",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
+  method="lm",data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
+  ),x=2008,y=25,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=30), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+
+## \textcolor{black}{Berlin, alle Gebäude, Verbrauch nach Energieträger}
+
+
+```{r}
+energy_mfh <- read.csv("./data/presentations/mfh/energy_abs_ET_MFH.csv")
+energy_sfh <- read.csv("./data/presentations/sfh/energy_abs_ET_SFH.csv")
+energy_all <- energy_mfh + energy_sfh
+energy_all[,names(energy_all)!="abrechnungsjahr"] <- energy_all[,names(energy_all)!="abrechnungsjahr"]/1e9
+energy_all$abrechnungsjahr <- 2002:2018
+energy_all_props <- energy_all[,names(energy_all)!="abrechnungsjahr"]/rowSums(energy_all[,names(energy_all)!="abrechnungsjahr"])
+energy_all_cumsums <- as.data.frame(t(apply(energy_all[,names(energy_all)!="abrechnungsjahr"],1,cumsum)))
+energy_all_cumsums$abrechnungsjahr <- 2002:2018
+energy_all_props_cumsums <- as.data.frame(t(apply(energy_all_props,1,cumsum)))*100
+energy_all_props_cumsums$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+energy_all_cumsums_lin <- linearizer(energy_all_cumsums)
+energy_all_props_cumsums_lin <- linearizer(energy_all_props_cumsums)
+```
+
+```{r}
+plot_byET(energy_all_cumsums_lin,"Jahr","Verbrauch (TWh)", plot_title)
+```
+
+## \textcolor{black}{Berlin, alle Gebäude, Verbrauchsanteile nach Energieträger}
+
+```{r}
+plot_byET(energy_all_props_cumsums_lin,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+

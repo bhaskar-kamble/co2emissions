@@ -1,0 +1,240 @@
+---
+title: "Berlin Bezirke"
+author: "Bhaskar Kamble"
+date: "9 April 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("D:/GITHUB_REPOS/co2emissions/Berlin/")
+#load("../MFH20022018_v2.RData")
+load("../SFH20022018_v2.RData")
+#In SFH20022018, abrechnungsjahr and verbrauch_gesamt_kwh are character - change then to int and numeric
+SFH20022018$abrechnungsjahr <- as.integer(SFH20022018$abrechnungsjahr)
+SFH20022018$verbrauch_gesamt_kwh <- gsub("," , "." , SFH20022018$verbrauch_gesamt_kwh)
+SFH20022018$verbrauch_gesamt_kwh <- as.numeric(SFH20022018$verbrauch_gesamt_kwh)
+SFH20022018$gtype <- "SFH"
+#MFH20022018$gtype <- "MFH"
+```
+
+```{r}
+setwd("D:/GITHUB_REPOS/co2emissions/Berlin/")
+load("../MFH20022018_v2.RData")
+#load("SFH20022018_v2.RData")
+#In SFH20022018, abrechnungsjahr and verbrauch_gesamt_kwh are character - change then to int and numeric
+#SFH20022018$abrechnungsjahr <- as.integer(SFH20022018$abrechnungsjahr)
+#SFH20022018$verbrauch_gesamt_kwh <- gsub("," , "." , SFH20022018$verbrauch_gesamt_kwh)
+#SFH20022018$verbrauch_gesamt_kwh <- as.numeric(SFH20022018$verbrauch_gesamt_kwh)
+#SFH20022018$gtype <- "SFH"
+MFH20022018$gtype <- "MFH"
+```
+
+
+```{r}
+
+subset_data_by_region <- function(inputdata , region) {
+  outputdata <- inputdata[inputdata$Landkreis_von_GS == region , ]
+  return(outputdata)
+}
+```
+
+
+
+```{r}
+weather_data <- read.table("berlin_wetter_tegel.txt",header=TRUE)
+names(weather_data) <- c("wind","sun","bedeckung","temperatur")
+weather_data$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+berlin_sfh <- subset_data_by_region(SFH20022018,"Berlin, Stadt")
+```
+
+```{r}
+berlin_mfh <- subset_data_by_region(MFH20022018,"Berlin, Stadt")
+```
+
+
+```{r}
+#remove additional outliers
+#berlin_mfh <- remove_outliers(berlin_mfh , c("gebaeude_baujahr","gebaeude_nutzflaeche","verbrauch_gesamt_kwh","verbrauch_gesamt_kwh_spez"))
+berlin_mfh <- berlin_mfh[(berlin_mfh$verbrauch_gesamt_kwh_spez > 15)&(berlin_mfh$verbrauch_gesamt_kwh_spez < 400) , ]
+```
+
+```{r}
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="fernwaerme"] <- "waerme"
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="nahwaerme"] <- "waerme"
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="waermepumpe"] <- "strom"
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="waermepumpe_luft"] <- "strom"
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="waermepumpe_wasser"] <- "strom"
+```
+
+```{r}
+berlin_sfh$energietraeger[berlin_sfh$energietraeger=="fernwaerme"] <- "waerme"
+berlin_sfh$energietraeger[berlin_sfh$energietraeger=="nahwaerme"] <- "waerme"
+berlin_sfh$energietraeger[berlin_sfh$energietraeger=="waermepumpe"] <- "strom"
+berlin_sfh$energietraeger[berlin_sfh$energietraeger=="waermepumpe_luft"] <- "strom"
+berlin_sfh$energietraeger[berlin_sfh$energietraeger=="waermepumpe_wasser"] <- "strom"
+```
+
+Data has been read in ....
+
+Now do the Postleitzahl
+
+```{r}
+getwd()
+plz_bezirk <- read.csv2("./Postleitzahl/plz_bezirk_long.csv" , stringsAsFactors = FALSE)
+plz_bezirk
+```
+
+```{r}
+berlin_mfh$sto_plz <- as.integer(berlin_mfh$sto_plz)
+berlin_sfh$sto_plz <- as.integer(berlin_sfh$sto_plz)
+```
+
+```{r}
+berlin_sfh <- merge(berlin_sfh , plz_bezirk , by.x="sto_plz" , by.y = "plz")
+berlin_mfh <- merge(berlin_mfh , plz_bezirk , by.x="sto_plz" , by.y = "plz")
+```
+
+# Function for finding verbrauchsanteile nach energietraeger
+
+```{r}
+find_proportions <- function(obj,drop_cols) {# from the file BerlinPresentationCO2BalanceUnified_v6.Rmd
+  obj <- obj[ , !(names(obj) %in% drop_cols)]
+  obj <- obj / rowSums(obj)
+  obj <- 100*obj
+  obj$abrechnungsjahr <- 2002:2018
+  return(obj)
+} 
+
+energy_proportions_by_et <- function(bezirk,input_data,drop_cols) {
+  # uses find_proportions()
+  #input_data is either berlin_mfh or berlin_sfh
+  require(dplyr)
+  input_data <- input_data[input_data$bezirk == bezirk , ]
+  by_year_ET <- group_by(input_data,abrechnungsjahr,energietraeger)
+  return_data <- as.data.frame(summarize(by_year_ET,sum(verbrauch_gesamt_kwh)))
+  names(return_data) <- c("abrechnungsjahr" ,"energietraeger" ,"sum_verbrauch_gesamt_kwh")
+  detach(package:dplyr)
+  require(reshape2)
+  return_data <- dcast(return_data , abrechnungsjahr ~ energietraeger , value.var = "sum_verbrauch_gesamt_kwh")
+  return_data[is.na(return_data)]=0.0
+  return_data <- find_proportions(return_data , "abrechnungsjahr")
+  return(return_data)
+}
+```
+
+# energy consumption fopr a bezirk
+
+
+# verbrauchsanteile nach ET for a bezirk
+```{r}
+bezirk <- "pankow"
+energy_prop_table <- energy_proportions_by_et(bezirk,berlin_sfh,"abrechnungsjahr")
+energy_prop_table
+```
+
+# Flächenanteile nach ET für ein Bezirk (area_prop_table or area_shares_rel)
+
+
+
+```{r}
+area_proportions_by_et <- function(bezirk,input_data,drop_cols) {
+  #input_data is either berlin_mfh or berlin_sfh
+  require(dplyr)
+  input_data <- input_data[input_data$bezirk == bezirk , ]
+  by_year_ET <- group_by(input_data,abrechnungsjahr,energietraeger)
+  return_data <- as.data.frame(summarize(by_year_ET,sum(gebaeude_nutzflaeche)))
+  names(return_data) <- c("abrechnungsjahr" ,"energietraeger" ,"sum_gebaeude_nutzflaeche")
+  detach(package:dplyr)
+  require(reshape2)
+  return_data <- dcast(return_data , abrechnungsjahr ~ energietraeger , value.var = "sum_gebaeude_nutzflaeche")
+  return_data[is.na(return_data)]=0.0
+  return_data <- find_proportions(return_data , "abrechnungsjahr")
+  return(return_data)
+}
+```
+
+```{r}
+bezirk <- "pankow"
+area_prop_table <- area_proportions_by_et(bezirk,berlin_sfh,"abrechnungsjahr")
+area_prop_table
+```
+
+
+# gesamtfläche nach ET für ein Bezirk (area_shares_abs or area_abs_table)
+
+Here you need the area for a particular bezirk.
+
+Now you need to do the calculation for the areas for the bezirke for the years.
+
+This data is in the files in the folder ./FindArea
+
+
+
+```{r}
+bezirk_areas <- read.csv2("./FindArea/areas_berlin_bezirke.csv")
+bezirk_areas <- bezirk_areas[ , c("bezirk","wohnflaeche_gebaeude_insgesamt","wohnflaeche_gebaeude_1FH","wohnflaeche_gebaeude_2FH","wohnflaeche_gebaeude_MFH","abrechnungsjahr")]
+bezirk_areas
+```
+
+
+```{r}
+bezirk <- "pankow"
+bezirk_areas_subset <- bezirk_areas[bezirk_areas$bezirk=="pankow"  ,  ]
+bezirk_areas_subset
+```
+
+Append the 2018 values to the above data using linear regression:
+```{r}
+append2018trend <- function(obj) { #obj can contain only ONE bezirk
+  obj_temp <- obj[obj$abrechnungsjahr!=2018 , ]
+  var_list <- names(obj)[!(names(obj) %in% c("abrechnungsjahr","bezirk"))]
+  storage <- list()
+  data2018 <- obj[obj$abrechnungsjahr==2017 , ]
+  data2018$abrechnungsjahr <- 2018
+  #obj_new <- obj
+  for (varname in var_list) {
+    storage[[varname]] <- lm(get(varname) ~ abrechnungsjahr , data = obj_temp)
+    data2018[[varname]] <- as.numeric(predict(storage[[varname]] , newdata = data2018))
+  }
+  obj_new <- rbind(obj_temp , data2018)
+  return(obj_new)
+}
+```
+
+```{r}
+bezirk_areas_subset <- append2018trend(bezirk_areas_subset)
+```
+
+So now you have the areas for a bezirk for each year
+
+```{r}
+bezirk_areas_subset <- bezirk_areas_subset[ , c("bezirk" , "wohnflaeche_gebaeude_1FH" , "wohnflaeche_gebaeude_2FH" , "wohnflaeche_gebaeude_MFH" , "abrechnungsjahr")]
+bezirk_areas_subset$wohnflaeche_gebaeude_SFH <- bezirk_areas_subset$wohnflaeche_gebaeude_1FH + bezirk_areas_subset$wohnflaeche_gebaeude_2FH
+bezirk_areas_subset <- bezirk_areas_subset[ , c("abrechnungsjahr" , "bezirk" , "wohnflaeche_gebaeude_SFH" , "wohnflaeche_gebaeude_MFH")]
+str(bezirk_areas_subset)
+```
+
+```{r}
+bezirk_areas_subset
+```
+
+# Recap
+
+You have the `area_prop_table` which shows the area proportions of each ET for a particular bezirk.
+
+You also have the `energy_prop_table` which shows the energy consumption proportions for each ET for a particular bezirk.
+
+Now you have to find the average energy consumed per square km for a particular bezirk, and multiply it with the total area for that bezirk to get the total energy consumption in that bezirk.
+
+Write a function to get the average energy per unit area for each year for a particular bezirk
+
+```{r}
+mean_spz_verbrauch <- 
+```

@@ -1,0 +1,244 @@
+---
+title: "CO<sub>2</sub> emissions for Ulm for all (1-2 FH + MFH) buildings"
+author: "Bhaskar Kamble"
+date: "5 März 2019"
+output:
+  beamer_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,message=FALSE)
+```
+
+## Introduction
+
+CO<sub>2</sub> emissions for Ulm all buildings
+
+This time I replace the 2018 value by the trend value.
+
+
+```{r}
+setwd("D:/GITHUB_REPOS/co2emissions")
+area_abs_by_ET_MFH <- read.csv("./data/presentations/ulm/mfh/area_abs_ET_MFH.csv")
+co2_abs_by_ET_MFH <- read.csv("./data/presentations/ulm/mfh/co2_abs_ET_MFH.csv")
+energy_abs_by_ET_MFH <- read.csv("./data/presentations/ulm/mfh/energy_abs_ET_MFH.csv")
+area_MFH <- read.csv("./data/presentations/ulm/mfh/totalArea_MFH.csv")
+
+area_abs_by_ET_SFH <- read.csv("./data/presentations/ulm/sfh/area_abs_ET_SFH.csv")
+co2_abs_by_ET_SFH <- read.csv("./data/presentations/ulm/sfh/co2_abs_ET_SFH.csv")
+energy_abs_by_ET_SFH <- read.csv("./data/presentations/ulm/sfh/energy_abs_ET_SFH.csv")
+area_SFH <- read.csv("./data/presentations/ulm/sfh/totalArea_SFH.csv")
+```
+
+
+```{r}
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+plot_title <- "Ulm, Alle Gebäude"
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+```
+
+```{r}
+require(ggplot2)
+plot_byET <- function(obj,xlabel,ylabel,plottitle) {
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+
+
+
+## CO2 emissions nach energieträger - data
+
+```{r}
+co2_abs_by_ET_ALL <- co2_abs_by_ET_MFH[,names(co2_abs_by_ET_MFH)!="abrechnungsjahr"] + co2_abs_by_ET_SFH[,names(co2_abs_by_ET_SFH)!="abrechnungsjahr"]
+et_list <- names(co2_abs_by_ET_ALL)[ !(names(co2_abs_by_ET_ALL) %in% c("abrechnungsjahr","total"))]
+co2_abs_by_ET_ALL$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+reqd_order <- c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+final_names <- c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+library(gridExtra)
+library(grid)
+```
+
+```{r}
+co2_abs_by_ET_ALL_TAB <- data.frame(sapply(co2_abs_by_ET_ALL , function(obj) round(obj,2)))
+co2_abs_by_ET_ALL_TAB <- co2_abs_by_ET_ALL_TAB[, c(reqd_order , "total")]
+names(co2_abs_by_ET_ALL_TAB) <- c(final_names , "Total")
+grid.draw(tableGrob(co2_abs_by_ET_ALL_TAB,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 emissions nach energieträger - graph
+
+```{r}
+co2_abs_by_ET_ALL_cumsums <- t(apply(co2_abs_by_ET_ALL[,!(names(co2_abs_by_ET_ALL)%in%c("abrechnungsjahr","total"))], 1 , cumsum))
+co2_abs_by_ET_ALL_cumsums <- as.data.frame(co2_abs_by_ET_ALL_cumsums)
+co2_abs_by_ET_ALL_cumsums$abrechnungsjahr <- 2002:2018
+```
+
+
+```{r}
+plot_byET(co2_abs_by_ET_ALL_cumsums,"Jahr","1.000 Tonnen", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 emissions nach energieträger - linear graph
+
+```{r}
+linearize <- function(obj) {
+  slopes <- NULL
+  intercepts <- NULL
+  obj_linear <- obj
+  et_list <- names(obj)[names(obj)!="abrechnungsjahr"]
+  storage <- list()
+  for (et in et_list) {
+    storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = obj)
+    intercepts <- c(intercepts , as.numeric(coefficients(storage[[et]])[1]))
+    slopes <- c(slopes , as.numeric(coefficients(storage[[et]])[2]))
+    obj_linear[[et]] <- predict(storage[[et]] , newdata = obj)
+  }
+  return(obj_linear)
+}
+```
+
+```{r}
+co2_abs_ET_ALL_cumsums_linear <- linearize(co2_abs_by_ET_ALL_cumsums)
+```
+
+```{r}
+plot_byET(co2_abs_ET_ALL_cumsums_linear,"Jahr","1.000 Tonnen", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 Anteile nach energieträger - data
+```{r}
+#co2_abs_by_ET_ALL
+drop_cols <- c("total","abrechnungsjahr")
+co2_rel_by_ET_ALL <- as.data.frame(sapply(co2_abs_by_ET_ALL[,!(names(co2_abs_by_ET_ALL)%in%drop_cols)] , function(obj) obj/co2_abs_by_ET_ALL$total))
+co2_rel_by_ET_ALL <- 100*co2_rel_by_ET_ALL
+co2_rel_by_ET_ALL$abrechnungsjahr <- 2002:2018
+
+co2_rel_by_ET_ALL_TAB <- data.frame(sapply(co2_rel_by_ET_ALL , function(obj) round(obj,2)))
+co2_rel_by_ET_ALL_TAB <- co2_rel_by_ET_ALL_TAB[,reqd_order]
+names(co2_rel_by_ET_ALL_TAB) <- final_names
+grid.draw(tableGrob(co2_rel_by_ET_ALL_TAB,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 Anteile nach energieträger - graph
+```{r}
+co2_rel_by_ET_ALL_cumsums <- as.data.frame(t(apply(co2_rel_by_ET_ALL[,names(co2_rel_by_ET_ALL)!="abrechnunhgsjahr"] , 1 , cumsum)))
+co2_rel_by_ET_ALL_cumsums$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+plot_byET(co2_rel_by_ET_ALL_cumsums,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 Anteile nach energieträger - linear graph
+```{r}
+co2_rel_ET_ALL_cumsums_linear <- linearize(co2_rel_by_ET_ALL_cumsums)
+```
+
+```{r}
+plot_byET(co2_rel_ET_ALL_cumsums_linear,"Jahr","Anteile in Prozent", plot_title)
+```

@@ -1,0 +1,1004 @@
+---
+title: "CO<sub>2</sub> emissions for Berlin for MFH buildings"
+author: "Bhaskar Kamble"
+date: "4 März 2019"
+output:
+  beamer_presentation:
+    includes:
+      in_header: header_pagenrs.tex
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,cache=FALSE,message=FALSE)
+```
+
+## Introduction
+
+CO<sub>2</sub> emissions for Berlin for MFH buildings
+
+```{r}
+setwd("D:/GITHUB_REPOS/co2emissions/Berlin/")
+load("../MFH20022018_v2.RData")
+#load("SFH20022018_v2.RData")
+#In SFH20022018, abrechnungsjahr and verbrauch_gesamt_kwh are character - change then to int and numeric
+#SFH20022018$abrechnungsjahr <- as.integer(SFH20022018$abrechnungsjahr)
+#SFH20022018$verbrauch_gesamt_kwh <- gsub("," , "." , SFH20022018$verbrauch_gesamt_kwh)
+#SFH20022018$verbrauch_gesamt_kwh <- as.numeric(SFH20022018$verbrauch_gesamt_kwh)
+#SFH20022018$gtype <- "SFH"
+MFH20022018$gtype <- "MFH"
+```
+
+```{r}
+find_ET_shares_by_year <- function(inputdata) {
+  require(dplyr)
+  by_year_ET <- group_by(inputdata,abrechnungsjahr,energietraeger)
+  return(as.data.frame(summarize(by_year_ET,sum(verbrauch_gesamt_kwh))))
+  detach(package:dplyr)
+}
+
+find_et_list <- function(inputdata) {
+  ET_list <- unique(inputdata$energietraeger)  
+  return(ET_list)
+}
+subset_data_by_region <- function(inputdata , region) {
+  outputdata <- inputdata[inputdata$Landkreis_von_GS == region , ]
+  return(outputdata)
+}
+
+remove_outliers <- function(datframe , colums) {
+  #takes in a dataframe <datframe> and returns the dataframe after removing rows containing outliers in the 
+  #all the columns specifed in the vector "colums"
+  for (colum in colums) {
+    q25 <- as.numeric(quantile(datframe[[colum]] , probs = 0.25 ))
+    q75 <- as.numeric(quantile(datframe[[colum]] , probs = 0.75 ))
+    IQR <- q75 - q25
+    left_fence  <- q25 - 1.5*IQR
+    right_fence <- q75 + 1.5*IQR
+    is_outlier <- (datframe[[colum]] < left_fence)|(datframe[[colum]] > right_fence)
+    datframe <- datframe[!is_outlier   ,  ]
+  }
+  return(datframe)  
+}
+
+```
+
+
+```{r}
+weather_data <- read.table("berlin_wetter_tegel.txt",header=TRUE)
+names(weather_data) <- c("wind","sun","bedeckung","temperatur")
+weather_data$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+berlin_mfh <- subset_data_by_region(MFH20022018,"Berlin, Stadt")
+```
+
+```{r}
+#remove additional outliers
+#berlin_mfh <- remove_outliers(berlin_mfh , c("gebaeude_baujahr","gebaeude_nutzflaeche","verbrauch_gesamt_kwh","verbrauch_gesamt_kwh_spez"))
+berlin_mfh <- berlin_mfh[(berlin_mfh$verbrauch_gesamt_kwh_spez > 15)&(berlin_mfh$verbrauch_gesamt_kwh_spez < 400) , ]
+```
+
+```{r}
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="fernwaerme"] <- "waerme"
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="nahwaerme"] <- "waerme"
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="waermepumpe"] <- "strom"
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="waermepumpe_luft"] <- "strom"
+berlin_mfh$energietraeger[berlin_mfh$energietraeger=="waermepumpe_wasser"] <- "strom"
+et_list <- find_et_list(berlin_mfh)
+```
+
+
+
+
+
+
+
+## Berlin, MFH
+
+CO<sub>2</sub> emissions for Berlin for MFH buildings
+
+
+
+
+
+
+## Verbrauchsanteile nach Energieträger
+
+```{r}
+#get the data:
+ET_shares_by_year <- find_ET_shares_by_year(berlin_mfh)
+names(ET_shares_by_year) <- c("abrechnungsjahr" ,"energietraeger" ,"sum_verbrauch_gesamt_kwh")
+#change to wide format
+detach(package:dplyr)
+require(reshape2)
+ET_shares_by_year_wide <- dcast(ET_shares_by_year , abrechnungsjahr ~ energietraeger , value.var = "sum_verbrauch_gesamt_kwh")
+ET_shares_by_year_wide[is.na(ET_shares_by_year_wide)]=0.0
+drop_cols <- "abrechnungsjahr"
+ET_shares_by_year_wide$Yearlysum <- rowSums(ET_shares_by_year_wide[ , !(names(ET_shares_by_year_wide) %in% drop_cols)])
+detach(package:reshape2)
+```
+
+```{r}
+drop_cols <- c("abrechnungsjahr","Yearlysum")
+final_prop_table <- as.data.frame(sapply(ET_shares_by_year_wide[ , !(names(ET_shares_by_year_wide) %in% drop_cols)],function(obj) obj/ET_shares_by_year_wide$Yearlysum))
+final_prop_table$abrechnungsjahr <- 2002:2018
+```
+
+
+
+```{r}
+library(gridExtra)
+library(grid)
+#mytheme <- gridExtra::ttheme_default(
+#    core = list(fg_params=list(cex = 2.0)),
+#    colhead = list(fg_params=list(cex = 1.0)),
+#    rowhead = list(fg_params=list(cex = 1.0)))
+```
+
+```{r}
+reqd_order <- c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+final_names <- c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+```
+
+```{r}
+replace2018trend <- function(obj) {
+  obj_temp <- obj[obj$abrechnungsjahr!=2018 , ]
+  et_list <- names(obj)[names(obj)!="abrechnungsjahr"]
+  storage <- list()
+  data2018 <- obj[obj$abrechnungsjahr==2018 , ]
+  #obj_new <- obj
+  for (et in et_list) {
+    storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = obj_temp)
+    data2018[[et]] <- as.numeric(predict(storage[[et]] , newdata = data2018))
+  }
+  obj_new <- rbind(obj_temp , data2018)
+  return(obj_new)
+}
+```
+
+```{r}
+final_prop_table <- replace2018trend(final_prop_table)
+```
+
+```{r}
+FRP_round <- data.frame ( sapply ( final_prop_table[ , c("abrechnungsjahr" , names(final_prop_table)[names(final_prop_table)!="abrechnungsjahr"])] , function(obj) round(obj,2)))
+FRP_round <- FRP_round[, reqd_order]
+names(FRP_round) <- final_names
+grid.draw(tableGrob(FRP_round,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+```{r}
+final_prop_table <- final_prop_table[,c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","abrechnungsjahr")]
+final_prop_table_cumsums <- t(apply(final_prop_table[, !(names(final_prop_table)=="abrechnungsjahr")] 
+                                    , 1 , cumsum))
+final_prop_table_cumsums <- as.data.frame(final_prop_table_cumsums)
+final_prop_table_cumsums$abrechnungsjahr <- final_prop_table$abrechnungsjahr
+```
+
+
+```{r}
+#final_prop_table_cumsums_omit2018 <- final_prop_table_cumsums[final_prop_table_cumsums$abrechnungsjahr!=2018 , ]
+et_list <- names(final_prop_table_cumsums)[names(final_prop_table_cumsums)!="abrechnungsjahr"]
+storage <- list()
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = final_prop_table_cumsums)
+}
+for (et in et_list) {
+  colname <- paste0(et,"_lm")
+  final_prop_table_cumsums[[colname]] <- predict(storage[[et]] , newdata = final_prop_table_cumsums)
+}#in the predictions, replace any negative numbers by zeros
+#final_prop_table_cumsums
+```
+
+
+```{r}
+slopes <- NULL
+intercepts <- NULL
+for (et in et_list) {
+  intercepts <- c(intercepts , as.numeric(coefficients(storage[[et]])[1]))
+  slopes <- c(slopes , as.numeric(coefficients(storage[[et]])[2]))
+}
+```
+
+```{r}
+datawide <- final_prop_table_cumsums
+datawide[,names(datawide)!="abrechnungsjahr"] <- 100.0*datawide[,names(datawide)!="abrechnungsjahr"]
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+plot_title <- "Berlin, MFH"
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+```
+
+```{r}
+require(ggplot2)
+plot_byET <- function(obj,xlabel,ylabel,plottitle) {
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+## Verbrauchsanteile nach Energieträger
+
+```{r}
+plot_byET(datawide,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+## Verbrauchsanteile nach Energieträger - linear trends
+
+```{r}
+datawide_linear <- datawide[,grep("lm",names(datawide),value=TRUE)]
+names(datawide_linear) <- gsub("_lm", "" , names(datawide_linear))
+datawide_linear$abrechnungsjahr <- 2002:2018
+plot_byET(datawide_linear,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+
+## Flächeanteile nach Energieträger (qm)
+
+```{r}
+require(dplyr)
+by_year_ETArea <- group_by(berlin_mfh,abrechnungsjahr,energietraeger)
+ET_areas_by_year <- as.data.frame(summarize(by_year_ETArea,sum(gebaeude_nutzflaeche)))
+names(ET_areas_by_year) <- c("abrechnungsjahr" ,"energietraeger" ,"sum_nutzflaeche")
+#change to wide format
+detach(package:dplyr)
+library(reshape2)
+ET_areas_by_year_wide <- dcast(ET_areas_by_year , abrechnungsjahr ~ energietraeger , value.var = "sum_nutzflaeche")
+ET_areas_by_year_wide[is.na(ET_areas_by_year_wide)]=0.0
+drop_cols <- "abrechnungsjahr"
+ET_areas_by_year_wide$Yearlysum <- rowSums(ET_areas_by_year_wide[ , !(names(ET_areas_by_year_wide) %in% drop_cols)])
+drop_cols <- c("abrechnungsjahr","Yearlysum")
+area_prop_table <- as.data.frame(sapply(ET_areas_by_year_wide[ , !(names(ET_areas_by_year_wide) %in% drop_cols)],function(obj) obj/ET_areas_by_year_wide$Yearlysum))
+area_prop_table$abrechnungsjahr <- 2002:2018
+#area_prop_table
+```
+
+```{r}
+area_prop_table <- replace2018trend(area_prop_table)
+```
+
+```{r}
+APT_round <- data.frame ( sapply ( area_prop_table[ , c("abrechnungsjahr" , names(area_prop_table)[names(area_prop_table)!="abrechnungsjahr"])] , function(obj) round(obj,2)))
+APT_round <- APT_round[,reqd_order]
+names(APT_round) <- final_names
+grid.draw(tableGrob(APT_round,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+
+## Flächeanteile nach Energieträger - graph
+```{r}
+area_prop_table <- area_prop_table[,c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","abrechnungsjahr")]
+area_prop_table_cumsums <- t(apply(area_prop_table[, !(names(area_prop_table)=="abrechnungsjahr")] 
+                                    , 1 , cumsum))
+area_prop_table_cumsums <- as.data.frame(area_prop_table_cumsums)
+area_prop_table_cumsums$abrechnungsjahr <- area_prop_table$abrechnungsjahr
+area_prop_table_cumsums[,names(area_prop_table_cumsums)!="abrechnungsjahr"] <- 100*area_prop_table_cumsums[,names(area_prop_table_cumsums)!="abrechnungsjahr"]
+```
+
+```{r}
+plot_byET(area_prop_table_cumsums,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Flächeanteile nach Energieträger - linear graph
+
+```{r}
+et_list <- names(area_prop_table_cumsums)[names(area_prop_table_cumsums)!="abrechnungsjahr"]
+storage <- list()
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = area_prop_table_cumsums)
+}
+
+slopes <- NULL
+intercepts <- NULL
+for (et in et_list) {
+  intercepts <- c(intercepts , as.numeric(coefficients(storage[[et]])[1]))
+  slopes <- c(slopes , as.numeric(coefficients(storage[[et]])[2]))
+}
+
+area_prop_cumsum_linear <- area_prop_table_cumsums
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = area_prop_table_cumsums)
+}
+for (et in et_list) {
+  #colname <- paste0(et,"_lm")
+  area_prop_cumsum_linear[[et]] <- predict(storage[[et]] , newdata = area_prop_table_cumsums)
+}
+```
+
+```{r}
+plot_byET(area_prop_cumsum_linear,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+## Total heated area - official figures
+```{r}
+totalArea <- read.table("berlin_wohnflaeche.txt",header=TRUE)
+totalArea <- totalArea*1000000
+totalArea$abrechnungsjahr <- 2002:2018
+totalArea <- totalArea[ , c("abrechnungsjahr","MFH")]
+names(totalArea) <-  c("abrechnungsjahr","totArea")
+totalAreaTab <- totalArea
+names(totalAreaTab) <- c("Jahr","Fläche (qm)")
+grid.draw(tableGrob(totalAreaTab,theme=ttheme_minimal(base_size = 8),rows=NULL))
+#totalArea
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Fläche nach Energietraeger (qm)
+```{r}
+is_not_year <- names(area_prop_table) != "abrechnungsjahr"
+area_shares_absolute <- totalArea$totArea * area_prop_table[,is_not_year]
+area_shares_absolute$abrechnungsjahr <- 2002:2018
+ASA <- area_shares_absolute
+ASA <- ASA[,reqd_order]
+names(ASA) <- final_names
+ASA2 <- data.frame(sapply(ASA , function(obj) as.integer(obj)))
+grid.draw(tableGrob(ASA2,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+## Fläche nach Energietraeger - graph
+```{r}
+area_shares_absolute_cumsums <- t(apply(area_shares_absolute[, !(names(area_shares_absolute)=="abrechnungsjahr")] 
+                                    , 1 , cumsum))
+area_shares_absolute_cumsums <- as.data.frame(area_shares_absolute_cumsums)
+area_shares_absolute_cumsums$abrechnungsjahr <- area_shares_absolute$abrechnungsjahr
+area_shares_absolute_MioQM <- area_shares_absolute_cumsums
+area_shares_absolute_MioQM[ , names(area_shares_absolute_MioQM)!="abrechnungsjahr"] <- (1e-6)*area_shares_absolute_MioQM[ , names(area_shares_absolute_MioQM)!="abrechnungsjahr"]
+plot_byET(area_shares_absolute_MioQM,"Jahr","Fläche (Mio. qm)", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Fläche nach Energietraeger - linear graph
+
+```{r}
+et_list <- names(area_shares_absolute_cumsums)[names(area_shares_absolute_cumsums)!="abrechnungsjahr"]
+storage <- list()
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = area_shares_absolute_cumsums)
+}
+
+slopes <- NULL
+intercepts <- NULL
+for (et in et_list) {
+  intercepts <- c(intercepts , as.numeric(coefficients(storage[[et]])[1]))
+  slopes <- c(slopes , as.numeric(coefficients(storage[[et]])[2]))
+}
+
+area_abs_cumsum_linear <- area_shares_absolute_cumsums
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = area_shares_absolute_cumsums)
+}
+for (et in et_list) {
+  area_abs_cumsum_linear[[et]] <- predict(storage[[et]] , newdata = area_shares_absolute_cumsums)
+}
+```
+
+```{r}
+area_abs_MioQM_linear <- area_abs_cumsum_linear
+area_abs_MioQM_linear[ , names(area_abs_MioQM_linear)!="abrechnungsjahr"] <- (1e-6)*area_abs_MioQM_linear[ , names(area_abs_MioQM_linear)!="abrechnungsjahr"]
+plot_byET(area_abs_MioQM_linear,"Jahr","Fläche (Mio. qm)", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+## Verbrauch nach Energieträger (based on multivariate analysis)
+
+
+
+
+
+
+```{r}
+createRegData <- function(hev_data,weather_data) {
+  library(dplyr)
+  #averages according to abrechnungsjahr:
+  by_AbJahr <- group_by(hev_data,abrechnungsjahr)
+  RegData_temp <- as.data.frame(summarize(by_AbJahr,mean(gebaeude_baujahr,na.rm=TRUE),mean(gebaeude_nutzflaeche,na.rm=TRUE),mean(verbrauch_gesamt_kwh_spez,na.rm=TRUE)))
+  names(RegData_temp) <- c("abrechnungsjahr","mean_baujahr","mean_nutzflaeche","mean_spzverbrauch")
+  
+  RegData_temp <- merge(RegData_temp,weather_data,by.x="abrechnungsjahr",by.y="abrechnungsjahr") #not using cbind
+  #as we dont know if all the years are present in RegData_temp
+  #
+  #now u hv 2 introduce abjahr_index
+  abjahr_temp <- data.frame(abrechnungsjahr=as.numeric(c(2002:2018)) , abjahr_index = as.numeric(c(0:16)))
+  RegDatafunc <- merge(RegData_temp , abjahr_temp , by.x = "abrechnungsjahr" , by.y = "abrechnungsjahr")
+  detach("package:dplyr")
+  return(RegDatafunc)
+}
+
+
+RegDataBereinigung <- function(RD) {
+  FitRegData <- lm(mean_spzverbrauch ~ abjahr_index + mean_baujahr + mean_nutzflaeche + 
+                     wind + sun + temperatur + bedeckung  ,  data = RD)
+  RD <- cbind(RD,predict(FitRegData, newdata = RD))
+  names(RD) <- c("abrechnungsjahr","mean_baujahr","mean_nutzflaeche",
+                 "mean_spzverbrauch","wind","sun","bedeckung","temperatur","abjahr_index","pred1")
+  
+  FitRegData2 <- lm(mean_spzverbrauch ~ abjahr_index + wind + sun + temperatur + bedeckung , data = RD)
+  RD <- cbind(RD,predict(FitRegData2, newdata = RD))
+  names(RD) <- c("abrechnungsjahr","mean_baujahr","mean_nutzflaeche",
+                 "mean_spzverbrauch","wind","sun","bedeckung","temperatur","abjahr_index","pred1","pred2")
+  
+  RD$pred1minuspred2 <- RD$pred1 - RD$pred2
+  
+  RD$verbrauch_bereinigt <- RD$mean_spzverbrauch - RD$pred1minuspred2
+  
+  FitRegData3 <- lm(verbrauch_bereinigt ~ abjahr_index + wind + sun + temperatur + bedeckung ,  data = RD)
+  
+  RD <- cbind(RD,predict(FitRegData3, newdata = RD))
+  names(RD) <- c("abrechnungsjahr","mean_baujahr","mean_nutzflaeche",
+                 "mean_spzverbrauch","wind","sun","bedeckung","temperatur","abjahr_index",
+                 "pred1","pred2","pred1minuspred2","verbrauch_bereinigt","pred3")
+  
+  RD$jahrsq <- RD$abjahr_index*RD$abjahr_index
+  FitRegData4 <- lm(verbrauch_bereinigt ~ abjahr_index + jahrsq + wind + sun + temperatur + bedeckung ,  data = RD)
+  RD <- cbind(RD,predict(FitRegData4, newdata = RD))
+  names(RD) <- c("abrechnungsjahr","mean_baujahr","mean_nutzflaeche",
+                 "mean_spzverbrauch","wind","sun","bedeckung","temperatur","abjahr_index",
+                 "pred1","pred2","pred1minuspred2","verbrauch_bereinigt","pred3","jahrsq","pred4")
+  RD <- RD[ , c("abrechnungsjahr","pred4")]
+  names(RD) <- c("abrechnungsjahr","mean_spz_verberauch")
+  return(RD)
+}
+```
+
+
+```{r}
+replaceall2018trend <- function(obj) {
+  obj_temp <- obj[obj$abrechnungsjahr!=2018 , ]
+  var_list <- names(obj)[names(obj)!="abrechnungsjahr"]
+  storage <- list()
+  data2018 <- obj[obj$abrechnungsjahr==2018 , ]
+  #obj_new <- obj
+  for (varname in var_list) {
+    storage[[varname]] <- lm(get(varname) ~ abrechnungsjahr , data = obj_temp)
+    data2018[[varname]] <- as.numeric(predict(storage[[varname]] , newdata = data2018))
+  }
+  obj_new <- rbind(obj_temp , data2018)
+  return(obj_new)
+}
+RegData <- createRegData(berlin_mfh , weather_data)
+RegData <- replaceall2018trend(RegData)
+RegData <- cbind(RegData[ , c("abrechnungsjahr", "mean_baujahr", "mean_nutzflaeche", "mean_spzverbrauch")] , weather_data[ , c("wind","sun","bedeckung","temperatur")])
+RegData$abjahr_index <- 0:16
+spz_verbrauch_mean <- RegDataBereinigung(RegData)
+```
+
+
+## Verbrauch nach Energieträger (kWh)
+
+```{r}
+totalConsumption <- data.frame(abrechnungsjahr = 2002:2018,gesamtVerbrauch = totalArea$totArea*spz_verbrauch_mean$mean_spz_verberauch)
+totalConsumption$inTWh <- totalConsumption$gesamtVerbrauch/1e9
+#grid.draw(tableGrob(totalConsumption,theme=ttheme_minimal(base_size = 8)))
+is_not_year <- names(final_prop_table) != "abrechnungsjahr"
+energy_shares_absolute <- totalConsumption$gesamtVerbrauch * final_prop_table[,is_not_year]
+energy_shares_absolute$abrechnungsjahr <- 2002:2018
+energy_shares_absolute$Yearlysum <- rowSums(energy_shares_absolute[,names(energy_shares_absolute)!="abrechnungsjahr"])
+drop_cols <- c("abrechnungsjahr","Yearlysum")
+energy_shares_relative <- as.data.frame(sapply(energy_shares_absolute[ , !(names(energy_shares_absolute) %in% drop_cols)],function(obj) obj/energy_shares_absolute$Yearlysum))
+energy_shares_relative$abrechnungsjahr <- 2002:2018
+ESA <- energy_shares_absolute[,c(reqd_order,"Yearlysum")]
+names(ESA) <- c(final_names,"Yearlysum")
+ESA2 <- data.frame(sapply(ESA , function(obj) round(obj,0)))
+grid.draw(tableGrob(ESA2,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Verbrauch nach Energieträger - graph
+```{r}
+drop_cols <- c("abrechnungsjahr","Yearlysum")
+energy_shares_absolute_cumsums <- t(apply(energy_shares_absolute[,!(names(energy_shares_absolute)%in%drop_cols)],1,cumsum))
+energy_shares_absolute_cumsums <- as.data.frame(energy_shares_absolute_cumsums)
+energy_shares_absolute_cumsums$abrechnungsjahr <- 2002:2018
+```
+
+
+
+```{r}
+energy_shares_TWh <- energy_shares_absolute_cumsums
+energy_shares_TWh[,names(energy_shares_TWh)!="abrechnungsjahr"] <- (1e-9)*energy_shares_TWh[,names(energy_shares_TWh)!="abrechnungsjahr"]
+```
+
+```{r}
+plot_byET(energy_shares_TWh,"Jahr","Verbrauch (TWh)", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+## Verbrauch nach Energieträger - linear graph
+
+```{r}
+slopes <- NULL
+intercepts <- NULL
+energy_abs_cumsum_linear <- energy_shares_absolute_cumsums
+et_list <- names(energy_shares_absolute_cumsums)[names(energy_shares_absolute_cumsums)!="abrechnungsjahr"]
+storage <- list()
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = energy_shares_absolute_cumsums)
+  intercepts <- c(intercepts , as.numeric(coefficients(storage[[et]])[1]))
+  slopes <- c(slopes , as.numeric(coefficients(storage[[et]])[2]))
+  energy_abs_cumsum_linear[[et]] <- predict(storage[[et]] , newdata = energy_shares_absolute_cumsums)
+}
+```
+
+```{r}
+energy_shares_TWh_linear <- energy_abs_cumsum_linear
+energy_shares_TWh_linear[,names(energy_shares_TWh_linear)!="abrechnungsjahr"] <- (1e-9)*energy_shares_TWh_linear[,names(energy_shares_TWh_linear)!="abrechnungsjahr"]
+```
+
+```{r}
+plot_byET(energy_shares_TWh_linear,"Jahr","Verbrauch (TWh)", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Verbrauchsanteile nach Energieträger - data
+
+```{r}
+ESR <- energy_shares_relative[,reqd_order]
+names(ESR) <- final_names
+ESR[,names(ESR)!="Jahr"] <- 100.0*ESR[,names(ESR)!="Jahr"]
+#ESR$total <- rowSums(ESR[,names(ESR)!="abrechnungsjahr"])
+```
+
+```{r}
+ESR2 <- data.frame(sapply(ESR , function(obj) round(obj,2)))
+grid.draw(tableGrob(ESR2,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+## Verbrauchsanteile nach Energieträger - graph
+
+```{r}
+drop_cols <- "abrechnungsjahr"
+energy_shares_relative_cumsums <- t(apply(energy_shares_relative[,!(names(energy_shares_relative)%in%drop_cols)],1,cumsum))
+energy_shares_relative_cumsums <- as.data.frame(energy_shares_relative_cumsums)
+energy_shares_relative_cumsums$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+plot_byET(energy_shares_relative_cumsums,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+## CO<sub>2</sub> coefficients (g/kWh)
+```{r}
+co2_coeff <- read.table("berlin_co2_coefficients.txt",header=TRUE)
+names(co2_coeff) <- c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+co2_coeff_tab <- co2_coeff[,reqd_order]
+names(co2_coeff_tab) <- final_names
+grid.draw(tableGrob(co2_coeff_tab,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+
+## CO2 emissions by energieträger in kilotons - data
+
+```{r}
+co2_coeff_subset <- co2_coeff
+
+energy_shares_absolute <- energy_shares_absolute[, names(energy_shares_absolute)!="Yearlysum"]
+if (!setequal(names(energy_shares_absolute),names(co2_coeff_subset))) {
+  stop("give same names")
+}
+
+energy_shares_absolute_matchcoeff <- energy_shares_absolute[,names(co2_coeff_subset)]
+co2_emissions <- (energy_shares_absolute_matchcoeff[,
+          names(energy_shares_absolute_matchcoeff)!="abrechnungsjahr"])*co2_coeff_subset[,names(co2_coeff_subset)!="abrechnungsjahr"]
+co2_emissions_in_kilo_tons <- co2_emissions/1e9
+co2_emissions_in_kilo_tons$abrechnungsjahr <- 2002:2018
+co2_emissions_in_kilo_tons$total <- rowSums(co2_emissions_in_kilo_tons[,names(co2_emissions_in_kilo_tons)!="abrechnungsjahr"])
+co2_kilotons_tab <- co2_emissions_in_kilo_tons[,c(reqd_order,"total")]
+names(co2_kilotons_tab) <- c(final_names , "Total")
+co2_kilotons_tab <- data.frame(sapply(co2_kilotons_tab , function(obj) round(obj,2)))
+grid.draw(tableGrob(co2_kilotons_tab,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 emissions - total graph
+```{r}
+linmod <- lm(data=co2_emissions_in_kilo_tons,formula=total~abrechnungsjahr)
+a <- as.numeric(coefficients(linmod)[1])
+b <- as.numeric(coefficients(linmod)[2])
+if (a<0) {
+  asign <- " "
+} else {asign <- "+"}
+if (b<0) {
+  bsign <- " "
+} else {bsign <- " "}
+ggplot()+geom_line(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Jahr",y="1.000 Tonnen",title=plot_title)+ylim(0,max(co2_emissions_in_kilo_tons$total))+geom_smooth(method="lm",data=co2_emissions_in_kilo_tons,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))),x=2008,y=3000)+scale_x_continuous(breaks=seq(2002,2018,2))
+```
+
+
+
+
+
+
+
+
+
+
+
+## CO2 nach energieträger - graph
+```{r}
+drop_cols <- names(co2_emissions_in_kilo_tons)[!(names(co2_emissions_in_kilo_tons)%in%c("abrechnungsjahr","total"))]
+co2_abs_cumsums <- as.data.frame(t(apply(co2_emissions_in_kilo_tons[,drop_cols] , 1 , cumsum)))
+co2_abs_cumsums$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+plot_byET(co2_abs_cumsums,"Jahr","1.000 Tonnen", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 nach energieträger - linear graph
+
+```{r}
+slopes <- NULL
+intercepts <- NULL
+co2_abs_cumsums_linear <- co2_abs_cumsums
+et_list <- names(co2_abs_cumsums)[names(co2_abs_cumsums)!="abrechnungsjahr"]
+storage <- list()
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = co2_abs_cumsums)
+  intercepts <- c(intercepts , as.numeric(coefficients(storage[[et]])[1]))
+  slopes <- c(slopes , as.numeric(coefficients(storage[[et]])[2]))
+  co2_abs_cumsums_linear[[et]] <- predict(storage[[et]] , newdata = co2_abs_cumsums)
+}
+```
+
+```{r}
+plot_byET(co2_abs_cumsums_linear,"Jahr","1.000 Tonnen", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 Anteile nach energieträger - data
+```{r}
+drop_cols <- c("abrechnungsjahr","total")
+co2_relative <- as.data.frame(sapply(co2_emissions_in_kilo_tons[,!(names(co2_emissions_in_kilo_tons)%in%drop_cols)],function(obj) obj/co2_emissions_in_kilo_tons$total))
+co2_relative_tab <- co2_relative
+co2_relative_tab$abrechnungsjahr <- 2002:2018
+co2_relative_tab[,names(co2_relative_tab)!="abrechnungsjahr"] <- 100*co2_relative_tab[,names(co2_relative_tab)!="abrechnungsjahr"]
+co2_relative_tab <- co2_relative_tab[,reqd_order]
+names(co2_relative_tab) <- final_names
+co2_relative_tab <- as.data.frame(sapply(co2_relative_tab , function(obj) round(obj,2)))
+grid.draw(tableGrob(co2_relative_tab,theme=ttheme_minimal(base_size = 8),rows=NULL))
+```
+
+
+
+
+
+
+
+
+
+
+
+## CO2 Anteile nach energieträger - graph
+
+```{r}
+co2_relative_cumsums <- as.data.frame(t(apply(co2_relative,1,cumsum)))
+co2_relative$abrechnungsjahr <- 2002:2018
+co2_relative_cumsums$abrechnungsjahr <- 2002:2018
+co2_relative_cumsums[,names(co2_relative_cumsums)!="abrechnungsjahr"] <- 100.0*co2_relative_cumsums[,names(co2_relative_cumsums)!="abrechnungsjahr"]
+```
+
+```{r}
+plot_byET(co2_relative_cumsums,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## CO2 Anteile nach energieträger - linear graph
+
+```{r}
+slopes <- NULL
+intercepts <- NULL
+co2_rel_cumsums_linear <- co2_relative_cumsums
+et_list <- names(co2_relative_cumsums)[names(co2_relative_cumsums)!="abrechnungsjahr"]
+storage <- list()
+for (et in et_list) {
+  storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = co2_relative_cumsums)
+  intercepts <- c(intercepts , as.numeric(coefficients(storage[[et]])[1]))
+  slopes <- c(slopes , as.numeric(coefficients(storage[[et]])[2]))
+  co2_rel_cumsums_linear[[et]] <- predict(storage[[et]] , newdata = co2_relative_cumsums)
+}
+```
+
+```{r}
+plot_byET(co2_rel_cumsums_linear,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Spezifische CO2 Emission
+```{r}
+spz_co2 <- 1e6*co2_emissions_in_kilo_tons$total/totalArea$totArea#kg/sq.m.
+spez_co2_emission <- data.frame(abrechnungsjahr=2002:2018 , spez_co2 = spz_co2 )
+#spez_co2_emission
+```
+
+```{r,warning=FALSE}
+linmod_spez <- lm(data=spez_co2_emission,formula=spez_co2~abrechnungsjahr)
+a_spez <- as.numeric(coefficients(linmod_spez)[1])
+b_spez <- as.numeric(coefficients(linmod_spez)[2])
+if (a_spez<0) {
+  asign_spez <- " "
+} else {asign_spez <- "+"}
+if (b_spez<0) {
+  bsign_spez <- " "
+} else {bsign_spez <- " "}
+ggplot()+geom_line(data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+geom_point(
+  data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Jahr",
+  y="kg/qm",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
+  method="lm",data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
+  ),x=2008,y=30)+scale_x_continuous(breaks=seq(2002,2018,2))
+```
+
+
+```{r}
+# How much area each ET covers
+#area_shares_absolute
+# How much energy each ET provides
+# energy_shares_absolute
+# How much CO2 each ET emits
+#co2_emissions_in_kilo_tons
+write.csv(area_shares_absolute,file="./data/presentations/mfh/area_abs_ET_MFH.csv",row.names = FALSE)
+write.csv2(area_shares_absolute,file="./data/presentations/mfh/area_abs_ET_MFH_2.csv",row.names = FALSE)
+
+write.csv(energy_shares_absolute,file="./data/presentations/mfh/energy_abs_ET_MFH.csv",row.names = FALSE)
+write.csv2(energy_shares_absolute,file="./data/presentations/mfh/energy_abs_ET_MFH_2.csv",row.names = FALSE)
+
+write.csv(co2_emissions_in_kilo_tons,file="./data/presentations/mfh/co2_abs_ET_MFH.csv",row.names = FALSE)
+write.csv2(co2_emissions_in_kilo_tons,file="./data/presentations/mfh/co2_abs_ET_MFH_2.csv",row.names = FALSE)
+
+write.csv(totalArea,file="./data/presentations/mfh/totalArea_MFH.csv",row.names = FALSE)
+write.csv2(totalArea,file="./data/presentations/mfh/totalArea_MFH_2.csv",row.names = FALSE)
+```

@@ -1,0 +1,722 @@
+---
+title: "Berlin CO$_2$ Emissionen in Berlin von Gebäude Heizung"
+author: "Bhaskar Kamble"
+date: "25 März 2019"
+output:
+  beamer_presentation:
+    includes:
+      in_header: header_pagenrs.tex
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r}
+setwd("D:/GITHUB_REPOS/co2emissions/Berlin/")
+co2_abs_mfh <- read.csv("./data/presentations/mfh/co2_abs_ET_MFH.csv")
+co2_abs_sfh <- read.csv("./data/presentations/sfh/co2_abs_ET_SFH.csv")
+co2_abs_all <- co2_abs_mfh + co2_abs_sfh
+co2_abs_all$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+#plot_title <- "Berlin, alle Gebäude (MFH + 1-2 FH)"
+plot_title <- NULL
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+```
+
+```{r,message=FALSE}
+require(ggplot2)
+plot_byET <- function(obj,xlabel,ylabel,plottitle) {
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle) + theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"), legend.text = element_text(size=15), axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"), legend.key.size=unit(2, "lines")
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+
+```{r}
+find_proportions <- function(obj,drop_cols) {
+  obj <- obj[ , !(names(obj) %in% drop_cols)]
+  obj <- obj / rowSums(obj)
+  obj <- 100*obj
+  obj$abrechnungsjahr <- 2002:2018
+  return(obj)
+}
+```
+
+
+
+
+```{r}
+find_cumsums <- function(obj , drop_cols) {
+  obj <- as.data.frame(t(apply(obj[,!(names(obj)%in%drop_cols)],1,cumsum)))
+  obj$abrechnungsjahr <- 2002:2018
+  return(obj)
+}
+```
+
+```{r}
+linearizer <- function(obj) {
+  obj_new <- obj
+  storage <- list()
+  for (et in et_list) {
+    storage[[et]] <- lm(get(et) ~ abrechnungsjahr , data = obj)
+    obj_new[[et]] <- as.numeric(predict(storage[[et]] , newdata = obj))
+  }
+  return(obj_new)
+}
+```
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r,warning=FALSE}
+require(ggplot2)
+#plot_title <- "Berlin, alle Gebäude (MFH + 1-2 FH)"
+plot_title <- "Abbildung a: Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018 in kilo t."
+linmod <- lm(data=co2_abs_all,formula=total~abrechnungsjahr)
+a <- as.numeric(coefficients(linmod)[1])
+b <- as.numeric(coefficients(linmod)[2])
+if (a<0) {
+  asign <- " "
+} else {asign <- "+"}
+if (b<0) {
+  bsign <- " "
+} else {bsign <- " "}
+ggplot()+geom_line(data=co2_abs_all,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(data=co2_abs_all,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Jahr",y="1.000 Tonnen",title=plot_title)+ylim(0,max(co2_abs_all$total))+geom_smooth(method="lm",data=co2_abs_all,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(geom="text",label=paste0(bsign,as.character(round(b,0)),"x",asign,as.character(round(a,0))),x=2008,y=4000,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_abs_cumsums <- find_cumsums(co2_abs_all , c("abrechnungsjahr","total"))
+et_list <- names(co2_abs_cumsums)[names(co2_abs_cumsums)!="abrechnungsjahr"]
+plot_title <- "Abbildung b: Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in kilo t."
+plot_byET(co2_abs_cumsums,"Jahr","1.000 Tonnen", plot_title)
+```
+
+
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+```{r}
+co2_abs_linear <- linearizer(co2_abs_cumsums)
+plot_title <- "Abbildung b(lin): Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in kilo t."
+plot_byET(co2_abs_linear,"Jahr","1.000 Tonnen", plot_title)
+```
+
+
+
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_rel_all <- find_proportions(co2_abs_all, c("abrechnungsjahr","total") )
+co2_rel_cumsums <- find_cumsums(co2_rel_all , "abrechnungsjahr")
+```
+
+```{r}
+plot_title <- "Abbildung c: Berlin, Wohngebäude, Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in %"
+plot_byET(co2_rel_cumsums , "Jahr" , "Anteile in Prozent" , plot_title)
+```
+
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+```{r}
+co2_rel_linear <- linearizer(co2_rel_cumsums)
+```
+
+```{r}
+plot_title <- "Abbildung c(lin): Berlin, Wohngebäude, Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in %"
+plot_byET(co2_rel_linear , "Jahr" , "Anteile in Prozent" , plot_title)
+```
+
+
+
+
+
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+totalArea <- read.table("berlin_wohnflaeche.txt",header=TRUE)
+totalArea <- totalArea*1000000
+totalArea$totArea <- rowSums(totalArea)
+totalArea$abrechnungsjahr <- 2002:2018
+totalArea <- totalArea[ , c("abrechnungsjahr","totArea")]
+spz_co2 <- 1e6*co2_abs_all$total/totalArea$totArea
+spez_co2_emission <- data.frame(abrechnungsjahr=2002:2018 , spez_co2 = spz_co2 )
+```
+
+
+```{r,warning=FALSE}
+linmod_spez <- lm(data=spez_co2_emission,formula=spez_co2~abrechnungsjahr)
+a_spez <- as.numeric(coefficients(linmod_spez)[1])
+b_spez <- as.numeric(coefficients(linmod_spez)[2])
+if (a_spez<0) {
+  asign_spez <- " "
+} else {asign_spez <- "+"}
+if (b_spez<0) {
+  bsign_spez <- " "
+} else {bsign_spez <- " "}
+plot_title <- "Abbildung d1: Berlin, Wohngebäude, flächenbezogene CO2-Emission 2002 - 2018"
+ggplot()+geom_line(data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+geom_point(
+  data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Jahr",
+  y="kg/qm",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
+  method="lm",data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
+  ),x=2008,y=25,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+```{r}
+#totalArea
+```
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r,warning=FALSE}
+totalAreamqm <- totalArea
+totalAreamqm$totArea <- 1e-6*totalAreamqm$totArea
+linmod_spez <- lm(data=totalAreamqm,formula=totArea~abrechnungsjahr)
+a_spez <- as.numeric(coefficients(linmod_spez)[1])
+b_spez <- as.numeric(coefficients(linmod_spez)[2])
+if (a_spez<0) {
+  asign_spez <- " "
+} else {asign_spez <- "+"}
+if (b_spez<0) {
+  bsign_spez <- " "
+} else {bsign_spez <- " "}
+plot_title <- "Abbildung d2: Berlin, Wohngebäude, beheizte Wohnfläche 2002 - 2018"
+ggplot()+geom_line(data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),color="blue")+geom_point(
+  data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),color="blue")+theme_bw()+labs(x="Jahr",
+  y="Mio. qm",title=plot_title)+ylim(0,max(totalAreamqm$totArea))+geom_smooth(
+  method="lm",data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
+  ),x=2008,y=125,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+https://stackoverflow.com/questions/33214671/merging-table-header-cells-using-tablegrob
+
+```{r,warning=FALSE}
+library(gridExtra)
+library(grid)
+```
+
+```{r}
+table01 <- data.frame(abrechnungsjahr=2002:2018 , spez_co2 = spez_co2_emission$spez_co2 , flaeche = totalAreamqm$totArea, co2emission = 0.001*co2_abs_all$total)
+```
+
+```{r}
+table01$spez_co2 <- round(table01$spez_co2 , 2)
+table01$co2emission <- round(table01$co2emission , 2)
+table01$flaeche <- round(table01$flaeche , 2)
+names(table01) <- c("Jahr \n","CO2-Emissionen \n je qm (kg/qm)","Fläche \n (Mio. qm)","Co2-Emissionen \n (Mio. t.)")
+tab01 <- tableGrob(table01,theme=ttheme_default(base_size = 14),rows=NULL)
+```
+
+```{r}
+#table01[1 , 1:4]
+```
+
+```{r,warning=FALSE}
+header <- tableGrob(table01[1 , 1] , theme=ttheme_default(base_size = 14), rows=NULL, cols="Tabelle: Berlin, Wohngebäude,flächenbezogene CO2-Emission und beheizte Wohnfläche 2002 - 2018")
+#("Tabelle: Berlin, Wohngebäude,nflÃ¤chenbezogene CO2-Emission und beheiztenWohnfläche 2002 - 2018")
+```
+
+```{r,warning=FALSE}
+jn <- gtable_combine(header[1,],tab01,along=2)
+#jn <- tab01
+jn$widths <- rep(5,4)#rep(max(jn$widths),length(jn$widths))
+jn$layout[1:2,c("l","r")] <- list(1,4)
+grid.newpage()
+grid.draw(jn)
+#grid.draw(tab01)
+```
+
+
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+Tabelle: Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in Mio. t.
+```{r}
+table02 <- co2_abs_all
+table02 <- 0.001*table02
+table02$abrechnungsjahr <- 2002:2018
+table02 <- table02[,c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","total")]
+table02 <- data.frame ( sapply ( table02 , function(obj) round(obj,2)))
+names(table02) <- c("Jahr \n","Erdgas \n","Wärme \n (N+F)","Flussiggas \n","Heizöl \n","Holzpellets \n","Strom \n(D+WP)","Gesamt \n")
+tab02 <- tableGrob(table02,theme=ttheme_default(base_size = 14),rows=NULL)
+
+grid.draw(tab02)
+```
+
+#### \textcolor{black}{1. Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+Tabelle: Berlin, Wohngebäude, CO2-Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in %
+
+```{r}
+table03 <- co2_rel_all
+table03$total <- 100.0
+table03 <- table03[,c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","total")]
+table03 <- data.frame ( sapply ( table03 , function(obj) round(obj,2)))
+names(table03) <- c("Jahr \n","Erdgas \n","Wärme \n (N+F)","Flussiggas \n","Heizöl \n","Holzpellets \n","Strom \n(D+WP)","Gesamt \n")
+tab03 <- tableGrob(table03,theme=ttheme_default(base_size = 14),rows=NULL)
+grid.draw(tab03)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### \textcolor{black}{2. Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_abs_sfh <- 0.001*co2_abs_sfh
+co2_abs_sfh$abrechnungsjahr <- 2002:2018
+```
+
+```{r,warning=FALSE}
+linmod <- lm(data=co2_abs_sfh,formula=total~abrechnungsjahr)
+a <- as.numeric(coefficients(linmod)[1])
+b <- as.numeric(coefficients(linmod)[2])
+if (a<0) {
+  asign <- " "
+} else {asign <- "+"}
+if (b<0) {
+  bsign <- " "
+} else {bsign <- " "}
+plot_title <- "Abbildung a: Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002-2018 in Mio. t."
+ggplot()+geom_line(data=co2_abs_sfh,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(
+  data=co2_abs_sfh,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Jahr",
+  y="Mio. t.",title=plot_title)+ylim(0,max(co2_abs_sfh$total))+geom_smooth(
+  method="lm",data=co2_abs_sfh,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))
+  ),x=2008,y=1.0,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+
+
+#### \textcolor{black}{2. Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+
+
+```{r}
+#co2_abs_sfh
+```
+
+
+```{r}
+co2_abs_sfh_cumsums <- find_cumsums(co2_abs_sfh,c("abrechnungsjahr","total"))
+plot_title <- "Abbildung b: Berlin, 1-2 Familiengebäude, CO2-Emissionen aud Beheizung nach Energieträgern 2002-2008, Anteile in Mio. t CO2"
+plot_byET(co2_abs_sfh_cumsums,"Jahr","Mio. t.", plot_title)
+```
+
+
+#### \textcolor{black}{2. Berlin, 1-2 FamiliengebÃ¤ude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_abs_sfh_linear <- linearizer(co2_abs_sfh_cumsums)
+plot_title <- "Abbildung b(lin): Berlin, 1-2 Familiengebäude, CO2-Emissionen aud Beheizung nach Energieträgern 2002-2008, Anteile in Mio. t CO2"
+plot_byET(co2_abs_sfh_linear,"Jahr","Mio. t.", plot_title)
+```
+
+
+#### 2. \textcolor{black}{Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_rel_sfh <- find_proportions(co2_abs_sfh,c("abrechnungsjahr","total"))
+co2_rel_sfh_cumsums <- find_cumsums(co2_rel_sfh , "abrechnungsjahr")
+plot_title <- "Abbildung c: Berlin, 1-2 Familiengebäude, CO2-Emissionen aud Beheizung nach Energieträgern 2002-2008, Anteile in %"
+plot_byET(co2_rel_sfh_cumsums,"Jahr","Anteile in Prozent", plot_title)
+```
+
+#### \textcolor{black}{2. Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_rel_sfh_linear <- linearizer(co2_rel_sfh_cumsums)
+plot_title <- "Abbildung c(lin): Berlin, 1-2 Familiengebäude, CO2-Emissionen aud Beheizung nach Energieträgern 2002-2008, Anteile in %"
+plot_byET(co2_rel_sfh_linear,"Jahr","Anteile in Prozent", plot_title)
+```
+
+#### \textcolor{black}{2. Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+totalArea <- read.table("berlin_wohnflaeche.txt",header=TRUE)
+totalArea <- totalArea*1000000
+totalArea$abrechnungsjahr <- 2002:2018
+totalArea <- totalArea[ , c("abrechnungsjahr","SFH")]
+names(totalArea) <-  c("abrechnungsjahr","totArea")
+#totalAreaTab <- totalArea
+#names(totalAreaTab) <- c("Jahr","FlÃ¤che (qm)")
+#grid.draw(tableGrob(totalAreaTab,theme=ttheme_minimal(base_size = 14),rows=NULL))
+```
+
+```{r}
+#co2_abs_sfh
+#totalArea
+spz_co2 <- 1e9*co2_abs_sfh$total/totalArea$totArea#kg/sq.m.
+spez_co2_emission <- data.frame(abrechnungsjahr=2002:2018 , spez_co2 = spz_co2 )
+```
+
+```{r,warning=FALSE}
+plot_title <- "Abbildung d1: Berlin, 1-2 Familiengebäude, flächenbezogene CO2-Emissionen"
+linmod_spez <- lm(data=spez_co2_emission,formula=spez_co2~abrechnungsjahr)
+a_spez <- as.numeric(coefficients(linmod_spez)[1])
+b_spez <- as.numeric(coefficients(linmod_spez)[2])
+if (a_spez<0) {
+  asign_spez <- " "
+} else {asign_spez <- "+"}
+if (b_spez<0) {
+  bsign_spez <- " "
+} else {bsign_spez <- " "}
+ggplot()+geom_line(data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+geom_point(
+  data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Jahr",
+  y="kg/qm",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
+  method="lm",data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
+  ),x=2008,y=30,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+#### \textcolor{black}{2. Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r,warning=FALSE}
+totalAreamqm <- totalArea
+totalAreamqm$totArea <- 1e-6*totalAreamqm$totArea
+linmod_spez <- lm(data=totalAreamqm,formula=totArea~abrechnungsjahr)
+a_spez <- as.numeric(coefficients(linmod_spez)[1])
+b_spez <- as.numeric(coefficients(linmod_spez)[2])
+if (a_spez<0) {
+  asign_spez <- " "
+} else {asign_spez <- "+"}
+if (b_spez<0) {
+  bsign_spez <- " "
+} else {bsign_spez <- " "}
+plot_title <- "Abbildung d2: Berlin, 1-2 Familiengebäude, beheizte Wohnfläche 2002 - 2018"
+ggplot()+geom_line(data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),color="blue")+geom_point(
+  data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),color="blue")+theme_bw()+labs(x="Jahr",
+  y="Mio. qm",title=plot_title)+ylim(0,max(totalAreamqm$totArea))+geom_smooth(
+  method="lm",data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
+  ),x=2008,y=125,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+
+
+
+#### \textcolor{black}{2. Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+Tabelle: Berlin, 1-2 Familiengebäude, flächenbezogene CO2-Emission und beheizte Wohnfläche 2002 - 2018
+
+```{r}
+table04 <- data.frame(abrechnungsjahr=2002:2018 , spez_co2 = spez_co2_emission$spez_co2 , flaeche = totalAreamqm$totArea, co2emission = co2_abs_sfh$total)
+table04$spez_co2 <- round(table04$spez_co2 , 2)
+table04$co2emission <- round(table04$co2emission , 2)
+table04$flaeche <- round(table04$flaeche , 2)
+names(table04) <- c("Jahr \n","CO2-Emissionen \n je qm (kg/qm)","Fläche \n (Mio. qm)","Co2-Emissionen \n (Mio. t.)")
+tab04 <- tableGrob(table04,theme=ttheme_default(base_size = 14),rows=NULL)
+```
+
+```{r}
+#table01[1 , 1:4]
+```
+
+```{r,warning=FALSE}
+header <- tableGrob(table04[1 , 1] , rows=NULL, cols="Tabelle: Berlin, Wohngebäude,\n flächenbezogene CO2-Emission und beheizte\nWohnfläche 2002 - 2018")
+#("Tabelle: Berlin, WohngebÃ¤ude,nflÃ¤chenbezogene CO2-Emission und beheiztenWohnflÃ¤che 2002 - 2018")
+```
+
+```{r,warning=FALSE}
+#jn <- combine(header[1,],tab01,along=2)
+jn <- tab04
+#jn$widths <- rep(max(jn$widths),length(jn$widths))
+#jn$layout[1:4,c("l","r")] <- list(1,3,5)
+grid.newpage()
+grid.draw(jn)
+#grid.draw(tab01)
+```
+
+
+#### \textcolor{black}{2. Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+Tabelle: Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in Mio. t.
+```{r}
+table05 <- co2_abs_sfh
+table05 <- table05[,c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","total")]
+table05 <- data.frame ( sapply ( table05 , function(obj) round(obj,2)))
+names(table05) <- c("Jahr \n","Erdgas \n","Wärme \n (N+F)","Flussiggas \n","Heizöl \n","Holzpellets \n","Strom \n(D+WP)","Gesamt \n")
+tab05 <- tableGrob(table05,theme=ttheme_default(base_size = 14),rows=NULL)
+
+grid.draw(tab05)
+```
+
+
+#### \textcolor{black}{2. Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+Tabelle: Berlin, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in %
+
+```{r}
+table06 <- co2_rel_sfh
+table06$total <- 100.0
+table06 <- table06[,c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","total")]
+table06 <- data.frame ( sapply ( table06 , function(obj) round(obj,2)))
+names(table06) <- c("Jahr \n","Erdgas \n","Wärme \n (N+F)","Flussiggas \n","Heizöl \n","Holzpellets \n","Strom \n(D+WP)","Gesamt \n")
+tab06 <- tableGrob(table06,theme=ttheme_default(base_size = 14),rows=NULL)
+grid.draw(tab06)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_abs_mfh <- 0.001*co2_abs_mfh
+co2_abs_mfh$abrechnungsjahr <- 2002:2018
+```
+
+```{r,warning=FALSE}
+linmod <- lm(data=co2_abs_mfh,formula=total~abrechnungsjahr)
+a <- as.numeric(coefficients(linmod)[1])
+b <- as.numeric(coefficients(linmod)[2])
+if (a<0) {
+  asign <- " "
+} else {asign <- "+"}
+if (b<0) {
+  bsign <- " "
+} else {bsign <- " "}
+plot_title <- "Abbildung a: Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002-2018 in Mio. t."
+ggplot()+geom_line(data=co2_abs_mfh,aes(x=abrechnungsjahr,y=total),color="blue")+geom_point(
+  data=co2_abs_mfh,aes(x=abrechnungsjahr,y=total),color="blue")+theme_bw()+labs(x="Jahr",
+  y="Mio. t.",title=plot_title)+ylim(0,max(co2_abs_mfh$total))+geom_smooth(
+  method="lm",data=co2_abs_mfh,aes(x=abrechnungsjahr,y=total),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign,as.character(round(b,2)),"x",asign,as.character(round(a,0))
+  ),x=2008,y=1.0,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+
+
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_abs_mfh_cumsums <- find_cumsums(co2_abs_mfh,c("abrechnungsjahr","total"))
+plot_title <- "Abbildung b: Berlin, Mehrfamiliengebäude, CO2-Emissionen aud Beheizung nach Energieträgern 2002-2008, Anteile in Mio. t CO2"
+plot_byET(co2_abs_mfh_cumsums,"Jahr","Mio. t.", plot_title)
+```
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_abs_mfh_linear <- linearizer(co2_abs_mfh_cumsums)
+plot_title <- "Abbildung b(lin): Berlin, Mehrfamiliengebäude, CO2-Emissionen aud Beheizung nach Energieträgern 2002-2008, Anteile in Mio. t CO2"
+plot_byET(co2_abs_mfh_linear,"Jahr","Mio. t.", plot_title)
+```
+
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_rel_mfh <- find_proportions(co2_abs_mfh,c("abrechnungsjahr","total"))
+co2_rel_mfh_cumsums <- find_cumsums(co2_rel_mfh , "abrechnungsjahr")
+plot_title <- "Abbildung c: Berlin, Mehrfamiliengebäude, CO2-Emissionen aud Beheizung nach Energieträgern 2002-2008, Anteile in %"
+plot_byET(co2_rel_mfh_cumsums,"Jahr","Anteile in Prozent", plot_title)
+```
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_rel_mfh_linear <- linearizer(co2_rel_mfh_cumsums)
+plot_title <- "Abbildung c(lin): Berlin, Mehrfamiliengebäude, CO2-Emissionen aud Beheizung nach Energieträgern 2002-2008, Anteile in %"
+plot_byET(co2_rel_mfh_linear,"Jahr","Anteile in Prozent", plot_title)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+totalArea <- read.table("berlin_wohnflaeche.txt",header=TRUE)
+totalArea <- totalArea*1000000
+totalArea$abrechnungsjahr <- 2002:2018
+totalArea <- totalArea[ , c("abrechnungsjahr","MFH")]
+names(totalArea) <-  c("abrechnungsjahr","totArea")
+#totalAreaTab <- totalArea
+#names(totalAreaTab) <- c("Jahr","FlÃ¤che (qm)")
+#grid.draw(tableGrob(totalAreaTab,theme=ttheme_minimal(base_size = 14),rows=NULL))
+```
+
+```{r}
+#co2_abs_sfh
+#totalArea
+spz_co2 <- 1e9*co2_abs_mfh$total/totalArea$totArea#kg/sq.m.
+spez_co2_emission <- data.frame(abrechnungsjahr=2002:2018 , spez_co2 = spz_co2 )
+```
+
+```{r,warning=FALSE}
+plot_title <- "Abbildung d1: Berlin, Mehrfamiliengebäude, flächenbezogene CO2-Emissionen"
+linmod_spez <- lm(data=spez_co2_emission,formula=spez_co2~abrechnungsjahr)
+a_spez <- as.numeric(coefficients(linmod_spez)[1])
+b_spez <- as.numeric(coefficients(linmod_spez)[2])
+if (a_spez<0) {
+  asign_spez <- " "
+} else {asign_spez <- "+"}
+if (b_spez<0) {
+  bsign_spez <- " "
+} else {bsign_spez <- " "}
+ggplot()+geom_line(data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+geom_point(
+  data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),color="blue")+theme_bw()+labs(x="Jahr",
+  y="kg/qm",title=plot_title)+ylim(0,max(spez_co2_emission$spez_co2))+geom_smooth(
+  method="lm",data=spez_co2_emission,aes(x=abrechnungsjahr,y=spez_co2),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
+  ),x=2008,y=30,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+```{r,warning=FALSE}
+totalAreamqm <- totalArea
+totalAreamqm$totArea <- 1e-6*totalAreamqm$totArea
+linmod_spez <- lm(data=totalAreamqm,formula=totArea~abrechnungsjahr)
+a_spez <- as.numeric(coefficients(linmod_spez)[1])
+b_spez <- as.numeric(coefficients(linmod_spez)[2])
+if (a_spez<0) {
+  asign_spez <- " "
+} else {asign_spez <- "+"}
+if (b_spez<0) {
+  bsign_spez <- " "
+} else {bsign_spez <- " "}
+plot_title <- "Abbildung d2: Berlin, Mehrfamiliengebäude, beheizte Wohnfläche 2002 - 2018"
+ggplot()+geom_line(data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),color="blue")+geom_point(
+  data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),color="blue")+theme_bw()+labs(x="Jahr",
+  y="Mio. qm",title=plot_title)+ylim(0,max(totalAreamqm$totArea))+geom_smooth(
+  method="lm",data=totalAreamqm,aes(x=abrechnungsjahr,y=totArea),se=FALSE)+annotate(
+  geom="text",label=paste0(bsign_spez,as.character(round(b_spez,2)),"x",asign_spez,as.character(round(a_spez,0))
+  ),x=2008,y=125,size=6)+scale_x_continuous(breaks=seq(2002,2018,2))+theme(plot.title=element_text(size=12), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"),  axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))
+```
+
+
+
+
+
+
+
+
+
+
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+Tabelle: Berlin, Mehrfamiliengebäude, flÃ¤chenbezogene CO2-Emission und beheizte WohnflÃ¤che 2002 - 2018
+
+```{r}
+table07 <- data.frame(abrechnungsjahr=2002:2018 , spez_co2 = spez_co2_emission$spez_co2 , flaeche = totalAreamqm$totArea, co2emission = co2_abs_mfh$total)
+table07$spez_co2 <- round(table07$spez_co2 , 2)
+table07$co2emission <- round(table07$co2emission , 2)
+table07$flaeche <- round(table07$flaeche , 2)
+names(table07) <- c("Jahr \n","CO2-Emissionen \n je qm (kg/qm)","Fläche \n (Mio. qm)","Co2-Emissionen \n (Mio. t.)")
+tab07 <- tableGrob(table07,theme=ttheme_default(base_size = 14),rows=NULL)
+```
+
+```{r}
+#table01[1 , 1:4]
+```
+
+```{r,warning=FALSE}
+header <- tableGrob(table07[1 , 1] , rows=NULL, cols="Tabelle: Berlin, Mehrfamiliengebäude,\nflächenbezogene CO2-Emission und beheizte\nWohnfläche 2002 - 2018")
+#("Tabelle: Berlin, WohngebÃ¤ude,nflÃ¤chenbezogene CO2-Emission und beheiztenWohnflÃ¤che 2002 - 2018")
+```
+
+```{r,warning=FALSE}
+#jn <- combine(header[1,],tab01,along=2)
+jn <- tab07
+#jn$widths <- rep(max(jn$widths),length(jn$widths))
+#jn$layout[1:4,c("l","r")] <- list(1,3,5)
+grid.newpage()
+grid.draw(jn)
+#grid.draw(tab01)
+```
+
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+Tabelle: Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in Mio. t.
+```{r}
+table08 <- co2_abs_mfh
+table08 <- table08[,c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","total")]
+table08 <- data.frame ( sapply ( table08 , function(obj) round(obj,2)))
+names(table08) <- c("Jahr \n","Erdgas \n","Wärme \n (N+F)","Flussiggas \n","Heizöl \n","Holzpellets \n","Strom \n(D+WP)","Gesamt \n")
+tab08 <- tableGrob(table08,theme=ttheme_default(base_size = 14),rows=NULL)
+
+grid.draw(tab08)
+```
+
+
+#### \textcolor{black}{3. Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018}
+
+Tabelle: Berlin, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in %
+
+```{r}
+table09 <- co2_rel_mfh
+table09$total <- 100.0
+table09 <- table09[,c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets","strom","total")]
+table09 <- data.frame ( sapply ( table09 , function(obj) round(obj,2)))
+names(table09) <- c("Jahr \n","Erdgas \n","Wärme \n (N+F)","Flussiggas \n","Heizöl \n","Holzpellets \n","Strom \n(D+WP)","Gesamt \n")
+tab09 <- tableGrob(table09,theme=ttheme_default(base_size = 14),rows=NULL)
+grid.draw(tab09)
+```
