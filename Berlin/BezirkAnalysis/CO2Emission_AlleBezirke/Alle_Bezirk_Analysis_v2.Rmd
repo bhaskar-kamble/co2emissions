@@ -1,5 +1,5 @@
 ---
-title: "CO$_2$ Emissionen im Bezirk Charlottenburg-Wilmersdorf"
+title: "CO$_2$ Emissionen in allen Bezirken"
 author: "Bhaskar Kamble"
 date: "13 Mai 2019"
 output:
@@ -14,38 +14,180 @@ knitr::opts_chunk$set(echo = FALSE,cache=FALSE,message=FALSE)
 ```
 
 ```{r}
-bezirk <- "charlottenburg_wilmersdorf"
+#bezirk <- "neukoelln"
+```
+
+```{r}
+et_list <- c("erdgas","fluessiggas","heizoel","holzpellets","strom","waerme")
+bezirk_list <- c("charlottenburg_wilmersdorf","friedrichshain_kreuzberg",
+                 "lichtenberg","marzahn_hellersdorf","mitte","neukoelln",
+                 "pankow","reinickendorf","spandau",
+                 "steglitz_zehlendorf","tempelhof_schoeneberg","treptow_koepenick")
+#bezirk <- b_list[3] #"lichtenberg"
 ```
 
 
 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
-source("../mainScriptCO2Emissions.R")
-co2_SFH <- main_function("SFH" , bezirk)
-co2_MFH <- main_function("MFH" , bezirk)
-co2_ALL <- co2_SFH + co2_MFH
-co2_ALL$abrechnungsjahr <- 2002:2018
-co2_SFH <- co2_SFH/1e7
-co2_MFH <- co2_MFH/1e7
-co2_ALL <- co2_ALL/1e7
-co2_SFH$abrechnungsjahr <- 2002:2018
-co2_MFH$abrechnungsjahr <- 2002:2018
-co2_ALL$abrechnungsjahr <- 2002:2018
+
+#source("../mainScriptCO2Emissions.R")
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/mainScriptCO2Emissions.R")
+sfh_co2_2018 <- NULL
+mfh_co2_2018 <- NULL
+all_co2_2018 <- NULL
+sfh_co2_rel_2018 <- NULL
+mfh_co2_rel_2018 <- NULL
+all_co2_rel_2018 <- NULL
+for (bezirk in bezirk_list) {
+  co2_SFH <- main_function("SFH" , bezirk , et_list)
+  co2_MFH <- main_function("MFH" , bezirk , et_list)
+  co2_ALL <- co2_SFH + co2_MFH
+  co2_ALL$abrechnungsjahr <- 2002:2018
+  co2_SFH <- co2_SFH/1e7
+  co2_MFH <- co2_MFH/1e7
+  co2_ALL <- co2_ALL/1e7
+  co2_SFH$abrechnungsjahr <- 2002:2018
+  co2_MFH$abrechnungsjahr <- 2002:2018
+  co2_ALL$abrechnungsjahr <- 2002:2018
+  co2_MFH_rel <- find_proportions(co2_MFH , c("abrechnungsjahr" , "total"))
+  co2_MFH_rel <- getRowSums(co2_MFH_rel , "abrechnungsjahr")
+  co2_SFH_rel <- find_proportions(co2_SFH , c("abrechnungsjahr" , "total"))
+  co2_SFH_rel <- getRowSums(co2_SFH_rel , "abrechnungsjahr")
+  co2_ALL_rel <- find_proportions(co2_ALL , c("abrechnungsjahr" , "total"))
+  co2_ALL_rel <- getRowSums(co2_ALL_rel , "abrechnungsjahr")
+  
+  sfh_co2_2018 <- rbind(sfh_co2_2018 , co2_SFH[co2_SFH$abrechnungsjahr==2018 , ] )
+  mfh_co2_2018 <- rbind(mfh_co2_2018 , co2_MFH[co2_MFH$abrechnungsjahr==2018 , ] )
+  all_co2_2018 <- rbind(all_co2_2018 , co2_ALL[co2_ALL$abrechnungsjahr==2018 , ] )
+  sfh_co2_rel_2018 <- rbind(sfh_co2_rel_2018 , co2_SFH_rel[co2_SFH_rel$abrechnungsjahr==2018 , ] )
+  mfh_co2_rel_2018 <- rbind(mfh_co2_rel_2018 , co2_MFH_rel[co2_MFH_rel$abrechnungsjahr==2018 , ] )
+  all_co2_rel_2018 <- rbind(all_co2_rel_2018 , co2_ALL_rel[co2_ALL_rel$abrechnungsjahr==2018 , ] )
+}
+sfh_co2_2018$bezirk <- bezirk_list
+mfh_co2_2018$bezirk <- bezirk_list
+all_co2_2018$bezirk <- bezirk_list
+sfh_co2_rel_2018$bezirk <- bezirk_list
+mfh_co2_rel_2018$bezirk <- bezirk_list
+all_co2_rel_2018$bezirk <- bezirk_list
+```
+
+```{r}
+#co2_SFH
+sfh_co2_2018
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+# Show the data --------------
+
+reqd_order <- c("bezirk","total","waerme","erdgas","heizoel","strom","holzpellets")
+#reqd_names <- c("Stadtbezirk:" , "Gesamt" , "Fern-\nwärme" , "Erdgas","Heizöl","WP-Strom\nund Direkt-\nheizung")
+
+library(gridExtra)
+library(grid)
+table01 <- sfh_co2_2018
+table01$bezirk <- c("Charlottenburg-Wilmersdorf",
+                    "Friedrichshain-Kreuzberg",
+                    "Lichtenberg",
+                    "Marzahn-Hellersdorf",
+                    "Mitte",
+                    "Neukölln",
+                    "Pankow",
+                    "Reinickendorf",
+                    "Spandau",
+                    "Steglitz-Zehlendorf",
+                    "Tempelhof-Schöneberg",
+                    "Treptow-Köpenick")
+table01 <- table01[ , reqd_order]
+table01
+```
+
+```{r}
+#function for rounding off everything to two digits:
+round_off <- function(obj,drop_cols) {
+  columns_to_round_off <- names(obj)[!(names(obj) %in% drop_cols)]
+  for (colum in columns_to_round_off) {
+    obj[[colum]] <- round(obj[[colum]] , 2)
+  }
+  return(obj)
+}
+```
+
+## Table
+
+```{r}
+
+table01 <- round_off(table01 , "bezirk")
+
+tab01 <- tableGrob(table01,theme=ttheme_default(base_size = 8),rows=NULL,cols=NULL)
+
+header01 <- tableGrob(table01[1, 1:7],rows=NULL, cols=c("Stadtbezirk:",
+                                                        "Gesamt",
+                                                        "Fern \n wärme",
+                                                        "Erdgas",
+                                                        "Heizöl",
+                                                        "WP-Strom \n und Direkt- \n heizung",
+                                                        "Pellets"))
+jn <- gtable_combine(header01[1,],tab01,along=2)
+jn$layout[1:7 , c("r","l")] <- list(1:7,1:7)
+
+
+
+
+header02 <- tableGrob(table01[1, 1:2],rows=NULL, cols=c(" " , "CO2 Emission in 1.000 t")) 
+jn <- gtable_combine(header02[1,],jn,along=2)
+jn$layout[1:4 , c("r","l")] <- list(c(1,2),c(1,7)) # Wtf is the logic for 1:4 ???
+
+
+
+
+header03 <- tableGrob(table01[1, 1],rows=NULL, cols=c("1-2 Familiengebäude")) 
+jn <- gtable_combine(header03[1,],jn,along=2)
+#jn$widths <- rep(max(jn$widths), length(jn$widths))
+#jn$widths <- rep(5,7)
+jn$layout[1:2 , c("r","l")] <- list(1, 7)
+
+
+header04 <- tableGrob(table01[1, 1],rows=NULL, cols=c("CO2 Emissionen aus Beheizung von Wohngebäuden, Berliner Stadtbezirke, 2018")) 
+jn <- gtable_combine(header04[1,],jn,along=2)
+jn$widths <- rep(5,7)
+jn$layout[1:2 , c("r","l")] <- list(1, 7)
+
+grid.newpage()
+grid.draw(jn)
+
+# https://cran.r-project.org/web/packages/gridExtra/vignettes/tableGrob.html#text-justification
+
+
 ```
 
 
 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
-co2_MFH_rel <- find_proportions(co2_MFH , c("abrechnungsjahr" , "total"))
-co2_MFH_rel <- getRowSums(co2_MFH_rel , "abrechnungsjahr")
-co2_SFH_rel <- find_proportions(co2_SFH , c("abrechnungsjahr" , "total"))
-co2_SFH_rel <- getRowSums(co2_SFH_rel , "abrechnungsjahr")
-co2_ALL_rel <- find_proportions(co2_ALL , c("abrechnungsjahr" , "total"))
-co2_ALL_rel <- getRowSums(co2_ALL_rel , "abrechnungsjahr")
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
-source("../getCumSums.R")
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
 co2_SFH_cumsums <- getCumSums(co2_SFH , c("abrechnungsjahr","total"))
 co2_MFH_cumsums <- getCumSums(co2_MFH , c("abrechnungsjahr","total"))
 co2_ALL_cumsums <- getCumSums(co2_ALL , c("abrechnungsjahr","total"))

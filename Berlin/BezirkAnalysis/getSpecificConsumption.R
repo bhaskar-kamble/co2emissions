@@ -1,4 +1,5 @@
-source("appendLinearTrend.R")
+#source("appendLinearTrend.R")
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R")
 
 createRegData01 <- function(hev_data) {#no multivariate analysis for weather, based on BerlinPresentationCO2BalanceSFH_v6.R, line 530
   #hev_data is the same as bezirk_data
@@ -16,7 +17,8 @@ createRegData01 <- function(hev_data) {#no multivariate analysis for weather, ba
 
 createRegData02 <- function(hev_data) {#with multivariate analysis for weather, based on BerlinPresentationCO2BalanceSFH_v6.R, line 530
   #hev_data is the same as bezirk_data
-  weather_data <- read.table("../berlin_wetter_tegel.txt",header=TRUE)
+  #weather_data <- read.table("../berlin_wetter_tegel.txt",header=TRUE)
+  weather_data <- read.table("D:/GITHUB_REPOS/co2emissions/Berlin/berlin_wetter_tegel.txt",header=TRUE)
   names(weather_data) <- c("wind","sun","bedeckung","temperatur")
   weather_data$abrechnungsjahr <- 2002:2018
   require(dplyr)
@@ -74,7 +76,7 @@ RegDataBereinigung <- function(RD) {
 getSpecificConsumption <- function(bezirk_data , wetter_ja_nein) {
   
   if (wetter_ja_nein) {
-    weather_data <- read.table("../berlin_wetter_tegel.txt",header=TRUE)
+    weather_data <- read.table("D:/GITHUB_REPOS/co2emissions/Berlin/berlin_wetter_tegel.txt",header=TRUE)
     names(weather_data) <- c("wind","sun","bedeckung","temperatur")
     RegData <- createRegData02(bezirk_data)
     RegData <- cbind(RegData[ , c("abrechnungsjahr", "mean_baujahr", "mean_nutzflaeche", "mean_spzverbrauch")] , 

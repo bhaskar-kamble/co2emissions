@@ -5,10 +5,12 @@ subset_data_by_region <- function(inputdata , region) {
 
 
 getBerlinData <- function(gtype) {
-  setwd("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis") 
-  plz_bezirk <- read.csv2("../Postleitzahl/plz_bezirk_long.csv" , stringsAsFactors = FALSE)
+  #setwd("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis") 
+  #plz_bezirk <- read.csv2("../Postleitzahl/plz_bezirk_long.csv" , stringsAsFactors = FALSE)
+  plz_bezirk <- read.csv2("D:/GITHUB_REPOS/co2emissions/Berlin/Postleitzahl/plz_bezirk_long.csv" , stringsAsFactors = FALSE)
   if (gtype=="SFH") {
-    load("../../SFH20022018_v2.RData")
+    #load("../../SFH20022018_v2.RData")
+    load("D:/GITHUB_REPOS/co2emissions/SFH20022018_v2.RData")
     SFH20022018$abrechnungsjahr <- as.integer(SFH20022018$abrechnungsjahr)
     SFH20022018$verbrauch_gesamt_kwh <- gsub("," , "." , SFH20022018$verbrauch_gesamt_kwh)
     SFH20022018$verbrauch_gesamt_kwh <- as.numeric(SFH20022018$verbrauch_gesamt_kwh)
@@ -25,7 +27,8 @@ getBerlinData <- function(gtype) {
   }
   
   if (gtype=="MFH") {
-    load("../../MFH20022018_v2.RData")
+    #load("../../MFH20022018_v2.RData")
+    load("D:/GITHUB_REPOS/co2emissions/MFH20022018_v2.RData")
     MFH20022018$gtype <- "MFH"
     berlin_mfh <- subset_data_by_region(MFH20022018,"Berlin, Stadt")
     berlin_mfh <- berlin_mfh[(berlin_mfh$verbrauch_gesamt_kwh_spez > 15)&(berlin_mfh$verbrauch_gesamt_kwh_spez < 400) , ]
