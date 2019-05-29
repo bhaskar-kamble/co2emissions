@@ -1,11 +1,11 @@
 ---
 title: "CO$_2$ Emissionen im Bezirk Reinickendorf"
 author: "Bhaskar Kamble"
-date: "13 Mai 2019"
+date: "21 Mai 2019"
 output:
   beamer_presentation:
     includes:
-      in_header: ../header_pagenrs.tex
+      in_header: D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/header_pagenrs.tex
   ioslides_presentation: default
 ---
 
@@ -15,14 +15,15 @@ knitr::opts_chunk$set(echo = FALSE,cache=FALSE,message=FALSE)
 
 ```{r}
 bezirk <- "reinickendorf"
+et_list <- c("erdgas","fluessiggas","heizoel","holzpellets","strom","waerme")
 ```
 
 
 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
-source("../mainScriptCO2Emissions.R")
-co2_SFH <- main_function("SFH" , bezirk)
-co2_MFH <- main_function("MFH" , bezirk)
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/mainScriptCO2Emissions.R")
+co2_SFH <- main_function("SFH" , bezirk , et_list)
+co2_MFH <- main_function("MFH" , bezirk , et_list)
 co2_ALL <- co2_SFH + co2_MFH
 co2_ALL$abrechnungsjahr <- 2002:2018
 co2_SFH <- co2_SFH/1e7
@@ -45,7 +46,7 @@ co2_ALL_rel <- getRowSums(co2_ALL_rel , "abrechnungsjahr")
 ```
 
 ```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
-source("../getCumSums.R")
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
 co2_SFH_cumsums <- getCumSums(co2_SFH , c("abrechnungsjahr","total"))
 co2_MFH_cumsums <- getCumSums(co2_MFH , c("abrechnungsjahr","total"))
 co2_ALL_cumsums <- getCumSums(co2_ALL , c("abrechnungsjahr","total"))

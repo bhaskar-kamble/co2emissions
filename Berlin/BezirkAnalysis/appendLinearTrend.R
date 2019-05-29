@@ -3,7 +3,7 @@ appendLinearTrend <- function(obj , xVar , dropCols , missingValues) {
   # obj is the data frame, and "missingValues" is the list of x-values for which you calculate the y-values
   # xVar is the name of the x-variable in the data frame
   
-  obj <- obj[ , !(names(obj) %in% dropCols)]
+  obj <- obj[ !(obj[[xVar]] %in% missingValues) , !(names(obj) %in% dropCols)]
   
   newData <- data.frame(placeholder_name = missingValues)
   names(newData) <- xVar

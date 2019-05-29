@@ -73,7 +73,7 @@ all_co2_rel_2018$bezirk <- bezirk_list
 
 ```{r}
 #co2_SFH
-sfh_co2_2018
+#sfh_co2_2018
 ```
 
 
