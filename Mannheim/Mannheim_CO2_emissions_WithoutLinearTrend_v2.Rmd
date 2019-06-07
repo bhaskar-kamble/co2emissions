@@ -1,0 +1,215 @@
+---
+title: "Mannheim CO$_2$ Emissionen (2002 - 2018)"
+author: "Bhaskar Kamble"
+date: "4 Juni 2019"
+output: 
+  beamer_presentation:    
+    includes:
+      in_header: D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/header_pagenrs.tex
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,cache=FALSE,message=FALSE,warning=FALSE)
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+source("D:/GITHUB_REPOS/co2emissions/Mannheim/mainCO2_Mannheim.R")
+et_list <- c("erdgas","fluessiggas","heizoel","holzpellets","strom","waerme")
+
+sfh_data <- main_function("SFH" , et_list)
+mfh_data <- main_function("MFH" , et_list)
+
+
+co2_SFH <- sfh_data$co2_emissions#main_function("SFH" , et_list)
+co2_MFH <- mfh_data$co2_emissions#main_function("MFH" , et_list)
+co2_ALL <- co2_SFH + co2_MFH
+co2_ALL$abrechnungsjahr <- 2002:2018
+co2_SFH <- co2_SFH/1e9 # in kilo tons
+co2_MFH <- co2_MFH/1e9 # in kilo tons
+co2_ALL <- co2_ALL/1e9 # in kilo tons
+co2_SFH$abrechnungsjahr <- 2002:2018
+co2_MFH$abrechnungsjahr <- 2002:2018
+co2_ALL$abrechnungsjahr <- 2002:2018
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+co2_MFH_rel <- find_proportions(co2_MFH , c("abrechnungsjahr" , "total"))
+co2_MFH_rel <- getRowSums(co2_MFH_rel , "abrechnungsjahr")
+co2_SFH_rel <- find_proportions(co2_SFH , c("abrechnungsjahr" , "total"))
+co2_SFH_rel <- getRowSums(co2_SFH_rel , "abrechnungsjahr")
+co2_ALL_rel <- find_proportions(co2_ALL , c("abrechnungsjahr" , "total"))
+co2_ALL_rel <- getRowSums(co2_ALL_rel , "abrechnungsjahr")
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
+co2_SFH_cumsums <- getCumSums(co2_SFH , c("abrechnungsjahr","total"))
+co2_MFH_cumsums <- getCumSums(co2_MFH , c("abrechnungsjahr","total"))
+co2_ALL_cumsums <- getCumSums(co2_ALL , c("abrechnungsjahr","total"))
+co2_SFH_rel_cumsums <- getCumSums(co2_SFH_rel , c("abrechnungsjahr","total"))
+co2_MFH_rel_cumsums <- getCumSums(co2_MFH_rel , c("abrechnungsjahr","total"))
+co2_ALL_rel_cumsums <- getCumSums(co2_ALL_rel , c("abrechnungsjahr","total"))
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+et_list <- names(co2_SFH)[!(names(co2_SFH) %in% c("abrechnungsjahr","total"))]
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+plot_title <- NULL
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+```
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+require(ggplot2)
+plot_byET <- function(obj,xlabel,ylabel,plottitle) {
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle) + theme(plot.title=element_text(size=30), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"), legend.text = element_text(size=15), axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"), legend.key.size=unit(2, "lines")
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+
+```{r}
+require(FNN)
+approximate_by_kNN <- function(obj,no_of_neighbors,year_grid) {
+  #obj is the data frame of the cumulative co2 emissions (absolute or relative)
+  obj_new <- data.frame(abrechnungsjahr=year_grid)
+  for (e in names(obj)[names(obj)!="abrechnungsjahr"]) {
+    knnr.out <- knn.reg(train=obj$abrechnungsjahr , test=data.frame(abrechnungsjahr=year_grid) , y=obj[[e]] , k=no_of_neighbors)
+    #in the above, test can be a finer grid of the abrechnungsjahr (2002 to 2018 in steps of 0.01, for example). 
+    #This is the year_grid argument
+    #e is looped over the energietraegers
+    obj_new[[e]] <- knnr.out$pred
+  }
+  return(obj_new)
+}
+neighbors <- 3
+```
+
+
+#### \textcolor{black}{Mannheim, 1-2 Familiengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+#plot_byET(co2_SFH_cumsums , "Jahr" , "kilo t." , NULL)
+plot_byET(approximate_by_kNN(co2_SFH_cumsums,no_of_neighbors=neighbors,seq(2002,2018,1)) , "Jahr" , "kilo t." , NULL)
+```
+
+
+
+
+#### \textcolor{black}{Mannheim, 1-2 Familiengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+#plot_byET(co2_SFH_rel_cumsums , "Jahr" , "Anteile" , NULL)
+plot_byET(approximate_by_kNN(co2_SFH_rel_cumsums,no_of_neighbors=neighbors,seq(2002,2018,1)) , "Jahr" , "kilo t." , NULL)
+```
+
+#### \textcolor{black}{Mannheim, Mehrfamiliengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+#plot_byET(co2_MFH_cumsums , "Jahr" , "kilo t." , NULL)
+plot_byET(approximate_by_kNN(co2_MFH_cumsums,no_of_neighbors=neighbors,seq(2002,2018,1)) , "Jahr" , "kilo t." , NULL)
+```
+
+#### \textcolor{black}{Mannheim, Mehrfamiliengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+#plot_byET(co2_MFH_rel_cumsums , "Jahr" , "Anteile" , NULL)
+plot_byET(approximate_by_kNN(co2_MFH_rel_cumsums,no_of_neighbors=neighbors,seq(2002,2018,1)) , "Jahr" , "kilo t." , NULL)
+```
+
+
+#### \textcolor{black}{Mannheim, Wohngebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+#plot_byET(co2_ALL_cumsums , "Jahr" , "kilo t." , NULL)
+plot_byET(approximate_by_kNN(co2_ALL_cumsums,no_of_neighbors=neighbors,seq(2002,2018,1)) , "Jahr" , "kilo t." , NULL)
+```
+
+#### \textcolor{black}{Mannheim, Wohngebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+#plot_byET(co2_ALL_rel_cumsums , "Jahr" , "Anteile" , NULL)
+plot_byET(approximate_by_kNN(co2_ALL_rel_cumsums,no_of_neighbors=neighbors,seq(2002,2018,1)) , "Jahr" , "kilo t." , NULL)
+```
+
+
+
+```{r}
+detach(package:FNN)
+library(gridExtra)
+library(grid)
+```
+
+#### \textcolor{black}{Zahlen und Tabellen}
+
+```{r}
+co2coeff <- data.frame(Erdgas=240,Waerme=244,Fluessiggas=234,heizoel=310,holzpellets=40,strom=500)
+names(co2coeff) <- c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+tab01 <- tableGrob(co2coeff,theme=ttheme_default(base_size = 14),rows=NULL)
+header <- tableGrob(co2coeff[1 , 1] , theme=ttheme_default(base_size = 14), rows=NULL, cols="CO2 Koeffizienten (g/kWh)")
+
+```
+
+```{r,warning=FALSE}
+jn <- gtable_combine(header[1,],tab01,along=2)
+#jn <- tab01
+#jn$widths <- rep(5,4)#rep(max(jn$widths),length(jn$widths))
+jn$widths <- rep(6,6)
+jn$layout[1:2,c("l","r")] <- list(1,6)
+grid.newpage()
+grid.draw(jn)
+#grid.draw(tab01)
+```
+
+
+
+
+
+
+#### \textcolor{black}{Zahlen und Tabellen}
+
+```{r}
+zahlen <- data.frame(MFH = c(nrow(mfh_data$mannheim_data),
+                             sum(mfh_data$mannheim_data$gebaeude_nutzflaeche),
+                             round(100*sum(mfh_data$mannheim_data$gebaeude_nutzflaeche)/mfh_data$totalArea$areaMFH[17],2)) ,
+                     SFH = c(nrow(sfh_data$mannheim_data),
+                             sum(sfh_data$mannheim_data$gebaeude_nutzflaeche),
+                             round(100*sum(sfh_data$mannheim_data$gebaeude_nutzflaeche)/sfh_data$totalArea$areaSFH[17],2)) ,
+                     Gesamt = c(nrow(mfh_data$mannheim_data)+nrow(sfh_data$mannheim_data),
+                                sum(mfh_data$mannheim_data$gebaeude_nutzflaeche)+sum(sfh_data$mannheim_data$gebaeude_nutzflaeche),
+                                round(100*(sum(mfh_data$mannheim_data$gebaeude_nutzflaeche)+sum(sfh_data$mannheim_data$gebaeude_nutzflaeche))/(mfh_data$totalArea$areaMFH[17] + sfh_data$totalArea$areaSFH[17]),2)))
+names(zahlen) <- c("Mehrfamiliengebäude" , "1-2 Familiengebäude" , "Gesamt")
+tab01 <- tableGrob(zahlen,theme=ttheme_default(base_size = 14),rows=c("Anzahl","Nutzfläche (q.m.)","Coverage (%)"))
+header <- tableGrob(zahlen[1 , 1] , theme=ttheme_default(base_size = 14), rows=NULL, cols="2002 - 2018")
+jn <- gtable_combine(header[1,],tab01,along=2)
+jn$widths <- rep(6,4)
+jn$layout[1:2,c("l","r")] <- list(2,4)
+grid.newpage()
+grid.draw(jn)
+
+```

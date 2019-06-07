@@ -1,0 +1,59 @@
+1FHWohnfläche qm         1825345    2002
+2FHWohnfläche qm         1279787    2002
+MFHWohnfläche qm         8760287    2002
+1FHWohnfläche qm         1849833    2003
+2FHWohnfläche qm         1284485    2003
+MFHWohnfläche qm         8783904    2003
+1FHWohnfläche qm         1867963    2004
+2FHWohnfläche qm         1288094    2004
+MFHWohnfläche qm         8806901    2004
+1FHWohnfläche qm         1884946    2005
+2FHWohnfläche qm         1295354    2005
+MFHWohnfläche qm         8827344    2005
+1FHWohnfläche qm         1911102    2006
+2FHWohnfläche qm         1299145    2006
+MFHWohnfläche qm         8841680    2006
+1FHWohnfläche qm         1919780    2007
+2FHWohnfläche qm         1304434    2007
+MFHWohnfläche qm         8881884    2007
+1FHWohnfläche qm         1934074    2008
+2FHWohnfläche qm         1305849    2008
+MFHWohnfläche qm         8893681    2008
+1FHWohnfläche qm         1944649    2009
+2FHWohnfläche qm         1309338    2009
+MFHWohnfläche qm         8924536    2009
+1FHWohnfläche qm         2334821    2010
+2FHWohnfläche qm         1079901    2010
+MFHWohnfläche qm         8428930    2010
+1FHWohnfläche qm         2348573    2011
+2FHWohnfläche qm         1082085    2011
+MFHWohnfläche qm         8442471    2011
+1FHWohnfläche qm         2375583    2012
+2FHWohnfläche qm         1087274    2012
+MFHWohnfläche qm         8570946    2012
+1FHWohnfläche qm         2389410    2013
+2FHWohnfläche qm         1088919    2013
+MFHWohnfläche qm         8583370    2013
+1FHWohnfläche qm         2413942    2014
+2FHWohnfläche qm         1092807    2014
+MFHWohnfläche qm         8639568    2014
+1FHWohnfläche qm         2436805    2015
+2FHWohnfläche qm         1097709    2015
+MFHWohnfläche qm         8671627    2015
+1FHWohnfläche qm         2455690    2016
+2FHWohnfläche qm         1103043    2016
+MFHWohnfläche qm         8707208    2016
+1FHWohnfläche qm         2476448    2017
+2FHWohnfläche qm         1106802    2017
+MFHWohnfläche qm         8745651    2017
+
+
+
+
+
+
+
+
+
+
+

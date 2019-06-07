@@ -244,7 +244,7 @@ tab01 <- tableGrob(table01,theme=ttheme_default(base_size = 14),rows=NULL)
 
 ```{r,warning=FALSE}
 header <- tableGrob(table01[1 , 1] , theme=ttheme_default(base_size = 14), rows=NULL, cols="Tabelle: Berlin, Wohngebäude,flächenbezogene CO2-Emission und beheizte Wohnfläche 2002 - 2018")
-#("Tabelle: Berlin, Wohngebäude,nflÃ¤chenbezogene CO2-Emission und beheiztenWohnfläche 2002 - 2018")
+#("Tabelle: Berlin, Wohngebäude,flächenbezogene CO2-Emission und beheiztenWohnfläche 2002 - 2018")
 ```
 
 ```{r,warning=FALSE}
