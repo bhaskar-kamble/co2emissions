@@ -1,0 +1,503 @@
+---
+title: "Mannheim CO$_2$ Emissionen (2002 - 2018)"
+author: "Bhaskar Kamble"
+date: "4 Juni 2019"
+output: 
+  beamer_presentation:    
+    includes:
+      in_header: D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/header_pagenrs.tex
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,cache=FALSE,message=FALSE)
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+source("D:/GITHUB_REPOS/co2emissions/Mannheim/mainCO2_Mannheim.R")
+et_list <- c("erdgas","fluessiggas","heizoel","holzpellets","strom","waerme")
+
+sfh_data <- main_function("SFH" , et_list)
+mfh_data <- main_function("MFH" , et_list)
+
+co2_SFH <- sfh_data$co2_emissions#main_function("SFH" , et_list)
+co2_MFH <- mfh_data$co2_emissions#main_function("MFH" , et_list)
+co2_ALL <- co2_SFH + co2_MFH
+co2_ALL$abrechnungsjahr <- 2002:2018
+co2_SFH <- co2_SFH/1e9 # in kilo tons
+co2_MFH <- co2_MFH/1e9 # in kilo tons
+co2_ALL <- co2_ALL/1e9 # in kilo tons
+co2_SFH$abrechnungsjahr <- 2002:2018
+co2_MFH$abrechnungsjahr <- 2002:2018
+co2_ALL$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+# You must impute average value of CO2 emissions for Strom for the period 2002-2009.
+# Ideally you must impute these missing values to the energy consumption and area covered by Strom in the period 2002-2009.
+# anyway do it for co2 emissions now.
+# 1. Modify CO2_SFH
+# 2. Modify CO2_MFH
+# Add them to get CO2_ALL like you did in the first code chunk.
+co2_SFH$strom[co2_SFH$abrechnungsjahr < 2010] <- mean(co2_SFH$strom[co2_SFH$abrechnungsjahr >2009])
+co2_MFH$strom[co2_MFH$abrechnungsjahr < 2010] <- mean(co2_MFH$strom[co2_MFH$abrechnungsjahr >2009])
+co2_ALL <- co2_SFH + co2_MFH
+co2_ALL$abrechnungsjahr <- 2002:2018
+co2_SFH <- getRowSums(co2_SFH[ , names(co2_SFH)!="total"] , dropCols = "abrechnungsjahr")
+co2_MFH <- getRowSums(co2_MFH[ , names(co2_MFH)!="total"] , dropCols = "abrechnungsjahr")
+co2_ALL <- getRowSums(co2_ALL[ , names(co2_ALL)!="total"] , dropCols = "abrechnungsjahr")
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+co2_MFH_rel <- find_proportions(co2_MFH , c("abrechnungsjahr" , "total"))
+co2_MFH_rel <- getRowSums(co2_MFH_rel , "abrechnungsjahr")
+co2_SFH_rel <- find_proportions(co2_SFH , c("abrechnungsjahr" , "total"))
+co2_SFH_rel <- getRowSums(co2_SFH_rel , "abrechnungsjahr")
+co2_ALL_rel <- find_proportions(co2_ALL , c("abrechnungsjahr" , "total"))
+co2_ALL_rel <- getRowSums(co2_ALL_rel , "abrechnungsjahr")
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
+co2_SFH_cumsums <- getCumSums(co2_SFH , c("abrechnungsjahr","total"))
+co2_MFH_cumsums <- getCumSums(co2_MFH , c("abrechnungsjahr","total"))
+co2_ALL_cumsums <- getCumSums(co2_ALL , c("abrechnungsjahr","total"))
+co2_SFH_rel_cumsums <- getCumSums(co2_SFH_rel , c("abrechnungsjahr","total"))
+co2_MFH_rel_cumsums <- getCumSums(co2_MFH_rel , c("abrechnungsjahr","total"))
+co2_ALL_rel_cumsums <- getCumSums(co2_ALL_rel , c("abrechnungsjahr","total"))
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+et_list <- names(co2_SFH)[!(names(co2_SFH) %in% c("abrechnungsjahr","total"))]
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+plot_title <- NULL
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+```
+
+```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+require(ggplot2)
+plot_byET <- function(obj,xlabel,ylabel,plottitle) {
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle) + theme(plot.title=element_text(size=30), axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"), legend.text = element_text(size=15), axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"), legend.key.size=unit(2, "lines")
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+
+
+
+
+
+
+
+```{r}
+linearizer <- function(obj,dropCols,xVar) {
+  obj_new <- obj[ , !(names(obj) %in% dropCols)]
+  feature_list <- names(obj_new)[ !(names(obj_new) %in% c(dropCols,xVar)) ]
+  storage <- list()
+  for (feature in feature_list) {
+    storage[[feature]] <- lm(get(feature) ~ get(xVar) , data = obj)
+    obj_new[[feature]] <- as.numeric(predict(storage[[feature]] , newdata = obj))
+  }
+  return(obj_new)
+}
+
+#getMissingStrom <- function(obj , missingYears) {
+#  lin_Strom <- lm(strom ~ abrechnungsjahr , data = obj)
+#  appendData <- data.frame(abrechnungsjahr = missingYears)
+#  appendData$strom <- predict(lin_Strom , newdata = appendData)
+#  return(rbind(appendData , obj))
+#}
+
+cap100 <- function(obj) {
+  etcols <- names(obj)[names(obj)!="abrechnungsjahr"]
+  for (e in etcols) {
+    obj[[e]][obj[[e]]>100] <- 100
+  }
+  return(obj)
+}
+```
+
+\textcolor{black}{Mannheim, 1-2 Familiengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_SFH_linear <- linearizer(co2_SFH,"total","abrechnungsjahr")
+co2_SFH_linear_cumsums <- getCumSums(co2_SFH_linear , "abrechnungsjahr")
+plot_byET(co2_SFH_linear_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+
+```{r}
+#co2_SFH_linear
+```
+
+
+************
+
+
+\textcolor{black}{Mannheim, 1-2 Familiengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_SFH_linear_rel <- find_proportions(co2_SFH_linear , "abrechnungsjahr")
+co2_SFH_linear_rel_cumsums <- getCumSums(co2_SFH_linear_rel , "abrechnungsjahr")
+co2_SFH_linear_rel_cumsums <- cap100(co2_SFH_linear_rel_cumsums)
+plot_byET(co2_SFH_linear_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```
+
+************
+
+
+\textcolor{black}{Mannheim, 1-2 Familiengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+
+
+```{r}
+co2_SFH_lintrend <- co2_SFH[, c("abrechnungsjahr","total")]
+lin_co2 <- lm(total~abrechnungsjahr , data = co2_SFH)
+co2_SFH_lintrend$total <- predict(lin_co2 , newdata = co2_SFH_lintrend)
+b0 <- round(as.numeric(lin_co2$coefficients[1]),0)
+b1 <- round(as.numeric(lin_co2$coefficients[2]),2)
+ggplot()+geom_line(data=co2_SFH_lintrend,aes(x=abrechnungsjahr,y=total),size=2)+scale_y_continuous(limits=c(0,130))+annotate(geom="text",label=paste0(b1,"x"," + ", b0),x=2009,y=115,size=6)+theme_bw()+labs(x="Jahr",y="kilo t.")+theme(axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"), legend.text = element_text(size=15), axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))+scale_x_continuous(breaks=seq(2002,2018,2))
+
+
+```
+
+************
+
+
+\textcolor{black}{Mannheim, Mehrfamiliengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_MFH_linear <- linearizer(co2_MFH, dropCols = "total", xVar = "abrechnungsjahr")
+co2_MFH_linear_cumsums <- getCumSums(co2_MFH_linear , "abrechnungsjahr")
+plot_byET(co2_MFH_linear_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+
+************
+
+\textcolor{black}{Mannheim, Mehrfamiliengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_MFH_linear_rel <- find_proportions(co2_MFH_linear , "abrechnungsjahr")
+co2_MFH_linear_rel_cumsums <- getCumSums(co2_MFH_linear_rel , "abrechnungsjahr")
+co2_MFH_linear_rel_cumsums <- cap100(co2_MFH_linear_rel_cumsums)
+plot_byET(co2_MFH_linear_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```
+
+
+
+************
+
+\textcolor{black}{Mannheim, Mehrfamiliengebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+
+
+```{r}
+co2_MFH_lintrend <- co2_MFH[, c("abrechnungsjahr","total")]
+lin_co2 <- lm(total~abrechnungsjahr , data = co2_MFH)
+co2_MFH_lintrend$total <- predict(lin_co2 , newdata = co2_MFH_lintrend)
+b0 <- round(as.numeric(lin_co2$coefficients[1]),0)
+b1 <- round(as.numeric(lin_co2$coefficients[2]),2)
+ggplot()+geom_line(data=co2_MFH_lintrend,aes(x=abrechnungsjahr,y=total),size=2)+scale_y_continuous(limits=c(0,max(co2_MFH_lintrend$total)))+annotate(geom="text",label=paste0(b1,"x"," + ", b0),x=2008,y=250,size=6)+theme_bw()+labs(x="Jahr",y="kilo t.")+theme(axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"), legend.text = element_text(size=15), axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))+scale_x_continuous(breaks=seq(2002,2018,2))
+
+
+```
+
+
+
+
+
+
+
+
+
+
+************
+
+\textcolor{black}{Mannheim, Wohngebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_ALL_linear <- linearizer(co2_ALL, dropCols = "total", xVar = "abrechnungsjahr")
+co2_ALL_linear_cumsums <- getCumSums(co2_ALL_linear , "abrechnungsjahr")
+plot_byET(co2_ALL_linear_cumsums , "Jahr" , "kilo t." , NULL)
+```
+
+
+************
+
+\textcolor{black}{Mannheim, Wohngebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+```{r}
+co2_ALL_linear_rel <- find_proportions(co2_ALL_linear , "abrechnungsjahr")
+co2_ALL_linear_rel_cumsums <- getCumSums(co2_ALL_linear_rel , "abrechnungsjahr")
+co2_ALL_linear_rel_cumsums <- cap100(co2_ALL_linear_rel_cumsums)
+plot_byET(co2_ALL_linear_rel_cumsums , "Jahr" , "Anteile" , NULL)
+```
+
+
+
+************
+
+\textcolor{black}{Mannheim, Wohngebäude, CO$_2$ Emissionen aus Beheizung 2002 - 2018}
+
+
+
+```{r}
+co2_ALL_lintrend <- co2_ALL[, c("abrechnungsjahr","total")]
+lin_co2 <- lm(total~abrechnungsjahr , data = co2_ALL)
+co2_ALL_lintrend$total <- predict(lin_co2 , newdata = co2_ALL_lintrend)
+b0 <- round(as.numeric(lin_co2$coefficients[1]),0)
+b1 <- round(as.numeric(lin_co2$coefficients[2]),2)
+ggplot()+geom_line(data=co2_ALL_lintrend,aes(x=abrechnungsjahr,y=total),size=2)+scale_y_continuous(limits=c(0,max(co2_ALL_lintrend$total)))+annotate(geom="text",label=paste0(b1,"x"," + ", b0),x=2008,y=250,size=6)+theme_bw()+labs(x="Jahr",y="kilo t.")+theme(axis.title.x=element_text(size=20, face="bold"), axis.title.y=element_text(size=20, face="bold"), legend.text = element_text(size=15), axis.text.x=element_text(size=15,face="bold"), axis.text.y=element_text(size=15,face="bold"))+scale_x_continuous(breaks=seq(2002,2018,2))
+
+
+```
+
+
+
+
+
+
+```{r}
+#detach(package:FNN)
+library(gridExtra)
+library(grid)
+library(gtable)
+```
+
+
+************
+
+
+\textcolor{black}{Zahlen und Tabellen}
+
+
+```{r,warning=FALSE}
+co2_coeff <- sfh_data$co2_coeff
+names(co2_coeff) <- c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+t0 <- ttheme_default(base_size = 14,
+                     core=list(bg_params=list(fill="white",col="black")),
+                     colhead = list(bg_params=list(fill="white",col="black")))
+tab01 <- tableGrob(co2_coeff,theme=t0,rows=NULL)
+header <- tableGrob(co2_coeff[1 , 1] , theme=t0, rows=NULL, cols="CO2 Koeffizienten (g/kWh)")
+jn <- gtable_combine(header[1,],tab01,along=2)
+#jn <- tab01
+#jn$widths <- rep(5,4)#rep(max(jn$widths),length(jn$widths))
+jn$widths <- rep(6,7)
+jn$layout[1:2,c("l","r")] <- list(1,7)
+grid.newpage()
+grid.draw(jn)
+#grid.draw(tab01)
+```
+
+
+
+
+```{r}
+#zahlen <- data.frame(MFH = c(nrow(mfh_data$mannheim_data),
+#                             sum(mfh_data$mannheim_data$gebaeude_nutzflaeche),
+#                             round(100*sum(mfh_data$mannheim_data$gebaeude_nutzflaeche)/mfh_data$totalArea$areaMFH[17],2)) ,
+#                     SFH = c(nrow(sfh_data$mannheim_data),
+#                             sum(sfh_data$mannheim_data$gebaeude_nutzflaeche),
+#                             round(100*sum(sfh_data$mannheim_data$gebaeude_nutzflaeche)/sfh_data$totalArea$areaSFH[17],2)) ,
+#                     Gesamt = c(nrow(mfh_data$mannheim_data)+nrow(sfh_data$mannheim_data),
+#                                sum(mfh_data$mannheim_data$gebaeude_nutzflaeche)+sum(sfh_data$mannheim_data$gebaeude_nutzflaeche),
+#                                round(100*(sum(mfh_data$mannheim_data$gebaeude_nutzflaeche)+sum(sfh_data$mannheim_data$gebaeude_nutzflaeche))/(mfh_#data$totalArea$areaMFH[17] + sfh_data$totalArea$areaSFH[17]),2)))
+#names(zahlen) <- c("Mehrfamiliengebäude" , "1-2 Familiengebäude" , "Gesamt")
+#tab01 <- tableGrob(zahlen,theme=ttheme_default(base_size = 14),rows=c("Anzahl","Nutzfläche (q.m.)","Coverage (%)"))
+#header <- tableGrob(zahlen[1 , 1] , theme=ttheme_default(base_size = 14), rows=NULL, cols="2002 - 2018")
+#jn <- gtable_combine(header[1,],tab01,along=2)
+#jn$widths <- rep(6,4)
+#jn$layout[1:2,c("l","r")] <- list(2,4)
+#grid.newpage()
+#grid.draw(jn)
+
+```
+
+
+
+************
+
+\textcolor{black}{Zahlen und Tabellen}
+
+
+
+```{r}
+data_report <- data.frame(a=c(" ",
+                             "Stichprobe (2002-2018)",
+                             "Anzahl",
+                             "Beheizte Nutzflache [AN]",
+                             "Grundgesamtheit (2018)",
+                             "Anzahl",
+                             "Beheizte Nutzflache [AN]",
+                             "Abdeckung",
+                             "Anzahl",
+                             "Beheizte Nutzflache"),
+                         b=c("Mehrfamiliengebaeude",
+                             " ",
+                             "2.753",
+                             "3.842.321",
+                             " ",
+                             " ",
+                             "8.599.644",
+                             " ",
+                             " ",
+                             "44,7"),
+                         c=c("1-2 Familiengebaeude",
+                             " ",
+                             "2.581",
+                             "487.369",
+                             " ",
+                             " ",
+                             "3.637.082",
+                             " ",
+                             " ",
+                             "13,4"),
+                         d=c("Gesamt",
+                             " ",
+                             "5.334",
+                             "4.329.690",
+                             " ",
+                             " ",
+                             "12.237.677",
+                             " ",
+                             " ",
+                             "35,4"))
+border_colors <- "white"
+t0 <- ttheme_default()
+t1 <- ttheme_default(core=list(bg_params=list(fill=rep("white",9),col=border_colors )))
+
+#tab01 <- tableGrob(data_report,theme=t1,row=NULL,col=NULL)
+#tab01 <- gtable_add_grob(tab01 , 
+#                         grobs = rectGrob(gp = gpar(fill=NA,lwd=2)),
+#                         t = 1, b = 1 , l = 1 , r = 4)
+#add a border:
+tab01 <- tableGrob(data_report,theme=t1,row=NULL,col=NULL)
+tab01 <- gtable_add_grob(tab01,
+        grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+        t = 1, b = 10, l = 1, r = 4)
+
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 3, b = 4, l = 1, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 1, b = 1, l = 1, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 7, b = 7, l = 1, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(0,"npc"),
+            y1 = unit(1,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 1, b = 10, l = 3, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(0,"npc"),
+            y1 = unit(1,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 1, b = 10, l = 2, r = 3)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(0,"npc"),
+            y1 = unit(1,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 1, b = 10, l = 4, r = 4) #WHATTHEFUCK!!!
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 3, b = 3, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 5, b = 5, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 8, b = 8, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 9, b = 9, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 6, b = 6, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 2, b = 2, l = 2, r = 4)
+grid.newpage()
+grid.draw(tab01)
+```

@@ -65,7 +65,7 @@ main_function <- function(gtype , et_list) {
   
   
   co2_emissions <- getCO2Emissions(co2_coeff , energy_shares_absolute)
-  co2_emissions <- getRowSums(co2_emissions , "abrechnungsjahr")
+  co2_emissions <- getRowSums(co2_emissions , dropCols = "abrechnungsjahr")
   return_data$co2_emissions <- co2_emissions
   
   

@@ -1,0 +1,474 @@
+---
+title: "Making data tables in presentations"
+author: "Bhaskar Kamble"
+date: "9 Juni 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Purpose
+
+It is often necessary in presentations to present certain data in the form of tables. These tables often need to be formatted in certain ways, such as the correct alignment of text, suitable widths for the columns, merging certain rows or columns, highlighting certain cells and so on. For this, the `grid`and `gridExtra` packages are used. Here I want to describe possible ways to use these packages to get correctly formatted tables, and also some problems I ran into for which I don't have a solution yet.
+
+
+```{r}
+library(grid)
+library(gridExtra)
+library(gtable)
+tabla_fin <- rbind(
+c("","2015\nabril","2016\nabril","2017\nmarzo","2017\nabril"),
+c("Pedidos",-23.3,-13.8,-26,-39),
+c("Existencias",7.6,1.2,5.3,10.5),
+c("Expectativas",30.7,32.7,28.7,24),
+c("ICI",-0.1,5.9,-0.9,-8.5),
+c("ICI Desest*",0.4,5.7,-3.2,-6.9))
+colnames(tabla_fin) <- tabla_fin[1,]
+tabla_fin <- tabla_fin[-1,]
+rownames(tabla_fin) <- tabla_fin[,1]
+tabla_fin <- tabla_fin[,-1]
+print(tabla_fin)
+t1 <- ttheme_default(
+        core=list(
+         fg_params=list(fontface=rep("plain", 6), fontfamily="Calibri",
+                      x=1.0, hjust=1.0),
+         bg_params = list(
+                     fill=c(rep("red",3),"blue","green"),
+                     col=c("white","white","white","grey80","grey90"),
+                     alpha = rep(1,5))
+        ),
+        rowhead=list(
+         fg_params=list(x=0, hjust=0, fontface="plain", fontfamily="Calibri"),
+         bg_params = list(
+                     fill=c("white",rep("white",3),"grey80","grey90"),
+                     col=c("white","white","white","white","grey80","grey90"),
+                     alpha = rep(1,5))
+        ),
+        colhead=list(
+         fg_params=list(fontface="plain",fontfamily="Calibri"),
+         bg_params = list(
+                     fill="grey70",
+                     col="grey70",
+                     alpha = rep(1,5))
+        )
+)
+t  <- tableGrob(tabla_fin, theme=t1)
+grid.newpage()
+grid.draw(t)
+```
+
+```{r}
+a <- gtable(unit(1:3, c("cm")), unit(5, "cm"))
+a
+gtable_show_layout(a)
+
+# Add a grob:
+rect <- rectGrob(gp = gpar(fill = "black"))
+a <- gtable_add_grob(a, rect, 1, 1)
+a
+plot(a)
+```
+
+
+```{r}
+library(ggplot2)
+p1 <- qplot(mpg, wt, data = mtcars, colour = cyl)
+p2 <- qplot(mpg, data = mtcars) + ggtitle("title")
+p3 <- qplot(mpg, data = mtcars, geom = "dotplot")
+p4 <-
+  p1 + facet_wrap( ~ carb, nrow = 1) + theme(legend.position = "none") +
+  ggtitle("facetted plot")
+```
+
+```{r}
+grid.arrange(p1, p2, nrow = 1)
+```
+
+```{r}
+#https://stackoverflow.com/questions/36454028/how-do-i-customize-particular-columns-for-a-tablegrob-in-r
+library(grid)
+library(gridExtra)
+
+df <- data.frame(Order = c(1:5),
+                 Name = c("Adam", "Ben", "Charlie" , "Ted", "Eddie"), 
+                 Score = c(4, 8, 9 , 2 , 6))
+
+#hj <- matrix(c(0, 0.5, 1), ncol=3, nrow=nrow(df), byrow=TRUE)
+#x <- matrix(c(0, 0.5, 1), ncol=3, nrow=nrow(df), byrow=TRUE)
+
+hj <- rep(c(0,0.5,1),each=5)
+x <- rep(c(0,0.5,1),each=5)
+
+tt1 <- ttheme_default(core=list(fg_params=list(hjust = hj, 
+                                               x = x)),
+                      colhead=list(fg_params=list(hjust=1, x=0.95)))
+
+
+dfGrob <- tableGrob(df, rows = NULL, theme = tt1)
+grid.newpage()
+grid.draw(dfGrob)
+```
+
+```{r}
+hj <- matrix(c(0, 0.5, 1), ncol=3, nrow=nrow(df), byrow=TRUE)
+x <- matrix(c(0, 0.5, 1), ncol=3, nrow=nrow(df), byrow=TRUE)
+as.vector(x)
+```
+
+For grid package:
+
+https://bookdown.org/rdpeng/RProgDA/the-grid-package.html
+
+
+```{r}
+header_justify <- c(0,0.5,0.5,0.5)
+header_x       <- c(0,0.5,0.5,0.5)
+core_justify <-   rep(c(0,0.5,0.5,0.5),each=5)
+core_x       <-   rep(c(0,0.5,0.5,0.5),each=5)
+t_header <- ttheme_default(base_size = 8,
+                           colhead=list(fg_params=list(hjust = header_justify , x = header_x)))
+t_core   <- ttheme_default(base_size = 8,
+                           core=list(fg_params=list(hjust = core_justify , x = core_x)))
+daf <- data.frame(SomeLetters = paste0(letters[sample(1:26 , 5)],letters[sample(1:26 , 5)],letters[sample(1:26 , 5)]), 
+                  SomeNumbers1 = sample(1:26,5) , 
+                  SomeNumbers2 = sample(1:26,5) , 
+                  SomeNumbers3 = sample(1:26,5))
+tab01 <- tableGrob(daf , theme = t_core , rows=NULL, cols = NULL)
+header01 <- tableGrob(daf[1,1:4],theme=t_header,
+                      rows=NULL,cols= c("1. Some Letters",
+                                        "2. Some Numbers",
+                                        "3. Some Numbers",
+                                        "4. Some Numbers"))
+jn <- gtable_combine(header01[1,],tab01,along=2)
+jn$layout[1:4 , c("r","l")] <- list(1:4,1:4)
+jn$widths <- c(2,2,2,2)
+grid.newpage()
+grid.draw(jn)
+```
+
+hjust = 1 means left aligned. hjust = 0 means right aligned. The default value of x is 0.5. Increasing x will push the text to the right. Hence makes more sense only in left aligned cases. Decreasing x will push text to the left. Hence makes mmore sense only in the right aligned cases.
+
+For left justify, you can do either of the following:
+1. hjust = 0 (right justify) with x = 0 (so that the right-justified text will be pushed to the left and become left justified).
+2. hjust = 1 (left justify) with x equal to the default calue of 0.5.
+
+Exrercise: Find the corresponding options for right justifying.
+
+Next step: Can you add a common header spanning across all the columns?
+
+
+```{r}
+header_justify <- c(0,0.5,0.5,0.5)
+header_x       <- c(0,0.5,0.5,0.5)
+core_justify <-   rep(c(0,0.5,0.5,0.5),each=5)
+core_x       <-   rep(c(0,0.5,0.5,0.5),each=5)
+t_header <- ttheme_default(base_size = 8,
+                           colhead=list(fg_params=list(hjust = header_justify , x = header_x)))
+t_core   <- ttheme_default(base_size = 8,
+                           core=list(fg_params=list(hjust = core_justify , x = core_x)))
+daf <- data.frame(SomeLetters = paste0(letters[sample(1:26 , 5)],letters[sample(1:26 , 5)],letters[sample(1:26 , 5)]), 
+                  SomeNumbers1 = sample(1:26,5) , 
+                  SomeNumbers2 = sample(1:26,5) , 
+                  SomeNumbers3 = sample(1:26,5))
+
+tab01 <- tableGrob(daf , theme = t_core , rows=NULL, cols = NULL)
+header01 <- tableGrob(daf[1,1:4],theme=t_header,
+                      rows=NULL,cols= c("1. Some Letters",
+                                        "2. Some Numbers",
+                                        "3. Some Numbers",
+                                        "4. Some Numbers"))
+jn <- gtable_combine(header01[1,],tab01,along=2)
+jn$layout[1:4 , c("r","l")] <- list(1:4,1:4)
+
+t_header <- ttheme_default(base_size=8)
+header02 <- tableGrob(daf[1,1],rows=NULL,cols="Common header",theme=t_header)
+jn <- gtable_combine(header02[1,],jn,along=2)
+jn$layout[1:4 , c("r","l")] <- list(1,4)
+
+t_header <- ttheme_default(base_size=8)
+header02 <- tableGrob(daf[1,1:2],rows=NULL,cols=c("CH1", "CH2"),theme=t_header)
+jn <- gtable_combine(header02[1,],jn,along=2)
+jn$layout[1:4 , c("r","l")] <- list(c(1,4),c(3,4))
+
+jn$widths <- c(2,2,3,3)
+grid.newpage()
+grid.draw(jn)
+```
+
+
+
+
+
+https://cyancey95.github.io/CompBiol_2018/gridExtraPresentation.html
+https://cran.r-project.org/web/packages/gridExtra/vignettes/tableGrob.html
+https://bookdown.org/rdpeng/RProgDA/the-grid-package.html
+https://rdrr.io/cran/gtable/man/gtable.html
+https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html
+https://stackoverflow.com/questions/44418647/tablegrob-formatting
+https://stackoverflow.com/questions/39726423/how-to-merge-vertical-cells-in-tablegrob-output-tables-in-r
+http://www.flutterbys.com.au/stats/tut/tut5.2.html
+
+
+
+
+
+#####################
+
+Trying to merge rows:
+
+https://stackoverflow.com/questions/39726423/how-to-merge-vertical-cells-in-tablegrob-output-tables-in-r
+
+```{r}
+alphabets <- c(rep("A", 3), rep("B", 3), rep("C",3))
+numbers <- c(rep(c(1,2,3), 3))
+df1 <- data.frame(alphabets = alphabets,numbers=numbers)
+
+#sounds <- c('','Ayes','','','Bees','','','Cees','')
+sounds <- c("Ayes","Bees","Cees")
+df2 <- data.frame(sounds = sounds)
+t1 <- ttheme_default(core=list(bg_params=list(fill=rep("white",9),col=rep("red",9))))
+t2 <- ttheme_default()
+tab1 <- tableGrob(df1,theme = t1,row=NULL)
+tab2 <- tableGrob(df2,theme = t2,row=NULL)
+
+halign <- gtable_combine(tab2,tab1, along =1)
+
+grid.newpage()
+grid.draw(halign)
+```
+
+
+
+```{r}
+halign$layout
+```
+
+
+```{r}
+halign$layout[halign$layout$t != 1 &
+                halign$layout$l == 1, c("t")] <-
+  c(2,5,8,2,5,8)
+
+halign$layout[halign$layout$b != 1  &
+                halign$layout$l == 1, c("b")] <-
+  c(4,7,10,4,7,10)
+grid.newpage()
+grid.draw(halign)
+```
+
+
+
+#######################################################
+
+```{r}
+co2_online <- data.frame(a=c(" ",
+                             "Stichprobe (2002-2018)",
+                             "Anzahl",
+                             "Beheizte Nutzflache [AN]",
+                             "Grundgesamtheit (2018)",
+                             "Anzahl",
+                             "Beheizte Nutzflache [AN]",
+                             "Abdeckung",
+                             "Anzahl",
+                             "Beheizte Nutzflache"),
+                         b=c("Mehrfamiliengebaeude",
+                             " ",
+                             "2753",
+                             "3842321",
+                             " ",
+                             " ",
+                             "8599644",
+                             " ",
+                             " ",
+                             "44.7"),
+                         c=c("1-2 Familiengebaeude",
+                             " ",
+                             "2581",
+                             "487369",
+                             " ",
+                             " ",
+                             "3637082",
+                             " ",
+                             " ",
+                             "13.4"),
+                         d=c("Gesamt",
+                             " ",
+                             "5334",
+                             "4329690",
+                             " ",
+                             " ",
+                             "12237677",
+                             " ",
+                             " ",
+                             "35.4"))
+                         
+```
+
+
+```{r}
+#border_colors_col1 <- c( rep("black",2) , rep("white",2) , "black" , rep("white",2) , "black" , rep("white",2))
+#border_colors_col1 <- c("black" , rep("white",3) , "black" , rep("white",2) , "black" , rep("white",2))
+#border_colors_col2 <- c( "black" , "white" , rep("black" , 8))
+#border_colors_col3 <- c( "black" , "white" , rep("black" , 8))
+#border_colors_col4 <- c( "black" , "white" , rep("black" , 8))
+#border_colors <- c(border_colors_col1 , border_colors_col2 , border_colors_col3 , border_colors_col4)
+border_colors <- "white"
+t0 <- ttheme_default()
+t1 <- ttheme_default(core=list(bg_params=list(fill=rep("white",9),col=border_colors )))
+#grid.newpage()
+#grid.draw(tab01)
+```
+
+https://cran.r-project.org/web/packages/gridExtra/vignettes/tableGrob.html
+
+```{r}
+tab01 <- tableGrob(co2_online,theme=t1,row=NULL,col=NULL)
+#tab01 <- gtable_add_grob(tab01 , 
+#                         grobs = rectGrob(gp = gpar(fill=NA,lwd=2)),
+#                         t = 1, b = 1 , l = 1 , r = 4)
+#add a border:
+tab01 <- tableGrob(co2_online,theme=t1,row=NULL,col=NULL)
+tab01 <- gtable_add_grob(tab01,
+        grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+        t = 1, b = 10, l = 1, r = 4)
+
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 3, b = 4, l = 1, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 1, b = 1, l = 1, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 7, b = 7, l = 1, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(0,"npc"),
+            y1 = unit(1,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 1, b = 10, l = 3, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(0,"npc"),
+            y1 = unit(1,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 1, b = 10, l = 2, r = 3)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(0,"npc"),
+            y1 = unit(1,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 1, b = 10, l = 4, r = 4) #WHATTHEFUCK!!!
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 3, b = 3, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 5, b = 5, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 8, b = 8, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 9, b = 9, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 6, b = 6, l = 2, r = 4)
+tab01 <- gtable_add_grob(tab01,
+        grobs = segmentsGrob(
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 1.0,col="black")),
+        t = 2, b = 2, l = 2, r = 4)
+grid.newpage()
+grid.draw(tab01)
+```
+
+```{r}
+ttt <- ttheme_default(core=list(bg_params=list(fill="red",col="white" )))
+g <- tableGrob(iris[1:4, 1:3],theme=ttt)
+g <- gtable_add_grob(g,
+        grobs = segmentsGrob( # line across the bottom
+            x0 = unit(0,"npc"),
+            y0 = unit(0,"npc"),
+            x1 = unit(1,"npc"),
+            y1 = unit(0,"npc"),
+            gp = gpar(lwd = 2.0,col="black")),
+        t = 3, b = 3, l = 3, r = 3)
+grid.newpage()
+grid.draw(g)
+```
+
+
+
+###############################
+
+```{r}
+daf <- data.frame(a=1:8 , b = 9:16 , c = 17:24)
+tab01 <- tableGrob(daf , theme= t0,row=NULL,col=NULL)
+header01 <- tableGrob(daf[1,1],rows=NULL,cols="some text")
+jn <- gtable_combine(header01[1,] , tab01 , along = 2)
+jn$layout[1:2 , c("r","l")] <- list(1,3)
+header02 <- tableGrob(daf[1,1:3],rows=NULL,cols=c("aa","bb","cc"))
+jn <- gtable_combine(header02[1,] , jn , along = 2)
+jn$layout[1:3 , c("r","l")] <- list(1:3,1:3)
+daf2 <- data.frame(d = c("one" , "two" , "three "))
+tab02 <- tableGrob(daf2 , theme = t0,  row=NULL)
+#jn <- gtable_combine(tab02 , jn )
+#jn$layout[, c("t")] <- c(1,2,5,8,1,2,5,8)
+#jn$layout[, c("b")] <- c(1,4,7,10,1,4,7,10)
+#jn$layout[jn$layout$t != 1 & jn$layout$l == 1, c("t")] <- rep(c(2,5,8),2)
+#jn$layout[jn$layout$b != 1 & jn$layout$l == 1, c("b")] <- rep(c(4,7,10),2)
+grid.newpage()
+grid.draw(jn)
+```
