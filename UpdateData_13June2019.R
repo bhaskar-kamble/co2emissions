@@ -189,6 +189,7 @@ SFH20022018 <- rbind(SFH20022018 , new_data_sfh)
 
 # AND NOW, REMOVE DUPLICATES ------------------------------------
 # THEN SAVE AS VERSION_3
+# First, for MFH----------------------------
 remove_duplicates_by <- c("gebaeude_baujahr",
                           "energietraeger",
                           "abrechnungsjahr",
@@ -196,9 +197,12 @@ remove_duplicates_by <- c("gebaeude_baujahr",
                           "verbrauch_gesamt_kwh",
                           "verbrauch_gesamt_kwh_spez",
                           "Landkreis_von_GS")
-
-
 is_remove_duplicates_by <- which(names(MFH20022018) %in% remove_duplicates_by)
+MFH20022018 <- MFH20022018[!duplicated(MFH20022018[ , is_remove_duplicates_by]) , ]
+# Then for SFH------------------------------
+is_remove_duplicates_by <- which(names(SFH20022018) %in% remove_duplicates_by)
+SFH20022018 <- SFH20022018[!duplicated(SFH20022018[ , is_remove_duplicates_by]) , ]
 
-
-#file2018 <- both2018_v4[!duplicated(both2018_v4[ , is_remove_duplicates_by]) , ]
+#save as Rdata files
+save(MFH20022018 , file = "D:/GITHUB_REPOS/co2emissions/MFH20022018_v3.RData")
+save(SFH20022018 , file = "D:/GITHUB_REPOS/co2emissions/SFH20022018_v3.RData")
