@@ -1,5 +1,6 @@
 #setwd("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis")
 
+source("D:/GITHUB_REPOS/visualization-project2-smurfs/cleanData.R")
 
 source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getBerlinData.R")
 source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getBezirkData.R")
@@ -21,6 +22,8 @@ source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getRowSums.R")
 main_function <- function(gtype,bezirk,et_list) {
   
   berlin_data <- getBerlinData(gtype)
+  berlin_data$verbrauch_gesamt_kwh_spez <- berlin_data$verbrauch_gesamt_kwh_spez/1.2
+  berlin_data <- cleanData(berlin_data , gtype)
   
   bezirk_data <- getBezirkData(bezirk,berlin_data)
   
