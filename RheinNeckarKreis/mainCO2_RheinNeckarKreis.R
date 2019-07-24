@@ -1,5 +1,5 @@
-source("D:/GITHUB_REPOS/co2emissions/RheinNeckarKreis/getRNKData.R")
-source("D:/GITHUB_REPOS/co2emissions/RheinNeckarKreis/getRNKAreas.R")
+source("D:/GITHUB_REPOS/co2emissions/RheinNeckarKreis/getRegionData.R")
+source("D:/GITHUB_REPOS/co2emissions/RheinNeckarKreis/get_RNK_Areas.R")
 source("D:/GITHUB_REPOS/co2emissions/RheinNeckarKreis/getSpecificConsumptionRNK.R")
 source("D:/GITHUB_REPOS/co2emissions/RheinNeckarKreis/getCO2CoeffRNK.R")
 
@@ -21,33 +21,33 @@ main_function <- function(gtype , et_list) {
   
   return_data <- list()
   
-  berlin_data <- getBerlinData(gtype)
-  berlin_data$verbrauch_gesamt_kwh_spez <- berlin_data$verbrauch_gesamt_kwh_spez/1.2
+  region <- "Rhein-Neckar-Kreis"
+  region_data <- getRegionData(gtype,region)
+  region_data$verbrauch_gesamt_kwh_spez <- region_data$verbrauch_gesamt_kwh_spez/1.2
   if (gtype=="SFH") {
     cap_value <- 400.0
   }
   if (gtype=="MFH") {
     cap_value <- 350.0
   }
-  berlin_data <- berlin_data[(berlin_data$verbrauch_gesamt_kwh_spez < cap_value)&(berlin_data$verbrauch_gesamt_kwh_spez > 15.0) , ]
-  berlin_data <- cleanData(berlin_data , gtype)
-  return_data$berlin_data <- berlin_data
+  region_data <- region_data[(region_data$verbrauch_gesamt_kwh_spez < cap_value)&(region_data$verbrauch_gesamt_kwh_spez > 15.0) , ]
+  region_data <- cleanData(region_data , gtype)
+  return_data$region_data <- region_data
   
   
   
-  energy_prop_table <- energy_proportions_by_et(berlin_data,et_list)
+  energy_prop_table <- energy_proportions_by_et(region_data,et_list)
   return_data$energy_prop_table <- energy_prop_table
   
   
   
-  area_prop_table <- area_proportions_by_et(berlin_data,et_list)
+  area_prop_table <- area_proportions_by_et(region_data,et_list)
   return_data$area_prop_table <- area_prop_table
   
+  ############################### do from here on #############################  
   
-  
-  totalArea <- getBerlinAreas()
+  totalArea <- get_RNK_Areas()
   return_data$totalArea <- totalArea
-  
   
   
   spz_verbrauch_mean <- getSpecificConsumptionBerlin(berlin_data , TRUE)
