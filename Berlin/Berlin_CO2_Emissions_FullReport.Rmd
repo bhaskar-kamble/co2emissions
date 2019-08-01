@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning=FALSE)
 
 
 
-```{r, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+```{r,  results='hide', message=FALSE, warning=FALSE}
 source("D:/GITHUB_REPOS/co2emissions/Berlin/mainCO2_Berlin.R")
 et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
 

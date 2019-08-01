@@ -1,5 +1,5 @@
 source("D:/GITHUB_REPOS/visualization-project2-smurfs/cleanData.R")
-source("D:/GITHUB_REPOS/visualization-project2-smurfs/getGermanyData.R")
+source("D:/GITHUB_REPOS/visualization-project2-smurfs/getGermanyData_v2.R")
 source("D:/GITHUB_REPOS/co2emissions/Bundeslander/getBundeslandfromCode.R")
 source("D:/GITHUB_REPOS/visualization-project2-smurfs/getBundeslandfromLK.R")
 

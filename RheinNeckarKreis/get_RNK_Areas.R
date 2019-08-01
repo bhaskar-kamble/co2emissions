@@ -31,10 +31,12 @@ get_RNK_Areas <- function() {
   area_RNK <- area_RNK[ , c("abrechnungsjahr" , "areaSFH" , "areaMFH")]
   
   area_RNK <- appendLinearTrend(obj = area_RNK,
-                                xVar = "abrechningsjahr",
+                                xVar = "abrechnungsjahr",
                                 dropCols = NULL,
                                 missingValues = (2002:2018)[!(2002:2018 %in% 2010:2017)])
   
-  return(area_RNK)
+  #area_RNK <- area_RNK/1.2
+  #area_RNK$abrechnungsjahr <- 2002:2018
+  return(area_RNK) #units are in meter-squared.
   
 }

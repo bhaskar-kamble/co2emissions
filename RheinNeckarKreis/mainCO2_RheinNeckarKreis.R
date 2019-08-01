@@ -23,7 +23,7 @@ main_function <- function(gtype , et_list) {
   
   region <- "Rhein-Neckar-Kreis"
   region_data <- getRegionData(gtype,region)
-  region_data$verbrauch_gesamt_kwh_spez <- region_data$verbrauch_gesamt_kwh_spez/1.2
+  #region_data$verbrauch_gesamt_kwh_spez <- region_data$verbrauch_gesamt_kwh_spez/1.2
   if (gtype=="SFH") {
     cap_value <- 400.0
   }
@@ -44,13 +44,11 @@ main_function <- function(gtype , et_list) {
   area_prop_table <- area_proportions_by_et(region_data,et_list)
   return_data$area_prop_table <- area_prop_table
   
-  ############################### do from here on #############################  
-  
   totalArea <- get_RNK_Areas()
   return_data$totalArea <- totalArea
   
   
-  spz_verbrauch_mean <- getSpecificConsumptionBerlin(berlin_data , TRUE)
+  spz_verbrauch_mean <- getSpecificConsumptionRNK(region_data , TRUE)
   return_data$spz_verbrauch_mean <- spz_verbrauch_mean
   
   
@@ -65,7 +63,7 @@ main_function <- function(gtype , et_list) {
   
   
   
-  co2_coeff <- getCO2CoeffBerlin()
+  co2_coeff <- getCO2CoeffRNK()
   return_data$co2_coeff <- co2_coeff
   
   
