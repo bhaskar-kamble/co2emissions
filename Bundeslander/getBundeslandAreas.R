@@ -44,5 +44,8 @@ getBundeslandAreas <- function(b_land) {
   area_bland$areaSFH <- bland_sfh$areaSFH
   area_bland$areaMFH <- bland_mfh$areaMFH
   
+  area_bland <- 1000*area_bland
+  area_bland$abrechnungsjahr <- 2002:2018
+  
   return(area_bland)
 }

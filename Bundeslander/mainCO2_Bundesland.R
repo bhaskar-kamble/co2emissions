@@ -14,7 +14,7 @@ source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getAbsoluteEnergyShar
 source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCO2Emissions.R")
 source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getRowSums.R")
 
-et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+#et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
 
 main_function <- function(gtype , et_list , bundesland) {
   
@@ -30,7 +30,7 @@ main_function <- function(gtype , et_list , bundesland) {
   area_prop_table <- area_proportions_by_et(bundesland_data,et_list)
   return_data$area_prop_table <- area_prop_table
   
-  totalArea <- getBundeslandAreas()
+  totalArea <- getBundeslandAreas(bundesland)
   return_data$totalArea <- totalArea
   
   spz_verbrauch_mean <- getSpecificConsumptionBundesland(bundesland_data , TRUE , bundesland)
@@ -45,9 +45,9 @@ main_function <- function(gtype , et_list , bundesland) {
   co2_coeff <- getCO2CoeffBundesland(bundesland)
   return_data$co2_coeff <- co2_coeff
   
-  #co2_emissions <- getCO2Emissions(co2_coeff , energy_shares_absolute)
-  #co2_emissions <- getRowSums(co2_emissions , dropCols = "abrechnungsjahr")
-  #return_data$co2_emissions <- co2_emissions
+  co2_emissions <- getCO2Emissions(co2_coeff , energy_shares_absolute)
+  co2_emissions <- getRowSums(co2_emissions , dropCols = "abrechnungsjahr")
+  return_data$co2_emissions <- co2_emissions
   
   
   return(return_data)

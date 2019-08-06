@@ -80,11 +80,11 @@ RegDataBereinigung <- function(RD) {
 
 getSpecificConsumptionBundesland <- function(bezirk_data , wetter_ja_nein , bundesland) {
   
-  if (bundesland != "Baden-Württemberg") {
-    stop("have you taken the correct weather data?")
-  } else {
-    warning("using Mannheim weather data for now")
-  }
+  #if (bundesland != "Baden-Württemberg") {
+  #  stop("have you taken the correct weather data?")
+  #} else {
+  #  warning("using Mannheim weather data for now")
+  #}
   
   if (wetter_ja_nein) {
     #weather_data <- read.csv2("D:/GITHUB_REPOS/co2emissions/Germany/wetterGermany.csv",header=TRUE)
