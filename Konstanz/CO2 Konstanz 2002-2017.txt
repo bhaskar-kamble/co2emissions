@@ -1,0 +1,578 @@
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0402 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.01 I Neubau   I          Idurch Bau-I 31.12.2002
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9513         37          4           1      9547
+ Wohnfl‰che qm             2933793      17896        727        1853   2952815
+ Wohnungen                   38527        222          8          23     38764
+ davon
+   mit 1 Wohnung              3587         16          2          -7      3594
+   Wohnfl‰che qm            445135       2482        255        -837    446525
+
+   mit 2 Wohnungen            1707          7          0           5      1719
+   Wohnfl‰che qm            314458       1417          0        1151    317026
+   Wohnungen                  3414         14          0          10      3438
+
+   mit 3 u.m.Wohnungen        4219         14          2           3      4234
+   Wohnfl‰che qm           2174200      13997        472        1539   2189264
+   darin Wohnungen           31526        192          6          20     31732
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0403 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.02 I Neubau   I          Idurch Bau-I 31.12.2003
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9547         38          6           0      9579
+ Wohnfl‰che qm             2952815       9489        912        1281   2962673
+ Wohnungen                   38764         86          9          10     38851
+ davon
+   mit 1 Wohnung              3594         23          4          -3      3610
+   Wohnfl‰che qm            446525       3687        455        -295    449462
+
+   mit 2 Wohnungen            1719          7          1          -1      1724
+   Wohnfl‰che qm            317026       1475        280        -171    318050
+   Wohnungen                  3438         14          2          -2      3448
+
+   mit 3 u.m.Wohnungen        4234          8          1           4      4245
+   Wohnfl‰che qm           2189264       4327        177        1747   2195161
+   darin Wohnungen           31732         49          3          15     31793
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0404 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.03 I Neubau   I          Idurch Bau-I 31.12.2004
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9579         74          7           5      9651
+ Wohnfl‰che qm             2962673      13699        862        3560   2979070
+ Wohnungen                   38851        133         10          34     39008
+ davon
+   mit 1 Wohnung              3610         60          6          -3      3661
+   Wohnfl‰che qm            449462       8216        661         -14    457003
+
+   mit 2 Wohnungen            1724          6          0           5      1735
+   Wohnfl‰che qm            318050       1118          0        1039    320207
+   Wohnungen                  3448         12          0          10      3470
+
+   mit 3 u.m.Wohnungen        4245          8          1           3      4255
+   Wohnfl‰che qm           2195161       4365        201        2535   2201860
+   darin Wohnungen           31793         61          4          27     31877
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0405 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.04 I Neubau   I          Idurch Bau-I 31.12.2005
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9651         62          8           5      9710
+ Wohnfl‰che qm             2979070      17547       1415        3032   2998234
+ Wohnungen                   39008        154         20          37     39179
+ davon
+   mit 1 Wohnung              3661         35          5          -3      3688
+   Wohnfl‰che qm            457003       4889        577        -117    461198
+
+   mit 2 Wohnungen            1735         13          1           2      1749
+   Wohnfl‰che qm            320207       2762        170         268    323067
+   Wohnungen                  3470         26          2           4      3498
+
+   mit 3 u.m.Wohnungen        4255         14          2           6      4273
+   Wohnfl‰che qm           2201860       9896        668        2881   2213969
+   darin Wohnungen           31877         93         13          36     31993
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0406 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.05 I Neubau   I          Idurch Bau-I 31.12.2006
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9710        108          5           4      9817
+ Wohnfl‰che qm             2998234      36574       1149        5921   3039580
+ Wohnungen                   39179        335         15          57     39556
+ davon
+   mit 1 Wohnung              3688         65          1          -2      3750
+   Wohnfl‰che qm            461198      10387        141         446    471890
+
+   mit 2 Wohnungen            1749          4          1           2      1754
+   Wohnfl‰che qm            323067        950        240         725    324502
+   Wohnungen                  3498          8          2           4      3508
+
+   mit 3 u.m.Wohnungen        4273         39          3           4      4313
+   Wohnfl‰che qm           2213969      25237        768        4750   2243188
+   darin Wohnungen           31993        262         12          55     32298
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0407 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.06 I Neubau   I          Idurch Bau-I 31.12.2007
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9817         69          8           5      9883
+ Wohnfl‰che qm             3039580      18911       1995        4793   3061289
+ Wohnungen                   39556        188         27          52     39769
+ davon
+   mit 1 Wohnung              3750         34          2          -2      3780
+   Wohnfl‰che qm            471890       5015        291         514    477128
+
+   mit 2 Wohnungen            1754         16          3          -2      1765
+   Wohnfl‰che qm            324502       2860        705        -240    326417
+   Wohnungen                  3508         32          6          -4      3530
+
+   mit 3 u.m.Wohnungen        4313         19          3           9      4338
+   Wohnfl‰che qm           2243188      11036        999        4519   2257744
+   darin Wohnungen           32298        122         19          58     32459
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0408 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.07 I Neubau   I          Idurch Bau-I 31.12.2008
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9883         57         21           9      9928
+ Wohnfl‰che qm             3061289      12439       5006        6960   3075682
+ Wohnungen                   39769        115         89          51     39846
+ davon
+   mit 1 Wohnung              3780         39          2           0      3817
+   Wohnfl‰che qm            477128       5837        228        1086    483823
+
+   mit 2 Wohnungen            1765          9          1           2      1775
+   Wohnfl‰che qm            326417       1420        142         574    328269
+   Wohnungen                  3530         18          2           4      3550
+
+   mit 3 u.m.Wohnungen        4338          9         18           7      4336
+   Wohnfl‰che qm           2257744       5182       4636        5300   2263590
+   darin Wohnungen           32459         58         85          47     32479
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0409 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.08 I Neubau   I          Idurch Bau-I 31.12.2009
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9928         51          6           1      9974
+ Wohnfl‰che qm             3075682      16018       1433        2776   3093043
+ Wohnungen                   39846        157         10          12     40005
+ davon
+   mit 1 Wohnung              3817         30          4          -3      3840
+   Wohnfl‰che qm            483823       4430        595         199    487857
+
+   mit 2 Wohnungen            1775          7          1           1      1782
+   Wohnfl‰che qm            328269       1477        300         140    329586
+   Wohnungen                  3550         14          2           2      3564
+
+   mit 3 u.m.Wohnungen        4336         14          1           3      4352
+   Wohnfl‰che qm           2263590      10111        538        2437   2275600
+   darin Wohnungen           32479        113          4          13     32601
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0410 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)2)
+ --------------------------------------------------------------------------------
+                       I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                       I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                       I 31.12.09 I Neubau   I          Idurch Bau-I 31.12.2010
+ --------------------------------------------------------maﬂnahmen--------------
+ Wohngeb‰ude insges.          9974         61          7         259     10287
+ Wohnfl‰che qm             3093043      20164       1652       98744   3210299
+ Wohnungen                   40005        218         15        -125     40083
+ davon
+   mit 1 Wohnung              3840         29          4         457      4322
+   Wohnfl‰che qm            487857       4725        474      113170    605278
+
+   mit 2 Wohnungen            1782          8          1        -298      1491
+   Wohnfl‰che qm            329586       1513        240      -48507    282352
+   Wohnungen                  3564         16          2        -596      2982
+
+   mit 3 u.m.Wohnungen        4352         24          2          39      4413
+   Wohnfl‰che qm           2275600      13926        938      -45103   2243485
+   darin Wohnungen           32601        173          9       -1350     31415
+  1) ohne Wohnungen in Wohnheimen  2) Basis GWZ 25.5.1987
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0411 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)
+ --------------------------------------------------------------------------------
+                      I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                      I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                      I 31.12.10 I Neubau   I          Idurch Bau-I 31.12.2011
+ --------------------------------------------------------maﬂnahmen---------------
+ Wohngeb‰ude insges.        10287         79          1           3     10368
+ Wohnfl‰che qm            3210299      27620       1268        5037   3241688
+ Wohnungen                  40083        329         15          52     40449
+ davon mit 1 Wohnung         4322         41          0          -3      4360
+ Wohnfl‰che qm             605278       6355          0         141    611774
+ mit 2 Wohnungen             1491         14          0           3      1508
+ Wohnfl‰che qm             282352       3064          0         989    286405
+ Wohnungen                   2982         28          0           6      3016
+ mit 3 u.m.Wohnungen         4413         17          1           3      4432
+ Wohnfl‰che qm            2243485      11579       1268        3907   2257703
+ Wohnungen                  31415        124         15          49     31573
+ Wohnheime                     61          7          0           0        68
+ Wohnfl‰che qm              79184       6622          0           0     85806
+ Wohnungen                   1364        136          0           0      1500
+ 1) Basis Geb‰ude- und Wohnungsz‰hlung vom 09 Mai 2011.
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0412 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)
+ --------------------------------------------------------------------------------
+                      I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                      I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                      I 31.12.11 I Neubau   I          Idurch Bau-I 31.12.2012
+ --------------------------------------------------------maﬂnahmen---------------
+ Wohngeb‰ude insges.        10368         69         13           3     10427
+ Wohnfl‰che qm            3241688      27852       3348        7077   3273269
+ Wohnungen                  40449        315         38          79     40805
+ davon mit 1 Wohnung         4360         36          5          -3      4388
+ Wohnfl‰che qm             611774       5698        855          19    616636
+ mit 2 Wohnungen             1508          7          2          -1      1512
+ Wohnfl‰che qm             286405       1439        346         -27    287471
+ Wohnungen                   3016         14          4          -2      3024
+ mit 3 u.m.Wohnungen         4432         26          6           7      4459
+ Wohnfl‰che qm            2257703      20715       2147        5710   2281981
+ Wohnungen                  31573        265         29          72     31881
+ Wohnheime                     68          0          0           0        68
+ Wohnfl‰che qm              85806          0          0        1375     87181
+ Wohnungen                   1500          0          0          12      1512
+ 1) Basis Geb‰ude- und Wohnungsz‰hlung vom 09 Mai 2011.
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0413 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)
+ --------------------------------------------------------------------------------
+                      I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                      I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                      I 31.12.12 I Neubau   I          Idurch Bau-I 31.12.2013
+ --------------------------------------------------------maﬂnahmen---------------
+ Wohngeb‰ude insges.        10427         91         13           3     10508
+ Wohnfl‰che qm            3273269      46139       2760        4500   3321148
+ Wohnungen                  40805        553         33          42     41367
+ davon mit 1 Wohnung         4388         38          8           0      4418
+ Wohnfl‰che qm             616636       6070       1127         450    622029
+ mit 2 Wohnungen             1512         10          1           0      1521
+ Wohnfl‰che qm             287471       1835        158         255    289403
+ Wohnungen                   3024         20          2           0      3042
+ mit 3 u.m.Wohnungen         4459         43          4           3      4501
+ Wohnfl‰che qm            2281981      38234       1475        3605   2322345
+ Wohnungen                  31881        495         23          25     32378
+ Wohnheime                     68          0          0           0        68
+ Wohnfl‰che qm              87181          0          0         190     87371
+ Wohnungen                   1512          0          0          17      1529
+ 1) Basis Geb‰ude- und Wohnungsz‰hlung vom 09 Mai 2011.
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0414 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)
+ --------------------------------------------------------------------------------
+                      I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                      I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                      I 31.12.13 I Neubau   I          Idurch Bau-I 31.12.2014
+ --------------------------------------------------------maﬂnahmen---------------
+ Wohngeb‰ude insges.        10508         77         14           3     10574
+ Wohnfl‰che qm            3321148      34915       3267        5252   3358048
+ Wohnungen                  41367        387         48          60     41766
+ davon mit 1 Wohnung         4418         32          5          -5      4440
+ Wohnfl‰che qm             622029       4495        624        -274    625626
+ mit 2 Wohnungen             1521         12          4           2      1531
+ Wohnfl‰che qm             289403       2561        921         684    291727
+ Wohnungen                   3042         24          8           4      3062
+ mit 3 u.m.Wohnungen         4501         31          5           6      4533
+ Wohnfl‰che qm            2322345      24431       1722        3833   2348887
+ Wohnungen                  32378        283         35          40     32666
+ Wohnheime                     68          2          0           0        70
+ Wohnfl‰che qm              87371       3428          0        1009     91808
+ Wohnungen                   1529         48          0          21      1598
+ 1) Basis Geb‰ude- und Wohnungsz‰hlung vom 09. Mai 2011.
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0415 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)
+ --------------------------------------------------------------------------------
+                      I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                      I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                      I 31.12.14 I Neubau   I          Idurch Bau-I 31.12.2015
+ --------------------------------------------------------maﬂnahmen---------------
+ Wohngeb‰ude insges.        10574         55          5           1     10625
+ Wohnfl‰che qm            3358048      35031        509        2317   3394887
+ Wohnungen                  41766        496          8          16     42270
+ davon mit 1 Wohnung         4440         14          2          -3      4449
+ Wohnfl‰che qm             625626       2211        154         -15    627668
+ mit 2 Wohnungen             1531         10          3          -1      1537
+ Wohnfl‰che qm             291727       2026        355        -133    293265
+ Wohnungen                   3062         20          6          -2      3074
+ mit 3 u.m.Wohnungen         4533         30          0           5      4568
+ Wohnfl‰che qm            2348887      27764          0        2465   2379116
+ Wohnungen                  32666        369          0          21     33056
+ Wohnheime                     70          1          0           0        71
+ Wohnfl‰che qm              91808       3030          0           0     94838
+ Wohnungen                   1598         93          0           0      1691
+ 1) Basis Geb‰ude- und Wohnungsz‰hlung vom 09. Mai 2011.
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0416 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)
+ --------------------------------------------------------------------------------
+                      I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                      I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                      I 31.12.15 I Neubau   I          Idurch Bau-I 31.12.2016
+ --------------------------------------------------------maﬂnahmen---------------
+ Wohngeb‰ude insges.        10625         25          9           5     10646
+ Wohnfl‰che qm            3394887      15962       2160        2046   3410735
+ Wohnungen                  42270        286         26          29     42559
+ davon mit 1 Wohnung         4449          4          4           3      4452
+ Wohnfl‰che qm             627668        689        590         470    628237
+ mit 2 Wohnungen             1537          3          2          -1      1537
+ Wohnfl‰che qm             293265        874        365        -304    293470
+ Wohnungen                   3074          6          4          -2      3074
+ mit 3 u.m.Wohnungen         4568         17          3           3      4585
+ Wohnfl‰che qm            2379116      12654       1205        1880   2392445
+ Wohnungen                  33056        172         18          28     33238
+ Wohnheime                     71          1          0           0        72
+ Wohnfl‰che qm              94838       1745          0           0     96583
+ Wohnungen                   1691        104          0           0      1795
+ 1) Basis Geb‰ude- und Wohnungsz‰hlung vom 09. Mai 2011.
+
+
+
+
+
+
+
+
+
+
+
+
+                  INFORMATIONSSYSTEM BADEN-W‹RTTEMBERG - S R D B -
+ a42w0417 Wohnungsfortschreibung                   Gebiet: Konstanz, Univ.-Stadt
+ --------------------------------------------------------------------------------
+ Fortschreibung des Bestandes an Wohngeb‰uden nach Geb‰udearten 1)
+ --------------------------------------------------------------------------------
+                      I Bestand  I Zugang   I Total-   I  Saldo   I Bestand
+                      I   zum    I durch    I abgang   IZu-/AbgangI   zum
+                      I 31.12.16 I Neubau   I          Idurch Bau-I 31.12.2017
+ --------------------------------------------------------maﬂnahmen---------------
+ Wohngeb‰ude insges.        10646         49          7           4     10692
+ Wohnfl‰che qm            3410735      22374       3042        7252   3437319
+ Wohnungen                  42559        244         24          63     42842
+ davon mit 1 Wohnung         4452         18          3          -4      4463
+ Wohnfl‰che qm             628237       3144        392         217    631206
+ mit 2 Wohnungen             1537          6          1           5      1547
+ Wohnfl‰che qm             293470       1473        200        1671    296414
+ Wohnungen                   3074         12          2          10      3094
+ mit 3 u.m.Wohnungen         4585         25          3           3      4610
+ Wohnfl‰che qm            2392445      17757       2450        5364   2413116
+ Wohnungen                  33238        214         19          57     33490
+ Wohnheime                     72          0          0           0        72
+ Wohnfl‰che qm              96583          0          0           0     96583
+ Wohnungen                   1795          0          0           0      1795
+ 1) Basis Geb‰ude- und Wohnungsz‰hlung vom 09. Mai 2011.
+
+
+
+
+
+
+
+
+
+
