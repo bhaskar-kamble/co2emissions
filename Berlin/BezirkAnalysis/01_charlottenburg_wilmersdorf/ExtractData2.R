@@ -28,7 +28,7 @@ bezirk_list  <- c(
   "treptow_koepenick"                              
 )
 
-bezirk_path_list <- paste0("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/",bezirk_number_list,"_",bezirk_list,"/")
+#bezirk_path_list <- paste0("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/",bezirk_number_list,"_",bezirk_list,"/")
 
 ################################################################################
 areas_mfh_allebezirke <- data.frame(abrechnungsjahr = 2002:2018)

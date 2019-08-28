@@ -45,11 +45,11 @@ main_function <- function(gtype , et_list) {
   area_prop_table <- area_proportions_by_et(region_data,et_list)
   return_data$area_prop_table <- area_prop_table
   
-  totalArea <- get_RNK_Areas()
+  totalArea <- get_Konstanz_Areas()
   return_data$totalArea <- totalArea
   
   
-  spz_verbrauch_mean <- getSpecificConsumptionRNK(region_data , TRUE)
+  spz_verbrauch_mean <- getSpecificConsumptionKonstanz(region_data , TRUE)
   return_data$spz_verbrauch_mean <- spz_verbrauch_mean
   
   
@@ -64,7 +64,7 @@ main_function <- function(gtype , et_list) {
   
   
   
-  co2_coeff <- getCO2CoeffRNK()
+  co2_coeff <- getCO2CoeffKonstanz()
   return_data$co2_coeff <- co2_coeff
   
   

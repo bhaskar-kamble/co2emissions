@@ -11,6 +11,7 @@ get_Konstanz_Areas <- function() {
                                 xVar = "abrechnungsjahr",
                                 dropCols = NULL,
                                 missingValues = (2002:2018)[!(2002:2018 %in% 2010:2017)])
+  #areas are in meters-squared
   return(area_Konstanz)
 }
 
