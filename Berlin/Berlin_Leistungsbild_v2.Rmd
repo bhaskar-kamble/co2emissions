@@ -16,6 +16,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning=FALSE,cache=FALSE)
 ```
 
+# <font size="20">Teil 1.</font>
 
 General Notes:
 
@@ -344,7 +345,13 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO2-Emission aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
 
-Same as 1.1.2.
+
+(Eine Grafik: co2 Emissionen je Bezirk und Jahr)
+Co2 emissions of all city districts by year in a single graph. (year on x-axis and co2 emission on y-axis).
+One Graph: Co2 emissions of all city districts by year
+
+
+
 
 ```{r}
 i_subsubsection <- i_subsubsection + 1
@@ -988,7 +995,7 @@ points_line_lm(input_data = spez_co2_sfh,
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum 2002 - 2008 in kg/m2[AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum 2002 – 2008 in kg/m2[AN]
 
 ```{r}
 bezirke_spez_co2_sfh <- 1e6*berlin_co2_sfh/bezirk_areas_sfh
@@ -1062,7 +1069,7 @@ ggplot(data=bezirke_spezco2_sfh_linear_2018,aes(x=bezirk,y=wert))+geom_bar(stat=
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002 - 2008, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002 – 2008, 2002 = 100
 
 ```{r}
 get2002as100(spez_co2_sfh , "abrechnungsjahr")
@@ -1116,7 +1123,7 @@ i_subsubsection <- 1
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2008, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 – 2008, 2002 = 100
 
 **I need the data for the population in SFH and MFH buildings**
 
@@ -1336,7 +1343,7 @@ points_line_lm(input_data = spez_co2_mfh,
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum 2002 - 2008 in kg/m2[AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum 2002 – 2008 in kg/m2[AN]
 
 ```{r}
 bezirke_spez_co2_mfh <- 1e6*berlin_co2_mfh/bezirk_areas_mfh
@@ -1408,7 +1415,7 @@ ggplot(data=bezirke_spezco2_mfh_linear_2018,aes(x=bezirk,y=wert))+geom_bar(stat=
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002 - 2008, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002 – 2008, 2002 = 100
 
 ```{r}
 get2002as100(spez_co2_mfh , "abrechnungsjahr")
@@ -1458,7 +1465,7 @@ i_subsubsection <- 1
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2008, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 – 2008, 2002 = 100
 
 ```{r}
 i_subsubsection <- i_subsubsection + 1
@@ -1519,7 +1526,7 @@ i_subsection <- 1
 ```
 
 
-# `r i_section`.	Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, alle Wohngebäude 
+# `r i_section`.	Heizenergieverbrauch nach Stadtbezirken 2002 – 2018, alle Wohngebäude 
 
 ## `r i_section`.`r i_subsection`.	Stadtbezirke, alle Wohngebäude, Heizenergieverbrauch 2002 - 2018 summiert 
 
@@ -1575,7 +1582,7 @@ plot_byBezirke(aes_by_bezirk_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , pl
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`.	Stadtbezirke, alle Wohngebäude, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
+## `r i_section`.`r i_subsection`.	Stadtbezirke, alle Wohngebäude, flächenbezogener Heizenergieverbrauch 2002 – 2018 in kWh/(m2[AN]*a) 
 
 
 * `bezirk_areas_all$total` gives the total areas of berlin (MFH+SFH).
@@ -1604,7 +1611,7 @@ points_line_lm(input_data = spz_verbrauch_all,
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, alle Wohngebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, alle Wohngebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 – 2018
 
 Plot of the total area (to be combined with the specific energy consumption into one picture):
 
@@ -1627,7 +1634,7 @@ i_section <- i_section + 1
 i_subsection <- 1
 ```
 
-# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, 1-2 Familiengebäude 
+# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 – 2018, 1-2 Familiengebäude 
 
 ## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, Heizenergieverbrauch 2002 - 2018 summiert 
 
@@ -1676,7 +1683,7 @@ plot_byBezirke(aes_by_bezirk_TWh_sfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" 
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogener Heizenergieverbrauch 2002 – 2018 in kWh/(m2[AN]*a) 
 
 
 
@@ -1702,7 +1709,7 @@ points_line_lm(input_data = spz_verbrauch_sfh,
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 – 2018
 
 Plot of the 1-2 FH area (to be combined with the specific energy consumption into one picture):
 
@@ -1731,7 +1738,7 @@ i_section <- i_section + 1
 i_subsection <- 1
 ```
 
-# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, Mehrfamiliengebäude 
+# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 – 2018, Mehrfamiliengebäude 
 
 ## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, Heizenergieverbrauch 2002 - 2018 summiert 
 
@@ -1780,7 +1787,7 @@ plot_byBezirke(aes_by_bezirk_TWh_mfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" 
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
+## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch 2002 – 2018 in kWh/(m2[AN]*a) 
 
 
 
@@ -1806,7 +1813,7 @@ points_line_lm(input_data = spz_verbrauch_mfh,
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 – 2018
 
 Plot of the MFH area (to be combined with the specific energy consumption into one picture):
 
@@ -1814,3 +1821,262 @@ Plot of the MFH area (to be combined with the specific energy consumption into o
 plot(2002:2018 , bezirk_areas_mfh$total)
 ```
 
+
+# <font size="20">Teil 2.</font>
+
+```{r}
+extract_co2_emission <- function(obj_sfh , obj_mfh) {
+  co2_SFH <- obj_sfh$co2_emissions 
+  co2_MFH <- obj_mfh$co2_emissions 
+  co2_SFH$strom[co2_SFH$abrechnungsjahr < 2010] <- mean(co2_SFH$strom[co2_SFH$abrechnungsjahr >2009])
+  co2_MFH$strom[co2_MFH$abrechnungsjahr < 2010] <- mean(co2_MFH$strom[co2_MFH$abrechnungsjahr >2009])
+  #recalculate "total" column
+  co2_SFH <- getRowSums(co2_SFH[,names(co2_SFH)!="total"] , dropCols = "abrechnungsjahr")
+  co2_MFH <- getRowSums(co2_MFH[,names(co2_MFH)!="total"] , dropCols = "abrechnungsjahr")
+  #---
+  co2_ALL <- co2_SFH + co2_MFH
+  co2_ALL$abrechnungsjahr <- 2002:2018
+  co2_SFH <- co2_SFH/1e7
+  co2_MFH <- co2_MFH/1e7
+  co2_ALL <- co2_ALL/1e7
+  co2_SFH$abrechnungsjahr <- 2002:2018
+  co2_MFH$abrechnungsjahr <- 2002:2018
+  co2_ALL$abrechnungsjahr <- 2002:2018
+  
+  return_data <- list()
+  return_data$SFH <- co2_SFH
+  return_data$MFH <- co2_MFH
+  return_data$ALL <- co2_ALL
+  return(return_data)
+}
+
+extract_aes <- function(obj_sfh , obj_mfh) {
+  aes_SFH <- obj_sfh$energy_shares_absolute
+  aes_MFH <- obj_mfh$energy_shares_absolute
+  aes_SFH$strom[aes_SFH$abrechnungsjahr < 2010] <- mean(aes_SFH$strom[aes_SFH$abrechnungsjahr >2009])
+  aes_MFH$strom[aes_MFH$abrechnungsjahr < 2010] <- mean(aes_MFH$strom[aes_MFH$abrechnungsjahr >2009])
+  aes_SFH <- getRowSums(aes_SFH , dropCols = "abrechnungsjahr")
+  aes_MFH <- getRowSums(aes_MFH , dropCols = "abrechnungsjahr")
+  aes_ALL <- aes_SFH + aes_MFH
+  aes_ALL$abrechnungsjahr <- 2002:2018
+  
+  return_data <- list()
+  return_data$SFH <- aes_SFH
+  return_data$MFH <- aes_MFH
+  return_data$ALL <- aes_ALL
+  return(return_data)
+}
+```
+
+```{r}
+bezirk_proper_names  <- c(
+  "Charlottenburg-Wilmersdorf",
+  "Friedrichshain-Kreuzberg",
+  "Lichtenberg",
+  "Marzahn-Hellersdorf",
+  "Mitte",
+  "Neukölln",
+  "Pankow"    ,             
+  "Reinickendorf",
+  "Spandau",
+  "Steglitz-Zehlendorf" ,
+  "Tempelhof-Schöneberg",
+  "Treptow-Köpenick"                              
+)
+
+bezirk_list  <- c(
+  "charlottenburg_wilmersdorf",
+  "friedrichshain_kreuzberg",
+  "lichtenberg",
+  "marzahn_hellersdorf",
+  "mitte",
+  "neukoelln",
+  "pankow"    ,             
+  "reinickendorf",
+  "spandau",
+  "steglitz_zehlendorf" ,
+  "tempelhof_schoeneberg",
+  "treptow_koepenick"                              
+)
+```
+
+
+```{r}
+i_bezirk <- 0
+```
+
+
+
+
+
+```{r}
+i_bezirk           <- i_bezirk + 1
+bezirk             <- bezirk_list[i_bezirk]
+bezirk_proper_name <- bezirk_proper_names[i_bezirk]
+et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+```
+
+```{r}
+i_section <- i_section + 1
+i_subsection <- 0
+i_subsubsection <- 0
+```
+
+# `r bezirk_proper_name`
+
+# `r i_section`.`r bezirk_proper_name`, alle Wohngebäude, CO2-Emission aus Beheizung 2002 – 2018 
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Absolute Zahlen
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`, alle Wohngebäude, CO2-Emission aus Beheizung 2002 - 2018 in units
+
+```{r}
+return_SFH <- main_function("SFH" , bezirk , et_list)
+return_MFH <- main_function("MFH" , bezirk , et_list)
+return_co2 <- extract_co2_emission(return_SFH , return_MFH)
+return_aes <- extract_aes(return_SFH , return_MFH) #this you can put in the section dealing with energy.
+```
+
+Here you need just the total co2 emitted, not split by ET.
+```{r}
+bezirk_co2_all <- return_co2$ALL
+```
+
+```{r}
+points_line_lm(input_data = bezirk_co2_all,
+               xVar = "abrechnungsjahr",
+               yVar = "total",
+               ymin = 0,
+               ymax = max(bezirk_co2_all$total),
+               x_eq = 2010,
+               y_eq = 300,
+               size_eq = 4,
+               plot_title = paste0("CO2 emissions in ",bezirk_proper_name, " All buildings"),
+               xlab = "Jahr",
+               ylab = "kilo t.")
+```
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`, alle Wohngebäude, CO2-Emission aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in units CO2, summiert
+
+Here you need to split by ET
+```{r}
+bezirk_co2_all_cumsums <- getCumSums(bezirk_co2_all , dropCols = c("abrechnungsjahr","total"))
+plot_byET(bezirk_co2_all_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = paste0("CO2 Emissions All buildings ",bezirk_proper_name) )
+```
+
+
+
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`, alle Wohngebäude, Emission aus Beheizung 2002 - 2018 nach Energieträgern, Anteile in %
+
+```{r}
+bezirk_co2_all_prop <- find_proportions(bezirk_co2_all,drop_cols = c("abrechnungsjahr","total"))
+bezirk_co2_all_prop_cumsums <- getCumSums(bezirk_co2_all_prop,dropCols="abrechnungsjahr")
+plot_byET(bezirk_co2_all_prop_cumsums , xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = paste0("CO2 Emissions All buildings ",bezirk_proper_name) )
+```
+
+```{r}
+i_subsection <- i_subsection + 1
+i_subsubsection <- 0
+```
+
+## `r i_section`.`r i_subsection`. Flächenbezug
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. alle Wohngebäude, flächenbezogene Emission aus Beheizung 2002 - 2018
+
+```{r}
+bezirk_total_area <- return_SFH$totalArea
+bezirk_total_area$areaALL <- bezirk_total_area$areaSFH + bezirk_total_area$areaMFH
+bezirk_total_area <- 100*bezirk_total_area
+bezirk_total_area$abrechnungsjahr <- 2002:2018
+```
+
+```{r}
+bezirk_spzco2_all <- data.frame(abrechnungsjahr=2002:2018 ,   spzco2 = 1e6*(bezirk_co2_all$total / bezirk_total_area$areaALL) )
+bezirk_spzco2_all
+```
+
+```{r}
+points_line_lm(input_data = bezirk_spzco2_all,
+               xVar = "abrechnungsjahr",
+               yVar = "spzco2",
+               ymin=0,
+               ymax=max(bezirk_spzco2_all$spzco2),
+               x_eq = 2010,
+               y_eq = 20,
+               size_eq = 4,
+               plot_title = paste0("Specific CO2 emissions, All buildings ",bezirk_proper_name),
+               xlab = "Jahr",
+               ylab = "kg/qm")
+```
+
+
+
+<font size="12">Isn't it strange that the above graph has almost exactly the same shape as total co2 emissions?</font>
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. alle Wohngebäude, flächenbezogene CO2-Emssion und beheizte Wohnfläche 2002 – 2018
+
+```{r}
+plot(bezirk_total_area$abrechnungsjahr , bezirk_total_area$areaALL)
+```
+
+```{r}
+i_subsection <- i_subsection + 1
+i_subsubsection <- 0
+```
+
+## `r i_section`.`r i_subsection`. Emission pro Einwohner
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. alle Wohngebäude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner 2002 - 2018
+
+* Need data for this.
+
+```{r}
+i_subsection <- i_subsection + 1
+i_subsubsection <- 0
+```
+
+## `r i_section`.`r i_subsection`. Prognose
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Alle Stadtbezirke, Prognose der CO2-Emission aus Behei¬zung von 1-2 Familiengebäuden 2019 - 2030 in Mio. t (Trend Polynom 2. Grades)
+
+**Are you sure this is for Alle Stadtbezirke?**
+
+```{r}
+i_subsection <- i_subsection + 1
+i_subsubsection <- 0
+```
+
+## `r i_section`.`r i_subsection`. Einflussfaktoren
