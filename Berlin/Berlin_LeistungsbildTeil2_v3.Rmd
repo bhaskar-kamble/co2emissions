@@ -27,7 +27,7 @@ source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
 
 ```{r}
 require(ggplot2)
-#look at line 187 of BerlinPresentationCO2BalanceUnified_v6.Rmd
+#look at line 187 of BerlinPresentationCO2BalanceUnified_v6.Rmd#
 points_line_lm <- function(input_data,
                            xVar,
                            yVar,
