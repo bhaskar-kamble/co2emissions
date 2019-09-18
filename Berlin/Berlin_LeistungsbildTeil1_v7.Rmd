@@ -55,8 +55,20 @@ i_subsection <- 1
 ```
 
 
+
 ## `r i_section`.`r i_subsection` Absolute Zahlen
 
+### Sample Size
+
+```{r}
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getSampleSize.R")
+berlin_sample_size <- getSampleSize()
+```
+
+```{r}
+require(ggplot2)
+ggplot(berlin_sample_size$ALL) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="Stichprobengröße",title="Berlin, Alle Wohngebäude")+scale_x_continuous(breaks=seq(2002,2018,2))
+```
 
 ```{r}
 i_subsubsection <- 1
@@ -1451,6 +1463,13 @@ i_subsubsection <- 1
 
 ## `r i_section`.`r i_subsection` Absolute Zahlen
 
+### Sample Size
+
+```{r}
+require(ggplot2)
+ggplot(berlin_sample_size$SFH) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="Stichprobengröße",title="Berlin, 1-2 Familiengebäude")+scale_x_continuous(breaks=seq(2002,2018,2))
+```
+
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 Familiengebäude, co2-Emission aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
 
 ```{r}
@@ -1963,6 +1982,13 @@ i_subsection <- 1
 
 ```{r}
 i_subsubsection <- 1
+```
+
+### Sample Size
+
+```{r}
+require(ggplot2)
+ggplot(berlin_sample_size$MFH) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="Stichprobengröße",title="Berlin, Mehrfamiliengebäude")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in 1.000 t
@@ -3034,14 +3060,27 @@ area= bezirk_areas_mfh$total,
               spez_verbrauch = spz_verbrauch_mfh$kWh_per_m2)
 ```
 
+# Sample size in Berlin
+
+
+
 
 # Points to do
 
 * Write a description of what each point does. What the graph shows.
 * Improve the title, xlabel etc.
-* Make a table of the sample size
 * Change font style to calibri or verdana or ariel
 * The graphs in svg OR in jpeg or png with a  resolution of 300 - 600 DPI.
+
+* For the pro kopf calculations:
+1.	You have the population statistics for entire Berlin, MFH+SFH combined, i.e. how many people live in SFH flats and how many in MFH flats. You have the number of SFH and MFH flats in Berlin. So fins out many people live in each MFH flat, and how many people live in each SFH flat.
+
+2.	Now take Bezirk X. You have the number of flats in Bezirk X; look at for instance D: /GITHUB_REPOS/co2emissions/Berlin/FindArea/year2015.csv etc. You also have the population of the bezirk. From point 2, you found out how many people live on an average in each MFH flat and in each SFH flat. Multiply the number of MFH flats in Bezirk X with the number of people living in each MFH flat. This gives the number of people in MFH flats in Bezirk X. Likewise find how many people live in SFH flats in Bezirk X. The sum should ideally equal the population of the Bezirk.
+
+
+
+
+
 # Inferences
 
 * Section 5.2, 1-2 FH energy consumption is increasing for Lichtenberg and Marzahn-Hellersdorf.
