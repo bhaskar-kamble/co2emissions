@@ -466,6 +466,10 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO2-Emission aus der Beheizung von Wohnraum 2002-2018, Veränderung in Prozent
 
+* Finds the mean co2 emitted by each bezirk in each year (for eg for year Y, total co2 by all bezirks in Y divided by number of bezirks).
+
+* For bezirk X, it finds the difference of co2 emitted by X in year Y and the mean co2 in year Y, divides by the diffference by the mean co2 in year Y, and multiplies by 100
+
 ```{r}
 getDeviationsFromMean <- function(input_data,xVar,colsToAvgOver) {
   input_data <- input_data[ , c(xVar , colsToAvgOver)]
@@ -863,7 +867,9 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Alle Stadtbezirke, alle Wohngebäude, flächenbezogene co2 Emission aus der Beheizung von Wohnraum, Entwicklung 2002-2018 und Niveau 2018 (Rang-folge)
 
-Take the Berlin specific CO2 emission for 2018 as the baseline, Subtract from this the 2018 value of specific co2 emission of Stadtbezirk X. Do for all the bezirks and make a barplot.
+
+
+***(Berlin specific CO2 emission for 2018) - (Bezirk specific CO2 emission for 2018)***
 
 Make a linear trend of `spez_co2_emission`. This is the value for Berlin total. The 2018 value is the baseline.
 `bezirke_spezco2_linear_2018` gives the 2018 values of the linear trend for the bezirke.

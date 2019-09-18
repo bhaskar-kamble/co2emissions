@@ -460,6 +460,8 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO2-Emission aus der Beheizung von Wohnraum 2002-2018, Veränderung in Prozent
 
+**(CO2 emitted by a bezirk for a particualar year - Average CO2 emitted by a bezirk in particular year)/(Average CO2 emitted by a bezirk in particular year) times 100**
+
 ```{r}
 getDeviationsFromMean <- function(input_data,xVar,colsToAvgOver) {
   input_data <- input_data[ , c(xVar , colsToAvgOver)]
@@ -518,7 +520,7 @@ for (ii in 1:12) {
                                        yVar = bezirk_list[ii],
                                        ymin=ymin,
                                        ymax=ymax,
-                                       ylabel="% deviation from mean",
+                                       ylabel="Abweichung vom Mittelwert (%)",
                                        plot_title = bezirk_name[ii])
 }
 ```
@@ -664,7 +666,9 @@ plot_reqdColumns(bezirke_spez_co2,
                  cols_to_plot = names(bezirke_spez_co2)[!(names(bezirke_spez_co2) %in% c("abrechnungsjahr","total"))],
                  yColsName = "Bezirk",
                  yVar = "kg/qm",
-                 plot_title = "Spezifische CO2 Emissionen von Stadtbezirken, alle Wohngebäude")
+                 plot_title = "Spezifische CO2 Emissionen von Stadtbezirken, alle Wohngebäude",
+                 xlabel = "Jahr",
+                 ylabel = "kilo t.")
 ```
 
 
@@ -712,7 +716,7 @@ i_subsubsection <- i_subsubsection + 1
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, flächenbezogene co2 Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2 [AN]
 
 
-Extract the 2018 values from the above...
+**2018 values for the specific CO2 emission in each bezirk**
 
 ```{r}
 bezirke_spez_co2_2018 <- bezirke_spez_co2[bezirke_spez_co2$abrechnungsjahr==2018 , ]
@@ -828,7 +832,7 @@ get2002as100 <- function(obj,dropCols) {
 
 
 ```{r}
-get2002as100(spez_co2_emission , "abrechnungsjahr")
+#get2002as100(spez_co2_emission , "abrechnungsjahr")
 ```
 
 ```{r}
@@ -856,6 +860,8 @@ i_subsubsection <- i_subsubsection + 1
 ```
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Alle Stadtbezirke, alle Wohngebäude, flächenbezogene co2 Emission aus der Beheizung von Wohnraum, Entwicklung 2002-2018 und Niveau 2018 (Rang-folge)
+
+**Specific CO2 emission in bezirk X in 2018 - Specific CO2 emission in Berlin in 2018**
 
 Take the Berlin specific CO2 emission for 2018 as the baseline, Subtract from this the 2018 value of specific co2 emission of Stadtbezirk X. Do for all the bezirks and make a barplot.
 
@@ -909,8 +915,8 @@ plot_devFromBerlin2018 <- function(obj,
 }
 
 plot_devFromBerlin2018(bezirke_spezco2_linear_2018,
-                       "2018 deviation from Berlin",
-                       "some y-label")
+                       plot_title = "Abweichung von Berlin 2018, Spezifische CO2 Emissionen, Alle Wohngebäude",
+                       ylabel = "kg/m2")
 ```
 
 
@@ -925,6 +931,8 @@ i_subsubsection <- i_subsubsection + 1
 ```
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle Wohngebäude, durchschnittliche Emissionsminderung je qm Nutzfläche im Zeitraum 2002-2018
+
+**Berlin, specific co2 emission with 2012 value as the reference**
 
 Take the 2012 value of specific co2 emission as the base line. Plot the changes of each year with respect to this value.
 
@@ -952,7 +960,9 @@ barPlot_delta2012 <- function(obj,ylabel=NULL,plot_title=NULL) {
 ```
 
 ```{r}
-barPlot_delta2012(changeFrom2012(spez_co2_emission),"some y-label")
+barPlot_delta2012(changeFrom2012(spez_co2_emission),
+                  ylabel = "kg/m2",
+                  plot_title = "Spezifische CO2 Berlin, Alle Wohngebäude, zentriert um 2012")
 ```
 
 
@@ -1303,12 +1313,14 @@ plot_co2perhead_2018 <- function(obj,
   obj$bezirk <- get_BezirkNames(obj$bezirk)
   obj$bezirk <- factor(obj$bezirk , levels = obj$bezirk[order(obj$wert)])
   return(
-    ggplot(data=obj,aes(x=bezirk,y=wert))+geom_bar(stat="identity")+labs(x="",y=ylabel,title=plot_title)+coord_flip()
+    ggplot(data=obj,aes(x=bezirk,y=wert,fill=wert))+geom_bar(stat="identity")+theme(legend.position="none",axis.text.x=element_text(angle=45,hjust=1))+labs(x="",y=ylabel,title=plot_title)+scale_fill_gradient(
+  low="green",high="red"
+)
   )
 }
 plot_co2perhead_2018(bezirk_co2_percapita_linear_2018,
-                     ylabel = "kg / Einwohner",
-                     plot_title = "CO2 Emissionen pro Einwohner in Stadtbezirken,\nalle Wohngebäude")
+                     ylabel = "kg",
+                     plot_title = "CO2 Emissionen pro Einwohner in Stadtbezirken 2018,\nAlle Wohngebäude")
 ```
 
 
@@ -1352,23 +1364,28 @@ data_long <- data_long[ data_long$bezirk!="total" , ]
 ```
 
 ```{r}
-plot_groupBar <- function(obj,yVar,ylabel) {
+plot_groupBar <- function(obj,yVar,xlabel=NULL,ylabel=NULL,plot_title=NULL) {
   obj$bezirk <- get_BezirkNames(as.character(obj$bezirk))
   obj$abrechnungsjahr <- as.factor(as.character(obj$abrechnungsjahr))  
   return(
     ggplot(obj , aes(x=bezirk,y=get(yVar),fill=abrechnungsjahr))+geom_bar(stat="identity", position=position_dodge()
-)+ scale_fill_discrete(name="Jahr") +theme(axis.text.x=element_text(angle=45,hjust=1))+labs(x=" ",y=ylabel)
+    )+ scale_fill_discrete(name="Jahr") +theme(axis.text.x=element_text(angle=45,hjust=1))+labs(x=" ",
+                                                                                                y=ylabel,
+                                                                                                title=plot_title)
   )
 }
-plot_groupBar(data_long,"wert","kg/head")
+plot_groupBar(data_long,"wert",NULL,"kg","CO2 Emissionen pro Einwohner, 2002 und 2018\nAlle Wohngebäude")
 ```
 
 ```{r}
-plot_groupBarPercent <- function(obj) {
+plot_groupBarPercent <- function(obj,
+                                 xlabel = NULL,
+                                 ylabel = NULL,
+                                 plot_title = NULL) {
   values2002 <- obj$wert[obj$abrechnungsjahr == 2002]
   obj$percentchange <- rep(values2002, each = 2)
   obj$percentchange <- 100*obj$wert/obj$percentchange
-  g_return <- plot_groupBar(obj,"percentchange","per capita percent change, 2002=100")
+  g_return <- plot_groupBar(obj,"percentchange",xlabel=xlabel,ylabel=ylabel,plot_title=plot_title)
   return(g_return)
 }
 ```
@@ -1376,7 +1393,10 @@ plot_groupBarPercent <- function(obj) {
 
 
 ```{r}
-plot_groupBarPercent(data_long)
+plot_groupBarPercent(data_long,
+                     xlabel=NULL,
+                     ylabel = NULL,
+                     plot_title = "pro Kopf CO2 Emissionen 2018, 2002 Wert = 100")
 ```
 
 ```{r}
@@ -1566,6 +1586,8 @@ i_subsubsection <- i_subsubsection+1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengebäude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018, Veränderung in Prozent
 
+**(CO2 emitted by a bezirk for a particular year - Average CO2 emitted by a bezirk in particular year)/(Average CO2 emitted by a bezirk in particular year) times 100**
+
 ```{r}
 berlin_co2_sfh_devFromMean <- getDeviationsFromMean(berlin_co2_sfh,
                                                     xVar = "abrechnungsjahr",
@@ -1594,7 +1616,7 @@ for (ii in 1:12) {
                                        yVar = bezirk_list[ii],
                                        ymin=ymin,
                                        ymax=ymax,
-                                       ylabel="% deviation from mean",
+                                       ylabel="Abweichung vom Mittelwert (%)",
                                        plot_title = bezirk_name[ii])
 }
 ```
@@ -1719,6 +1741,9 @@ i_subsubsection <- i_subsubsection+1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2[AN]
 
+**2018 values for the specific CO2 emission in each bezirk**
+
+
 
 ```{r}
 bezirke_spez_co2_sfh_linear <- linearizer(bezirke_spez_co2_sfh , dropCols = NULL , xVar = "abrechnungsjahr")
@@ -1788,7 +1813,9 @@ i_subsubsection <- i_subsubsection+1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Alle Stadtbezirke, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum, Entwicklung 2002 - 2018 und Niveau 2018 (Rang¬folge)
 
-**Take the Berlin specific CO2 emission for 2018 as the baseline, Subtract from this the 2018 value of specific co2 emission of Stadtbezirk X. Do for all the bezirks and make a barplot.**
+
+**Specific CO2 emission in bezirk X in 2018 - Specific CO2 emission in Berlin in 2018**
+
 
 ```{r}
 spez_co2_sfh_linear <- linearizer(spez_co2_sfh,dropCols=NULL,xVar="abrechnungsjahr")
@@ -1810,8 +1837,8 @@ bezirke_spezco2_sfh_linear_2018$dev_from_berlin <- bezirke_spezco2_sfh_linear_20
 
 ```{r}
 plot_devFromBerlin2018(bezirke_spezco2_sfh_linear_2018,
-                       "2018 deviation from Berlin, 1-2 Familiengebäude",
-                       "some y-label")
+                       "Abweichung von Berlin 2018, Spezifische CO2 Emissionen",
+                       "kg/m2")
 ```
 
 
@@ -1827,9 +1854,11 @@ i_subsubsection <- i_subsubsection+1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, 1-2 Familiengebäude, durchschnittliche Emissionsminderung je qm Nutzfläche im Zeitraum 2012 - 2018
 
+**Berlin, specific co2 emission with 2012 value as the reference**
+
 
 ```{r}
-barPlot_delta2012(changeFrom2012(spez_co2_sfh) , "some-y-label" , "some title")
+barPlot_delta2012(changeFrom2012(spez_co2_sfh) , "kg/m2" , "Spezifische CO2 Berlin, 1-2 Familiengebäude, zentriert um 2012")
 ```
 
 ```{r}
@@ -2077,6 +2106,8 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018, Veränderung in Prozent
 
+**(CO2 emitted by a bezirk for a particular year - Average CO2 emitted by a bezirk in particular year)/(Average CO2 emitted by a bezirk in particular year) times 100**
+
 
 ```{r,fig.width=10,fig.height=10}
 berlin_co2_mfh_devFromMean <- getDeviationsFromMean(berlin_co2_mfh,
@@ -2103,7 +2134,7 @@ for (ii in 1:12) {
                                        yVar = bezirk_list[ii],
                                        ymin=ymin,
                                        ymax=ymax,
-                                       ylabel="% deviation from mean",
+                                       ylabel="Abweichung vom Mittelwert (%)",
                                        plot_title = bezirk_name[ii])
 }
 require(grid)
@@ -2227,6 +2258,9 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2[AN]
 
+**2018 values for the specific CO2 emission in each bezirk**
+
+
 
 ```{r}
 bezirke_spez_co2_mfh_linear <- linearizer(bezirke_spez_co2_mfh , dropCols = NULL , xVar = "abrechnungsjahr")
@@ -2295,7 +2329,8 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Alle Stadtbezirke, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum, Entwicklung 2002 - 2018 und Niveau 2018 (Rang¬folge)
 
-Take the Berlin specific CO2 emission for 2018 as the baseline, Subtract from this the 2018 value of specific co2 emission of Stadtbezirk X. Do for all the bezirks and make a barplot.
+**Specific CO2 emission in bezirk X in 2018 - Specific CO2 emission in Berlin in 2018**
+
 
 ```{r}
 spez_co2_mfh_linear <- linearizer(spez_co2_mfh,dropCols=NULL,xVar="abrechnungsjahr")
@@ -2313,8 +2348,8 @@ bezirke_spezco2_mfh_linear_2018$dev_from_berlin <- bezirke_spezco2_mfh_linear_20
 
 ```{r}
 plot_devFromBerlin2018(bezirke_spezco2_mfh_linear_2018,
-                       "2018 deviation from Berlin, Mehrfamiliengebäude",
-                       "some y-label")
+                       "Abweichung von Berlin 2018, Spezifische CO2 Emissionen Mehrfamiliengebäude",
+                       "kg/m2")
 ```
 
 
@@ -2330,8 +2365,11 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, durchschnittliche Emissionsminderung je qm Nutzfläche im Zeitraum 2012 - 2018
 
+**Berlin, specific co2 emission with 2012 value as the reference**
+
+
 ```{r}
-barPlot_delta2012(changeFrom2012(spez_co2_mfh),"some-y-label" , "some title")
+barPlot_delta2012(changeFrom2012(spez_co2_mfh), "kg/m2" , "Spezifische CO2 Berlin, Mehrfamiliengebäude, zentriert um 2012")
 ```
 
 ```{r}
@@ -2564,7 +2602,7 @@ points_line_lm(input_data = spz_verbrauch_all,
                size_eq = 4,
                plot_title = "Spezifischer Energieverbrauch in Berlin, alle Wohngebäude",
                xlab = "Jahr",
-               ylab = "kWh/m^2")
+               ylab = "kWh/m2")
 ```
 
 ```{r}
@@ -2995,3 +3033,17 @@ data.frame(Jahr=2002:2018,
 area= bezirk_areas_mfh$total,
               spez_verbrauch = spz_verbrauch_mfh$kWh_per_m2)
 ```
+
+
+# Points to do
+
+* Write a description of what each point does. What the graph shows.
+* Improve the title, xlabel etc.
+* Make a table of the sample size
+* Change font style to calibri or verdana or ariel
+* The graphs in svg OR in jpeg or png with a  resolution of 300 - 600 DPI.
+# Inferences
+
+* Section 5.2, 1-2 FH energy consumption is increasing for Lichtenberg and Marzahn-Hellersdorf.
+* Treptow-Kopenick. Energy consumption for MFH is stagnant. Also Marzahn-Hellersdorf (almost stagnant) and Pankow.
+* How does the age of the buildings compare with the co2 emission/energy efficiency?
