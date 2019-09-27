@@ -1891,12 +1891,15 @@ i_subsection <- i_subsection + 1
 
 ## `r i_section`.`r i_subsection`. Emission pro Einwohner
 
-
 ```{r}
 i_subsubsection <- 1
 ```
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
+
+```{r}
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getBezirkPopulations_by_gtype.R")
+```
 
 **I need the data for the population in SFH and MFH buildings**
 
