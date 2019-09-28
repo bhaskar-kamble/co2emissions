@@ -1872,14 +1872,18 @@ points_line_lm(input_data = berlin_co2_sfh,
 berlin_co2_sfh[ , c("abrechnungsjahr" , "total")]
 ```
 
-```{r,fig.width=2.5,fig.height=7}
+```{r,fig.width=7,fig.height=7}
+#https://stackoverflow.com/questions/43714570/add-superscript-in-table-using-tablegrob
+#https://r.789695.n4.nabble.com/Transferring-commas-in-character-vector-to-expression-td4670987.html
+#https://groups.google.com/forum/m/#!msg/ggplot2/vga0PKjMBCo/5mH4sobYykkJ
 createTable(obj = berlin_co2_sfh[, c("abrechnungsjahr","total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, \nCO2 Emissionen",
+            headerName = "Berlin~1-2~Familiengebäude~CO[2]~Emissionen:~No~commas~No~newlines.",
             columnNames = c("Jahr","kilo t."),
             columnWidths = c(1,1),
-            columnsToRound = "kilo t."
+            columnsToRound = "kilo t.",
+            parseHeader = TRUE
 )
 ```
 
@@ -1900,6 +1904,18 @@ plot_byET(co2_sfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t.
 co2_sfh_allebezirke_byET
 ```
 
+```{r,fig.width=10,fig.height=7}
+createTable(co2_sfh_allebezirke_byET,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen in kilo t. nach Energieträgern",
+            columnNames =  c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            columnWidths = rep(1,8),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt")
+)
+```
+
+
 
 ```{r}
 i_subsubsection <- i_subsubsection+1
@@ -1918,6 +1934,27 @@ plot_byBezirke(berlin_co2_sfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , p
 berlin_co2_sfh
 ```
 
+```{r,fig.width=10,fig.height=7}
+createTable(berlin_co2_sfh[ , 1:7],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berliner, 1-2 Familiengebäude, CO2 Emissionen in kilo t. nach Bezirken",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+)
+```
+
+```{r,fig.width=10,fig.height=7}
+createTable(berlin_co2_sfh[ , c(1,8:13)],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berliner, 1-2 Familiengebäude, CO2 Emissionen in kilo t. nach Bezirken",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+)
+```
 
 ```{r}
 i_subsubsection <- i_subsubsection+1
@@ -1936,6 +1973,16 @@ plot_byET(co2_sfh_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Ante
 co2_sfh_allebezirke_byET_prop
 ```
 
+```{r,fig.width=8.75,fig.height=7}
+createTable(co2_sfh_allebezirke_byET_prop,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen, Anteile nach Energieträgern (%)",
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+)
+```
 
 ```{r}
 berlin_co2_sfh_prop <- find_proportions(berlin_co2_sfh,drop_cols=c("abrechnungsjahr","total"))
@@ -1948,6 +1995,27 @@ berlin_co2_sfh_prop
 ```
 
 
+```{r,fig.width=10,fig.height=7}
+createTable(berlin_co2_sfh_prop[ , c(1:6,13)],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berliner, 1-2 Familiengebäude, CO2 Emissionen, Anteile nach Bezirken (%)",
+            columnNames =  c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln","Jahr"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+)
+```
+
+```{r,fig.width=10,fig.height=7}
+createTable(berlin_co2_sfh_prop[ , c(7:12,13)],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berliner, 1-2 Familiengebäude, CO2 Emissionen, Anteile nach Bezirken (%)",
+            columnNames =  c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick","Jahr"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+)
+```
 
 ```{r}
 i_subsubsection <- i_subsubsection+1

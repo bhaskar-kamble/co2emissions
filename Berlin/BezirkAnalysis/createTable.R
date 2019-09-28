@@ -7,7 +7,8 @@ createTable <- function(obj,
                         columnsToRound = NULL,
                         roundOffTo = 2,
                         addRowTotals = FALSE,
-                        addColTotals = FALSE) {
+                        addColTotals = FALSE,
+                        parseHeader = FALSE) {
   require(gridExtra)
   require(grid)
   
@@ -28,15 +29,17 @@ createTable <- function(obj,
   }
   
   
-  t0 <- ttheme_default(#base_size = fontSize
-                       #core=list(bg_params=list(fill="white",col="black")),
-                       #colhead = list(bg_params=list(fill="white",col="black"))
-  )
+  t0 <- ttheme_default()
   tab01 <- tableGrob(obj , theme=t0 , rows=NULL)
   
   if (isHeader) {
-
-    header <- tableGrob(obj[1 , 1] , theme=t0, rows=NULL, cols=headerName)
+    if (!parseHeader) {
+      header <- tableGrob(obj[1 , 1] , theme=t0, rows=NULL, cols=headerName)
+    }
+    if (parseHeader) {
+      t1 <- ttheme_default(colhead=list(fg_params = list(parse = TRUE)))
+      header <- tableGrob(obj[1 , 1] , theme=t1, rows=NULL, cols=headerName)
+    }
     
     jn <- gtable_combine(header[1,],tab01,along=2)
     jn$widths <- columnWidths
