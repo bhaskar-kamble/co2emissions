@@ -128,7 +128,8 @@ points_line_lm <- function(input_data,
                            xlab,
                            ylab,
                            slope_round_to = 2,
-                           intercept_round_to = 0) {
+                           intercept_round_to = 0,
+                           regLine = TRUE) {
   linmod <- lm(data=input_data , formula = get(yVar)~get(xVar))
   coeff_a <- as.numeric(coefficients(linmod)[1])
   coeff_b <- as.numeric(coefficients(linmod)[2])
@@ -154,6 +155,19 @@ points_line_lm <- function(input_data,
     axis.text.x=element_text(size=10,face="bold"), 
     axis.text.y=element_text(size=10,face="bold")
   )
+  if (regLine == FALSE) {
+     g <- ggplot() + geom_line(data=input_data , aes(x=get(xVar) , y=get(yVar)) , color="blue"
+  )+geom_point(data=input_data , aes(x=get(xVar) , y=get(yVar)) , color="blue"
+  )+ylim(ymin,ymax)+scale_x_continuous(breaks=seq(2002,2018,2)
+  )+theme_bw()+labs(x=xlab,
+  y=ylab,title=plot_title)+theme(
+    plot.title=element_text(size=10), 
+    axis.title.x=element_text(size=15, face="bold"), 
+    axis.title.y = element_text(size=15, face="bold"), 
+    axis.text.x=element_text(size=10,face="bold"), 
+    axis.text.y=element_text(size=10,face="bold")
+  ) 
+  }
   return(g)
 }
 ```
@@ -510,7 +524,8 @@ plot_reqdColumns <- function(input_data,   # data frame
                              yVar,        # for eg. "population" if the columns for "Berlin" etc. show population
                              plot_title = NULL,
                              xlabel = NULL,
-                             ylabel = NULL
+                             ylabel = NULL,
+                             regLine = TRUE
 ) {
   
   input_data <- input_data[ , c(xVar , cols_to_plot)]
@@ -528,6 +543,14 @@ plot_reqdColumns <- function(input_data,   # data frame
     ) + geom_smooth(method="lm",aes(x=get(xVar),y=get(yVar),col=get(yColsName)),se=FALSE
     )+scale_color_discrete(name = yColsName
     )+labs(x=xlabel,y=ylabel,title=plot_title)+ylim(0,max(input_data[[yVar]]))
+  
+  if (regLine==FALSE) {
+      return_object <- 
+    ggplot(input_data
+    )+geom_point(aes(x=get(xVar),y=get(yVar),col=get(yColsName))
+    )+scale_color_discrete(name = yColsName
+    )+labs(x=xlabel,y=ylabel,title=plot_title)+ylim(0,max(input_data[[yVar]]))
+  }
   
   detach("package:reshape2")
   #detach("package:ggplot2")
@@ -1553,22 +1576,23 @@ plot_reqdColumns(bezirk_prohead_2002As100_all,
 
 
 ```{r}
-plot_bezirkeGridPlot <- function(obj,ylabel) {
+plot_bezirkeGridPlot <- function(obj,ylabel,regLine=TRUE) {
   max_y_val <- max(obj[ , names(obj)[!(names(obj) %in% c("abrechnungsjahr","total"))]])
   g_return <- list()
   require(ggplot2)
   for (ii in 1:12) {
-  g_return[[ii]] <- points_line_lm(input_data = obj,
-                                       xVar = "abrechnungsjahr",
-                                       yVar = bezirk_list[ii],
-                                       ymin=0,
-                                       ymax=max_y_val,
-                                       x_eq = 2010,
-                                       y_eq = 0.5*max_y_val,
-                                       size_eq = 4,
-                                       plot_title = bezirk_name[ii],
-                                       xlab = "Jahr",
-                                       ylab = ylabel)
+    g_return[[ii]] <- points_line_lm(input_data = obj,
+                                     xVar = "abrechnungsjahr",
+                                     yVar = bezirk_list[ii],
+                                     ymin=0,
+                                     ymax=max_y_val,
+                                     x_eq = 2010,
+                                     y_eq = 0.5*max_y_val,
+                                     size_eq = 4,
+                                     plot_title = bezirk_name[ii],
+                                     xlab = "Jahr",
+                                     ylab = ylabel,
+                                     regLine = regLine)
   }
   return(g_return)
 }
@@ -4643,8 +4667,86 @@ createTable(obj = data.frame(Jahr=2002:2018 , area=1e-6*bezirk_areas_mfh$total,
 )
 ```
 
-# Sample size in Berlin
+# Sample size in Bezirken, alle Wohngebäude
 
+
+```{r}
+#berlin_sample_size$ALL
+```
+
+```{r}
+plot_reqdColumns(berlin_sample_size$ALL,
+                 xVar = "abrechnungsjahr",
+                 cols_to_plot = names(berlin_sample_size$ALL)[!(names(berlin_sample_size$ALL)) %in% c("abrechnungsjahr","total")],
+                 yColsName = "Bezirk",
+                 yVar = "N",
+                 plot_title = "Stichprobengröße, alle Wohngebäude",
+                 xlabel = "Jahr",
+                 ylabel = "N",
+                 regLine = FALSE)
+```
+
+
+```{r,fig.width=10,fig.height=10}
+gg_N <- plot_bezirkeGridPlot(berlin_sample_size$ALL,ylabel="N",regLine=FALSE)
+require(grid)
+require(gridExtra)
+grid.arrange(gg_N[[1]],gg_N[[2]],gg_N[[3]],gg_N[[4]],
+             gg_N[[5]],gg_N[[6]],gg_N[[7]],gg_N[[8]],
+             gg_N[[9]],gg_N[[10]],gg_N[[11]],gg_N[[12]],ncol=3
+)
+```
+
+
+
+```{r}
+plot_reqdColumns(berlin_sample_size$SFH,
+                 xVar = "abrechnungsjahr",
+                 cols_to_plot = names(berlin_sample_size$SFH)[!(names(berlin_sample_size$SFH)) %in% c("abrechnungsjahr","total")],
+                 yColsName = "Bezirk",
+                 yVar = "N",
+                 plot_title = "Stichprobengröße, 1-2 Familiengebäude",
+                 xlabel = "Jahr",
+                 ylabel = "N",
+                 regLine = FALSE)
+```
+
+
+```{r,fig.width=10,fig.height=10}
+gg_N <- plot_bezirkeGridPlot(berlin_sample_size$SFH,ylabel="N",regLine=FALSE)
+require(grid)
+require(gridExtra)
+grid.arrange(gg_N[[1]],gg_N[[2]],gg_N[[3]],gg_N[[4]],
+             gg_N[[5]],gg_N[[6]],gg_N[[7]],gg_N[[8]],
+             gg_N[[9]],gg_N[[10]],gg_N[[11]],gg_N[[12]],ncol=3
+)
+```
+
+
+
+
+```{r}
+plot_reqdColumns(berlin_sample_size$MFH,
+                 xVar = "abrechnungsjahr",
+                 cols_to_plot = names(berlin_sample_size$MFH)[!(names(berlin_sample_size$MFH)) %in% c("abrechnungsjahr","total")],
+                 yColsName = "Bezirk",
+                 yVar = "N",
+                 plot_title = "Stichprobengröße, Mehrfamiliengebäude",
+                 xlabel = "Jahr",
+                 ylabel = "N",
+                 regLine = FALSE)
+```
+
+
+```{r,fig.width=10,fig.height=10}
+gg_N <- plot_bezirkeGridPlot(berlin_sample_size$MFH,ylabel="N",regLine=FALSE)
+require(grid)
+require(gridExtra)
+grid.arrange(gg_N[[1]],gg_N[[2]],gg_N[[3]],gg_N[[4]],
+             gg_N[[5]],gg_N[[6]],gg_N[[7]],gg_N[[8]],
+             gg_N[[9]],gg_N[[10]],gg_N[[11]],gg_N[[12]],ncol=3
+)
+```
 
 
 
