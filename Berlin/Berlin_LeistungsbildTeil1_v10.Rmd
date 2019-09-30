@@ -13,10 +13,15 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning=FALSE,cache=FALSE)
+knitr::opts_chunk$set(echo = FALSE,message=FALSE,warning=FALSE,cache=FALSE)
 ```
 
 # <font size="20">Teil 1.</font>
+
+```{r}
+showResults <- "hide" # the other option is "show"
+```
+
 
 
 ```{r}
@@ -75,7 +80,7 @@ ggplot(berlin_sample_size$ALL) + geom_point(aes(x=abrechnungsjahr,y=total))+labs
 ```
 
 
-```{r}
+```{r,results = showResults}
 source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/createTable.R")
 berlin_sample_size$ALL[,c("abrechnungsjahr","total")]
 ```
@@ -179,7 +184,7 @@ points_line_lm(input_data = berlin_co2_all,
 ```
 
 
-```{r}
+```{r,results = showResults}
 berlin_co2_all[, c("abrechnungsjahr","total")]
 ```
 
@@ -258,7 +263,7 @@ plot_byET(co2_all_allebezirke_byET_cumsums ,
           plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, nach Energieträgern"))
 ```
 
-```{r}
+```{r,results = showResults}
 co2_all_allebezirke_byET
 ```
 
