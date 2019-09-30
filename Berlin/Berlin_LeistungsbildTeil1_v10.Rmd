@@ -383,7 +383,7 @@ plot_byBezirke <- function(obj,xlabel,ylabel,plottitle) {
 plot_byBezirke(berlin_co2_all_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, nach Bezirk"))
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_all
 ```
 
@@ -446,7 +446,7 @@ co2_all_allebezirke_byET_prop_cumsums <- getCumSums(obj=co2_all_allebezirke_byET
 plot_byET(co2_all_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, Anteile nach Energieträgern"))
 ```
 
-```{r}
+```{r,results = showResults}
 co2_all_allebezirke_byET_prop
 ```
 
@@ -467,7 +467,7 @@ berlin_co2_all_prop_cumsums <- getCumSums(berlin_co2_all_prop,dropCols="abrechnu
 plot_byBezirke(berlin_co2_all_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, Anteile nach Bezirk"))
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_all_prop
 ```
 
@@ -581,8 +581,8 @@ grid.arrange(g_co2_bezirk[[1]],g_co2_bezirk[[2]],g_co2_bezirk[[3]],g_co2_bezirk[
 ```
 
 
-```{r}
-#berlin_co2_all
+```{r,results = showResults}
+berlin_co2_all
 ```
 
 
@@ -690,7 +690,7 @@ grid.arrange(g_co2dev_bezirk[[1]],g_co2dev_bezirk[[2]],g_co2dev_bezirk[[3]],g_co
 ```
 
 
-```{r}
+```{r,results = showResults}
 berlin_co2_all_devFromMean
 ```
 
@@ -798,7 +798,7 @@ points_line_lm(input_data = spez_co2_emission,
                ylab = "kg/qm")
 ```
 
-```{r}
+```{r,results = showResults}
 spez_co2_emission
 ```
 
@@ -890,7 +890,7 @@ grid.arrange(g_co2spez_bezirk[[1]],g_co2spez_bezirk[[2]],g_co2spez_bezirk[[3]],g
              g_co2spez_bezirk[[9]],g_co2spez_bezirk[[10]],g_co2spez_bezirk[[11]],g_co2spez_bezirk[[12]],ncol=3)
 ```
 
-```{r}
+```{r,results = showResults}
 bezirke_spez_co2
 ```
 
@@ -998,7 +998,7 @@ plot_spezCO2_2018(obj = bezirke_spezco2_linear_2018 ,
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirke_spezco2_linear_2018
 ```
 
@@ -1092,7 +1092,7 @@ points_line_lm(input_data = get2002as100(spez_co2_emission , "abrechnungsjahr"),
 ```
 
 
-```{r}
+```{r,results = showResults}
 get2002as100(spez_co2_emission , "abrechnungsjahr")
 ```
 
@@ -1173,7 +1173,7 @@ plot_devFromBerlin2018(bezirke_spezco2_linear_2018,
 
 
 
-```{r}
+```{r,results = showResults}
 bezirke_spezco2_linear_2018
 ```
 
@@ -1228,7 +1228,7 @@ barPlot_delta2012(changeFrom2012(spez_co2_emission),
 ```
 
 
-```{r}
+```{r,results = showResults}
 changeFrom2012(spez_co2_emission)
 ```
 
@@ -1362,7 +1362,7 @@ points_line_lm(input_data = berlin_co2_percapita,
 ```
 
 
-```{r}
+```{r,results = showResults}
 berlin_co2_percapita
 ```
 
@@ -1437,7 +1437,7 @@ grid.arrange(g_co2perhead_bezirk[[1]],g_co2perhead_bezirk[[2]],g_co2perhead_bezi
              g_co2perhead_bezirk[[9]],g_co2perhead_bezirk[[10]],g_co2perhead_bezirk[[11]],g_co2perhead_bezirk[[12]],ncol=3)
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_bezirke_all_co2perhead
 ```
 
@@ -1488,11 +1488,11 @@ points_line_lm(input_data = berlin_co2_percapita_2002as100,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, alle Wohngebäude, 2002 Wert = 100"),
                xlab = "Jahr",
-               ylab = changeCO2_to_CO_2("kg"))
+               ylab = "kg")
 ```
 
 
-```{r}
+```{r,results = showResults}
 berlin_co2_percapita_2002as100
 ```
 
@@ -1588,7 +1588,7 @@ grid.arrange(gg_co2perhead_2002As100[[1]],gg_co2perhead_2002As100[[2]],gg_co2per
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirk_prohead_2002As100_all
 ```
 
@@ -1680,7 +1680,7 @@ plot_co2perhead_2018(bezirk_co2_percapita_linear_2018,
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_linear_2018
 ```
 
@@ -1767,18 +1767,18 @@ plot_groupBarPercent(data_long,
                      plot_title = changeCO2_to_CO_2("pro Kopf CO2 Emissionen 2018, 2002 Wert = 100"))
 ```
 
-```{r}
+```{r,results = showResults}
 data_long
 ```
 
-```{r}
+```{r,results = showResults}
 require(reshape2)
 data_wide <- dcast(data_long , bezirk ~ abrechnungsjahr , value.var = "wert")
 data_wide$bezirk <- as.character(data_wide$bezirk)
 data_wide
 ```
 
-```{r,fig.width=6,fig.height=7}
+```{r,fig.width=6,fig.height=5}
 createTable20022018 <- function(obj,
                             headerName,
                             columnNames,
@@ -1898,7 +1898,7 @@ points_line_lm(input_data = berlin_co2_sfh,
                ylab = "kilo t.")
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_sfh[ , c("abrechnungsjahr" , "total")]
 ```
 
@@ -1930,7 +1930,7 @@ co2_sfh_allebezirke_byET_cumsums <- getCumSums(obj=co2_sfh_allebezirke_byET , dr
 plot_byET(co2_sfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, nach Energiträger"))
 ```
 
-```{r}
+```{r,results = showResults}
 co2_sfh_allebezirke_byET
 ```
 
@@ -1960,7 +1960,7 @@ berlin_co2_sfh_cumsums <- getCumSums(obj=berlin_co2_sfh , dropCols=c("abrechnung
 plot_byBezirke(berlin_co2_sfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, nach Bezirk"))
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_sfh
 ```
 
@@ -1999,7 +1999,7 @@ plot_byET(co2_sfh_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Ante
 ```
 
 
-```{r}
+```{r,results = showResults}
 co2_sfh_allebezirke_byET_prop
 ```
 
@@ -2020,7 +2020,7 @@ berlin_co2_sfh_prop_cumsums <- getCumSums(berlin_co2_sfh_prop,dropCols="abrechnu
 plot_byBezirke(berlin_co2_sfh_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, Anteile nach Bezirken"))
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_sfh_prop
 ```
 
@@ -2075,7 +2075,7 @@ grid.arrange(gg_co2_sfh[[1]],gg_co2_sfh[[2]],gg_co2_sfh[[3]],gg_co2_sfh[[4]],
              gg_co2_sfh[[9]],gg_co2_sfh[[10]],gg_co2_sfh[[11]],gg_co2_sfh[[12]],ncol=3)
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_sfh
 ```
 
@@ -2151,7 +2151,7 @@ grid.arrange(g_co2dev_bezirk[[1]],g_co2dev_bezirk[[2]],g_co2dev_bezirk[[3]],g_co
              g_co2dev_bezirk[[9]],g_co2dev_bezirk[[10]],g_co2dev_bezirk[[11]],g_co2dev_bezirk[[12]],ncol=3)
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_sfh_devFromMean
 ```
 
@@ -2218,7 +2218,7 @@ points_line_lm(input_data = spez_co2_sfh,
                ylab = "kg/qm")
 ```
 
-```{r}
+```{r,results = showResults}
 spez_co2_sfh
 ```
 
@@ -2282,7 +2282,7 @@ grid.arrange(g_co2spez_bezirk[[1]],g_co2spez_bezirk[[2]],g_co2spez_bezirk[[3]],g
              g_co2spez_bezirk[[9]],g_co2spez_bezirk[[10]],g_co2spez_bezirk[[11]],g_co2spez_bezirk[[12]],ncol=3)
 ```
 
-```{r}
+```{r,results = showResults}
 bezirke_spez_co2_sfh
 ```
 
@@ -2345,7 +2345,7 @@ plot_spezCO2_2018(obj = bezirke_spezco2_sfh_linear_2018 ,
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirke_spezco2_sfh_linear_2018
 ```
 
@@ -2384,7 +2384,7 @@ points_line_lm(input_data = get2002as100(spez_co2_sfh , "abrechnungsjahr"),
                ylab = " ")
 ```
 
-```{r}
+```{r,results = showResults}
 get2002as100(spez_co2_sfh , "abrechnungsjahr")
 ```
 
@@ -2436,11 +2436,11 @@ plot_devFromBerlin2018(bezirke_spezco2_sfh_linear_2018,
 
 
 
-```{r}
+```{r,results = showResults}
 bezirke_spezco2_sfh_linear_2018
 ```
 
-```{r,fig.width=3.5,fig.height=7}
+```{r,fig.width=3.5,fig.height=6}
 createTable2018(obj = bezirke_spezco2_sfh_linear_2018[, c("bezirk","dev_from_berlin")],
             headerName = "Bezirke, 1-2 Familiengebäude,\nCO2 Emissionen (2018)\nAbweichung von Berlin",
             columnNames = c("Bezirk","kg / q.m."),
@@ -2462,7 +2462,7 @@ i_subsubsection <- i_subsubsection+1
 barPlot_delta2012(changeFrom2012(spez_co2_sfh) , "kg/m2" , changeCO2_to_CO_2("Spezifische CO2 Berlin, 1-2 Familiengebäude, zentriert um 2012"))
 ```
 
-```{r}
+```{r,results = showResults}
 changeFrom2012(spez_co2_sfh)
 ```
 
@@ -2536,7 +2536,7 @@ points_line_lm(input_data = bezirk_co2_percapita_sfh,
 ```
                
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_sfh[ , c("abrechnungsjahr" , "total")]
 ```
 
@@ -2584,7 +2584,7 @@ grid.arrange(gg_co2perhead_bezirke[[1]],gg_co2perhead_bezirke[[2]],gg_co2perhead
              gg_co2perhead_bezirke[[9]],gg_co2perhead_bezirke[[10]],gg_co2perhead_bezirke[[11]],gg_co2perhead_bezirke[[12]],ncol=3)
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_sfh
 ```
 
@@ -2686,7 +2686,7 @@ grid.arrange(gg_co2perhead_2002As100[[1]],gg_co2perhead_2002As100[[2]],gg_co2per
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_2002as100_sfh
 ```
 
@@ -2745,7 +2745,7 @@ plot_co2perhead_2018(bezirk_co2_percapita_sfh_linear_2018,
                      plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, 1-2 Familiengebäude"))
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_sfh_linear_2018
 ```
 
@@ -2793,7 +2793,7 @@ plot_groupBarPercent(data_long,
                      plot_title = changeCO2_to_CO_2("pro Kopf CO2 Emissionen 2018, 1-2 Familiengebäude, 2002 Wert = 100"))
 ```
 
-```{r}
+```{r,results = showResults}
 require(reshape2)
 data_wide <- dcast(data_long , bezirk ~ abrechnungsjahr , value.var = "wert")
 data_wide$bezirk <- as.character(data_wide$bezirk)
@@ -2906,7 +2906,7 @@ points_line_lm(input_data = berlin_co2_mfh,
                ylab = "kilo t.")
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_mfh[,c("abrechnungsjahr","total")]
 ```
 
@@ -2939,7 +2939,7 @@ co2_mfh_allebezirke_byET_cumsums <- getCumSums(obj=co2_mfh_allebezirke_byET , dr
 plot_byET(co2_mfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, nach Energieträgern"))
 ```
 
-```{r}
+```{r,results = showResults}
 co2_mfh_allebezirke_byET
 ```
 
@@ -2971,7 +2971,7 @@ berlin_co2_mfh_cumsums <- getCumSums(obj=berlin_co2_mfh , dropCols=c("abrechnung
 plot_byBezirke(berlin_co2_mfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, nach Bezirk"))
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_mfh
 ```
 
@@ -3009,7 +3009,7 @@ co2_mfh_allebezirke_byET_prop_cumsums <- getCumSums(obj=co2_mfh_allebezirke_byET
 plot_byET(co2_mfh_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, Anteile nach Energieträgern"))
 ```
 
-```{r}
+```{r,results = showResults}
 co2_mfh_allebezirke_byET_prop
 ```
 
@@ -3031,7 +3031,7 @@ berlin_co2_mfh_prop_cumsums <- getCumSums(berlin_co2_mfh_prop,dropCols="abrechnu
 plot_byBezirke(berlin_co2_mfh_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, Anteile nach Bezirk"))
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_mfh_prop
 ```
 
@@ -3088,7 +3088,7 @@ grid.arrange(gg_co2_mfh[[1]],gg_co2_mfh[[2]],gg_co2_mfh[[3]],gg_co2_mfh[[4]],
              gg_co2_mfh[[9]],gg_co2_mfh[[10]],gg_co2_mfh[[11]],gg_co2_mfh[[12]],ncol=3)
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_co2_mfh
 ```
 
@@ -3159,7 +3159,7 @@ grid.arrange(g_co2dev_bezirk[[1]],g_co2dev_bezirk[[2]],g_co2dev_bezirk[[3]],g_co
 ```
 
 
-```{r}
+```{r,results = showResults}
 berlin_co2_mfh_devFromMean
 ```
 
@@ -3226,7 +3226,7 @@ points_line_lm(input_data = spez_co2_mfh,
                ylab = "kg/qm")
 ```
 
-```{r}
+```{r,results = showResults}
 spez_co2_mfh
 ```
 
@@ -3293,7 +3293,7 @@ grid.arrange(g_co2spez_bezirk[[1]],g_co2spez_bezirk[[2]],g_co2spez_bezirk[[3]],g
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirke_spez_co2_mfh
 ```
 
@@ -3359,7 +3359,7 @@ plot_spezCO2_2018(obj = bezirke_spezco2_mfh_linear_2018 ,
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirke_spezco2_mfh_linear_2018
 ```
 
@@ -3397,7 +3397,7 @@ points_line_lm(input_data = get2002as100(spez_co2_mfh , "abrechnungsjahr"),
                ylab = " ")
 ```
 
-```{r}
+```{r,results = showResults}
 get2002as100(spez_co2_mfh , "abrechnungsjahr")
 ```
 
@@ -3444,7 +3444,7 @@ plot_devFromBerlin2018(bezirke_spezco2_mfh_linear_2018,
 
 
 
-```{r}
+```{r,results = showResults}
 bezirke_spezco2_mfh_linear_2018
 ```
 
@@ -3470,7 +3470,7 @@ i_subsubsection <- i_subsubsection + 1
 barPlot_delta2012(changeFrom2012(spez_co2_mfh), "kg/m2" , changeCO2_to_CO_2("Spezifische CO2 Berlin, Mehrfamiliengebäude, zentriert um 2012"))
 ```
 
-```{r}
+```{r,results = showResults}
 changeFrom2012(spez_co2_mfh)
 ```
 
@@ -3515,7 +3515,7 @@ points_line_lm(input_data = bezirk_co2_percapita_mfh,
                ylab = "kg")
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_mfh[ , c("abrechnungsjahr" , "total")]
 ```
 
@@ -3559,7 +3559,7 @@ grid.arrange(gg_co2perhead_bezirke[[1]],gg_co2perhead_bezirke[[2]],gg_co2perhead
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_mfh
 ```
 
@@ -3647,7 +3647,7 @@ grid.arrange(gg_co2perhead_2002As100[[1]],gg_co2perhead_2002As100[[2]],gg_co2per
              gg_co2perhead_2002As100[[9]],gg_co2perhead_2002As100[[10]],gg_co2perhead_2002As100[[11]],gg_co2perhead_2002As100[[12]],ncol=3)
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_2002as100_mfh
 ```
 
@@ -3695,7 +3695,7 @@ plot_co2perhead_2018(bezirk_co2_percapita_mfh_linear_2018,
                      plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, Mehrfamiliengebäude"))
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_percapita_mfh_linear_2018
 ```
 
@@ -3797,7 +3797,7 @@ points_line_lm(input_data = aes_by_ET_TWh,
                slope_round_to = 4)
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_ET_TWh[ , c("abrechnungsjahr" , "total")]
 ```
 
@@ -3817,7 +3817,7 @@ createTable(obj = aes_by_ET_TWh[ , c("abrechnungsjahr" , "total")],
 plot_byET(aes_by_ET_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, alle Wohngebäude, nach Energieträgern")
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_ET_TWh
 ```
 
@@ -3847,7 +3847,7 @@ aes_by_bezirk_TWh_cumsums <- getCumSums(obj=aes_by_bezirk_TWh , dropCols = "abre
 plot_byBezirke(aes_by_bezirk_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, alle Wohngebäude, nach Bezirk")
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_bezirk_TWh
 ```
 
@@ -3934,7 +3934,7 @@ grid.arrange(g_aes_bezirk[[1]],g_aes_bezirk[[2]],g_aes_bezirk[[3]],g_aes_bezirk[
 ```
 
 
-```{r}
+```{r,results = showResults}
 aes_by_bezirk_TWh
 ```
 
@@ -3989,10 +3989,10 @@ points_line_lm(input_data = spz_verbrauch_all,
                size_eq = 4,
                plot_title = "Spezifischer Energieverbrauch in Berlin, alle Wohngebäude",
                xlab = "Jahr",
-               ylab = "kWh/m2")
+               ylab = "kWh/q.m.")
 ```
 
-```{r}
+```{r,results = showResults}
 spz_verbrauch_all
 ```
 
@@ -4062,7 +4062,7 @@ plot_dualPlot(1e-6*bezirk_areas_all$total,
 ```
 
 
-```{r}
+```{r,results = showResults}
 data.frame(Jahr=2002:2018 , area=1e-6*bezirk_areas_all$total,
               spez_verbrauch = spz_verbrauch_all$kWh_per_m2)
 ```
@@ -4119,7 +4119,7 @@ points_line_lm(input_data = aes_by_ET_TWh_sfh,
                slope_round_to = 4)
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_ET_TWh_sfh[, c("abrechnungsjahr","total")]
 ```
 
@@ -4140,7 +4140,7 @@ createTable(obj = aes_by_ET_TWh_sfh[ , c("abrechnungsjahr" , "total")],
 plot_byET(aes_by_ET_TWh_sfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, 1-2 Familiengebäude, nach Energieträgern")
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_ET_TWh_sfh
 ```
 
@@ -4169,7 +4169,7 @@ aes_by_bezirk_TWh_sfh_cumsums <- getCumSums(obj=aes_by_bezirk_TWh_sfh , dropCols
 plot_byBezirke(aes_by_bezirk_TWh_sfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, 1-2 Familiengebäude, nach Bezirk")
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_bezirk_TWh_sfh
 ```
 
@@ -4251,7 +4251,7 @@ grid.arrange(g_aes_bezirk[[1]],g_aes_bezirk[[2]],g_aes_bezirk[[3]],g_aes_bezirk[
 ```
 
 
-```{r}
+```{r,results = showResults}
 aes_by_bezirk_TWh_sfh
 ```
 
@@ -4306,7 +4306,7 @@ points_line_lm(input_data = spz_verbrauch_sfh,
                ylab = "kWh/q.m.")
 ```
 
-```{r}
+```{r,results = showResults}
 spz_verbrauch_sfh
 ```
 
@@ -4343,7 +4343,7 @@ plot_dualPlot(1e-6*bezirk_areas_sfh$total,
 ```
 
 
-```{r}
+```{r,results = showResults}
 data.frame(Jahr=2002:2018,
 area= bezirk_areas_sfh$total,
               spez_verbrauch = spz_verbrauch_sfh$kWh_per_m2)
@@ -4404,7 +4404,7 @@ points_line_lm(input_data = aes_by_ET_TWh_mfh,
                slope_round_to = 4)
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_ET_TWh_mfh[ , c("abrechnungsjahr","total")]
 ```
 
@@ -4425,7 +4425,7 @@ createTable(obj = aes_by_ET_TWh_mfh[ , c("abrechnungsjahr" , "total")],
 plot_byET(aes_by_ET_TWh_mfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, Mehrfamiliengebäude, nach Energieträgern")
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_ET_TWh_mfh
 ```
 
@@ -4455,7 +4455,7 @@ aes_by_bezirk_TWh_mfh_cumsums <- getCumSums(obj=aes_by_bezirk_TWh_mfh , dropCols
 plot_byBezirke(aes_by_bezirk_TWh_mfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, Mehrfamiliengebäude, nach Bezirk")
 ```
 
-```{r}
+```{r,results = showResults}
 aes_by_bezirk_TWh_mfh
 ```
 
@@ -4536,7 +4536,7 @@ grid.arrange(g_aes_bezirk[[1]],g_aes_bezirk[[2]],g_aes_bezirk[[3]],g_aes_bezirk[
 ```                 
                  
 
-```{r}
+```{r,results = showResults}
 aes_by_bezirk_TWh_mfh
 ```                 
 
@@ -4588,7 +4588,7 @@ points_line_lm(input_data = spz_verbrauch_mfh,
                ylab = "kWh/q.m.")
 ```
 
-```{r}
+```{r,results = showResults}
 spz_verbrauch_mfh
 ```
 
@@ -4625,7 +4625,7 @@ plot_dualPlot(1e-6*bezirk_areas_mfh$total,
 ```
 
 
-```{r}
+```{r,results = showResults}
 data.frame(Jahr=2002:2018,
 area= bezirk_areas_mfh$total,
               spez_verbrauch = spz_verbrauch_mfh$kWh_per_m2)
@@ -4644,6 +4644,8 @@ createTable(obj = data.frame(Jahr=2002:2018 , area=1e-6*bezirk_areas_mfh$total,
 ```
 
 # Sample size in Berlin
+
+
 
 
 
