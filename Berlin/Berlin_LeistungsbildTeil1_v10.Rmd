@@ -85,7 +85,7 @@ source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/createTable.R")
 berlin_sample_size$ALL[,c("abrechnungsjahr","total")]
 ```
 
-```{r,fig.width=2.5,fig.height=7}
+```{r,fig.width=2.5,fig.height=6}
 createTable(obj = berlin_sample_size$ALL[,c("abrechnungsjahr","total")],
             fontSize = 10,
             isHeader = TRUE,
