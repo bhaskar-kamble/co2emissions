@@ -116,7 +116,8 @@ getPopulationBezirk_byGtype <- function(gtype) {
   return(population_bybezirk_gtype)
 }
 
-getCo2PerCapitaBezirk_byGtype_method2 <- function(obj,gtype) {#obj is data frame of co2 emissions
+getCo2PerCapitaBezirk_byGtype_method2 <- function(obj,gtype) {#obj is data frame of co2 emissions 
+                                                            #of all bezirke in Berlin and also their sum
   if (!(gtype %in% c("SFH","MFH"))) {
     stop("give valid gtype. options are: MFH or SFH")
   } 

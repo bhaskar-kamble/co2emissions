@@ -430,7 +430,7 @@ i_subsubsection <- i_subsubsection + 1
 ```
 
 ```{r}
-plot_dualPlot <- function(y1 , y2 , x , xlab, ylab1 , ylab2, ylegend1, ylegend2) {
+plot_dualPlot <- function(y1 , y2 , x , xlab, ylab1 , ylab2, ylegend1, ylegend2, main=NULL) {
   dframe <- data.frame(x=x , y1=y1 , y2=y2)
  lm1 <- lm(y1~x , data = dframe)
  lm2 <- lm(y2~x , data = dframe)
@@ -443,7 +443,7 @@ plot_dualPlot <- function(y1 , y2 , x , xlab, ylab1 , ylab2, ylegend1, ylegend2)
  
  par(new=TRUE)
  
- plot(x,y2,xlab="", ylab="", ylim=c(0,max(y2)), axes = FALSE , col = "red",pch=15)
+ plot(x,y2,xlab="", ylab="", ylim=c(0,max(y2)), axes = FALSE , col = "red",pch=15, main = main)
  mtext(ylab2, side = 4, line = 4,col="red")
  axis(4, ylim=c(0,max(y2)), col="red",col.axis="red",las=1)
 
@@ -460,14 +460,27 @@ plot_dualPlot(
   bezirk_spzco2_all$spzco2,
   2002:2018,
   "Jahr",
-  "Nutzfläche, alle Wohngebäude (Mio. q.m.)",
+  "Nutzfläche, (Mio. q.m.)",
   "kg/q.m.",
   "Nutzfläche",
-  "spezifische CO2 Emissionen")
+  "spezifische CO2 Emissionen",main = paste0(bezirk_proper_name, ", alle Wohngebäude")
+  )
 ```
 
 ```{r}
 data.frame(Jahr=2002:2018,Area=bezirk_total_area$areaALL,Spez_CO2 = bezirk_spzco2_all$spzco2)
+```
+
+
+```{r,fig.width=5.5,fig.height=6}
+createTable(obj = data.frame(Jahr=2002:2018,Area=1e-6*bezirk_total_area$areaALL,Spez_CO2 = bezirk_spzco2_all$spzco2),
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", alle Wohngebäude"),
+            columnNames = c("Jahr","Wohnfläche\n(Mio. q.m.)","spezifische CO2\nEmissionen (kg/q.m.)"),
+            columnWidths = c(1,1,1),
+            columnsToRound = c("Wohnfläche\n(Mio. q.m.)","spezifische CO2\nEmissionen (kg/q.m.)")
+)
 ```
 
 ```{r}
@@ -623,7 +636,7 @@ createTable(obj = berlin_sample_size$SFH[,c("abrechnungsjahr",bezirk)],
 
 
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`, 1-2 Familiengebäude, CO2-Emission aus Beheizung 2002 - 2018 in units
+### `r i_section`.`r i_subsection`.`r i_subsubsection`, 1-2 Familiengebäude, CO2-Emission aus Beheizung 2002 - 2018 in kilo t.
 
 
 
@@ -789,18 +802,31 @@ i_subsubsection <- i_subsubsection + 1
 
 ```{r}
 plot_dualPlot(
-  bezirk_total_area$areaSFH,
+  1e-6*bezirk_total_area$areaSFH,
   bezirk_spzco2_sfh$spzco2,
   2002:2018,
   "Jahr",
-  "1-2 FH Buildings (m2)",
-  "kg/m2",
-  "Area",
-  "CO2 emissions per m2")
+  "Nutzfläche, (Mio. q.m.)",
+  "kg/q.m.",
+  "Nutzfläche",
+  "spezifische CO2 Emissionen",
+  paste0(bezirk_proper_name, ", 1-2 Familiengebäude"))
 ```
 
 ```{r}
 data.frame(Jahr=2002:2018,Area=bezirk_total_area$areaSFH,Spez_CO2 = bezirk_spzco2_sfh$spzco2)
+```
+
+
+```{r,fig.width=5.5,fig.height=6}
+createTable(obj = data.frame(Jahr=2002:2018,Area=1e-6*bezirk_total_area$areaSFH,Spez_CO2 = bezirk_spzco2_sfh$spzco2),
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", 1-2 Familiengebäude"),
+            columnNames = c("Jahr","Wohnfläche\n(Mio. q.m.)","spezifische CO2\nEmissionen (kg/q.m.)"),
+            columnWidths = c(1,1,1),
+            columnsToRound = c("Wohnfläche\n(Mio. q.m.)","spezifische CO2\nEmissionen (kg/q.m.)")
+)
 ```
 
 ```{r}
@@ -816,7 +842,27 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. 1-2 FH, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner 2002 - 2018
 
-* Need data for this.
+```{r}
+source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCo2PerCapitaBezirk_byGtype_method2.R")
+# the above contains the function getPopulationBezirk_byGtype
+bezirk_population_sfh <- getPopulationBezirk_byGtype("SFH")
+#bezirk_population_sfh[ , c("abrechnungsjahr" , bezirk)]
+#bezirk_co2_sfh[ , c("abrechnungsjahr" , "total")]
+bezirk_prokopf_co2_sfh <- data.frame(abrechnungsjahr=2002:2018 , prokopfco2 = 1e6* bezirk_co2_sfh$total/bezirk_population_sfh[[bezirk]])
+#bezirk_prokopf_co2_sfh
+points_line_lm(input_data = bezirk_prokopf_co2_sfh,
+               xVar = "abrechnungsjahr",
+               yVar = "prokopfco2",
+               ymin=0,
+               ymax=max(bezirk_prokopf_co2_sfh$prokopfco2),
+               x_eq = 2010,
+               y_eq = 1500,
+               size_eq = 4,
+               plot_title = paste0("Pro Kopf CO2 Emissionen, 1-2 Familiengebäude ",bezirk_proper_name),
+               xlab = "Jahr",
+               ylab = "kg")
+```
+
 
 ```{r}
 i_subsection <- i_subsection + 1
@@ -893,6 +939,24 @@ i_subsection <- i_subsection + 1
 i_subsubsection <- i_subsubsection + 1
 ```
 
+### Stichprobengröße
+
+```{r}
+require(ggplot2)
+ggplot(berlin_sample_size$MFH) + geom_point(aes(x=abrechnungsjahr,y=get(bezirk)))+labs(x="Jahr",y="Stichprobengröße",title=paste0(bezirk_proper_name , ", Mehrfamiliengebäude (Stichprobengröße)"))+scale_x_continuous(breaks=seq(2002,2018,2))
+```
+
+
+```{r,fig.width=2.5,fig.height=7}
+createTable(obj = berlin_sample_size$MFH[,c("abrechnungsjahr",bezirk)],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,",\nMehrfamiliengebäude,\nStichprobengröße"),
+            columnNames = c("Jahr","N"),
+            columnWidths = c(1,1),
+            addColTotals = TRUE)
+```
+
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`, Mehrfamiliengebäude, CO2-Emission aus Beheizung 2002 - 2018 in units
 
 
@@ -916,6 +980,18 @@ points_line_lm(input_data = bezirk_co2_mfh,
                ylab = "kilo t.")
 ```
 
+```{r,fig.width=2.5,fig.height=6}
+createTable(obj = bezirk_co2_mfh[, c("abrechnungsjahr","total")],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"\nMehrfamiliengebäude\nCO2 Emissionen"),
+            columnNames = c("Jahr","kilo t."),
+            columnWidths = c(1,1),
+            columnsToRound = "kilo t."
+)
+```
+
+
 ```{r}
 i_subsubsection <- i_subsubsection + 1
 ```
@@ -929,6 +1005,16 @@ bezirk_co2_mfh_cumsums <- getCumSums(bezirk_co2_mfh , dropCols = c("abrechnungsj
 plot_byET(bezirk_co2_mfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = paste0("CO2 Emissions MFH ",bezirk_proper_name) )
 ```
 
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_co2_mfh,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", Mehrfamiliengebäude, CO2 Emissionen nach Energieträgern (kilo t.)"),
+            columnNames =  c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            columnWidths = rep(1,8),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt")
+)
+```
 
 
 
@@ -943,6 +1029,19 @@ bezirk_co2_mfh_prop <- find_proportions(bezirk_co2_mfh,drop_cols = c("abrechnung
 bezirk_co2_mfh_prop_cumsums <- getCumSums(bezirk_co2_mfh_prop,dropCols="abrechnungsjahr")
 plot_byET(bezirk_co2_mfh_prop_cumsums , xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = paste0("CO2 Emissions MFH ",bezirk_proper_name) )
 ```
+
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_co2_mfh_prop,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", Mehrfamiliengebäude, CO2 Emissionen, Anteile nach Energieträgern (%)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+)
+```
+
+
 
 ```{r}
 i_subsection <- i_subsection + 1
@@ -978,6 +1077,16 @@ points_line_lm(input_data = bezirk_spzco2_mfh,
                ylab = "kg/qm")
 ```
 
+```{r,fig.width=2.5,fig.height=6}
+createTable(obj = bezirk_spzco2_mfh[, c("abrechnungsjahr","spzco2")],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"\nMehrfamiliengebäude\nspezifische CO2 Emissionen"),
+            columnNames = c("Jahr","kg / q.m."),
+            columnWidths = c(1,1),
+            columnsToRound = "kg / q.m."
+)
+```
 
 
 
@@ -995,16 +1104,28 @@ i_subsubsection <- i_subsubsection + 1
 
 ```{r}
 plot_dualPlot(
-  bezirk_total_area$areaMFH,
+  1e-6*bezirk_total_area$areaMFH,
   bezirk_spzco2_mfh$spzco2,
   2002:2018,
   "Jahr",
-  "MFH Buildings (m2)",
-  "kg/m2",
-  "Area",
-  "CO2 emissions per m2")
+  "Nutzfläche, (Mio. q.m.)",
+  "kg/q.m.",
+  "Nutzfläche",
+  "spezifische CO2 Emissionen",
+  paste0(bezirk_proper_name, ", Mehrfamiliengebäude"))
 ```
 
+
+```{r,fig.width=5.5,fig.height=6}
+createTable(obj = data.frame(Jahr=2002:2018,Area=1e-6*bezirk_total_area$areaMFH,Spez_CO2 = bezirk_spzco2_mfh$spzco2),
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", Mehrfamiliengebäude"),
+            columnNames = c("Jahr","Wohnfläche\n(Mio. q.m.)","spezifische CO2\nEmissionen (kg/q.m.)"),
+            columnWidths = c(1,1,1),
+            columnsToRound = c("Wohnfläche\n(Mio. q.m.)","spezifische CO2\nEmissionen (kg/q.m.)")
+)
+```
 
 
 ```{r}
@@ -1020,7 +1141,34 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. MFH, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner 2002 - 2018
 
-* Need data for this.
+
+```{r}
+bezirk_population_mfh <- getPopulationBezirk_byGtype("MFH")
+bezirk_prokopf_co2_mfh <- data.frame(abrechnungsjahr=2002:2018 , prokopfco2 = 1e6* bezirk_co2_mfh$total/bezirk_population_mfh[[bezirk]])
+points_line_lm(input_data = bezirk_prokopf_co2_mfh,
+               xVar = "abrechnungsjahr",
+               yVar = "prokopfco2",
+               ymin=0,
+               ymax=max(bezirk_prokopf_co2_mfh$prokopfco2),
+               x_eq = 2010,
+               y_eq = 1400,
+               size_eq = 4,
+               plot_title = paste0("Pro Kopf CO2 Emissionen, Mehrfamiliengebäude ",bezirk_proper_name),
+               xlab = "Jahr",
+               ylab = "kg")
+```
+
+
+```{r,fig.width=2.5,fig.height=6}
+createTable(obj = bezirk_prokopf_co2_mfh,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"\nMehrfamiliengebäude\nPro Kopf CO2 Emissionen"),
+            columnNames = c("Jahr","kg"),
+            columnWidths = c(1,1),
+            columnsToRound = "kg"
+)
+```
+
 
 ```{r}
 i_subsection <- i_subsection + 1
@@ -1116,6 +1264,20 @@ points_line_lm(input_data = bezirk_aes_all_TWh,
 ```
 
 
+```{r,fig.width=2.5,fig.height=6}
+createTable(obj = bezirk_aes_all_TWh[ , c("abrechnungsjahr" , "total")],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name, "\nalle Wohngebäude\nHeizenergieverbrauch"),
+            columnNames = c("Jahr","TWh"),
+            columnWidths = c(1,1),
+            columnsToRound = "TWh",
+            roundOffTo = 4
+)
+```
+
+
+
 ```{r}
 i_subsection <- i_subsection + 1
 ```
@@ -1126,6 +1288,23 @@ i_subsection <- i_subsection + 1
 bezirk_aes_all_TWh_cumsums <- getCumSums(bezirk_aes_all_TWh , dropCols = c("abrechnungsjahr","total"))
 plot_byET(bezirk_aes_all_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = paste0("All buildings ",bezirk_proper_name) )
 ```
+
+```{r}
+bezirk_aes_all_TWh
+```
+
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_aes_all_TWh,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"alle Wohngebäude, Heizenergieverbrauch nach Energieträgern (TWh)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            columnWidths = rep(1,8),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            roundOffTo=3
+)
+```
+
 
 ```{r}
 i_subsection <- i_subsection + 1
@@ -1145,10 +1324,28 @@ points_line_lm(input_data = bezirk_spz_verbrauch_all,
                x_eq = 2010,
                y_eq = 0.8,
                size_eq = 4,
-               plot_title = paste0(bezirk_proper_name, " Specific consumption, all buildings"),
+               plot_title = paste0(bezirk_proper_name, ", Specific consumption, all buildings"),
                xlab = "Jahr",
                ylab = "kWh/m^2")
 ```
+
+
+```{r}
+bezirk_spz_verbrauch_all
+```
+
+```{r,fig.width=3,fig.height=6}
+createTable(obj = bezirk_spz_verbrauch_all,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"\nalle Wohngebäude\nspezifischer Heizenergieverbrauch"),
+            columnNames = c("Jahr","kWh / q.m."),
+            columnWidths = c(1,1),
+            columnsToRound = "kWh / q.m."
+)
+```
+
+
 
 ```{r}
 i_subsection <- i_subsection + 1
@@ -1332,7 +1529,9 @@ g_holzpellets
 g_strom
 ```
 
-
+```{r}
+spz_vrbrch_all_byET
+```
 
 
 
@@ -1368,6 +1567,19 @@ plot_gridAllETs <- function(obj,geb_type) {
 plot_gridAllETs(spz_vrbrch_all_byET, geb_type = "ALL")
 ```
 
+
+```{r,fig.width=8.75,fig.height=6}
+createTable(spz_vrbrch_all_byET,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", alle Wohngebäude\nspezifischer Heizenergieverbrauch nach Energieträgern (kWh/q.m.)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            columnWidths = rep(1,8),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            roundOffTo=3
+)
+```
+
 ```{r}
 #bezirk_aes_all
 ```
@@ -1394,6 +1606,20 @@ bezirk_aes_all_props_cumsums <- getCumSums(bezirk_aes_all_props , dropCols = "ab
 plot_byET(bezirk_aes_all_props_cumsums , xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = paste0("Energy Consumption All buildings ",bezirk_proper_name) )
 ```
 
+```{r}
+bezirk_aes_all_props
+```
+
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_aes_all_props,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name," alle Wohngebäude, CO2 Emissionen, Anteile nach Energieträgern (%)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+)
+```
 
 ```{r}
 i_subsection <- i_subsection + 1
@@ -1426,14 +1652,15 @@ spz_vrbrch_all_byET <- SV_all_byET$spzVrbch
 ```
 
 ```{r}
-plot_dualPlot(SV_all_byET$areas$total,
+plot_dualPlot(1e-6*SV_all_byET$areas$total,
               SV_all_byET$spzVrbch$total,
               2002:2018,
               "Jahr",
-              "Area MFH + 1-2 FH Buildings (m2)",
-              "kWh/m2",
-              "Area",
-              "Energy consumption per m2"
+              "Nutzfläche (Mio. q.m.)",
+              "kWh/q.m.",
+              "Nutzfläche",
+              "spezifischer Heizenergieverbrauch",
+              paste0(bezirk_proper_name, ", alle Wohngebäude")
 )
 ```
 
@@ -1509,6 +1736,20 @@ points_line_lm(input_data = bezirk_aes_sfh_TWh,
 ```
 
 
+```{r,fig.width=3,fig.height=6}
+createTable(obj = bezirk_aes_sfh_TWh[ , c("abrechnungsjahr" , "total")],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"\n1-2 Familiengebäude\nHeizenergieverbrauch"),
+            columnNames = c("Jahr","TWh"),
+            columnWidths = c(1,1),
+            columnsToRound = "TWh",
+            roundOffTo = 5
+)
+```
+
+
+
 ```{r}
 i_subsection <- i_subsection + 1
 ```
@@ -1518,6 +1759,18 @@ i_subsection <- i_subsection + 1
 ```{r}
 bezirk_aes_sfh_TWh_cumsums <- getCumSums(bezirk_aes_sfh_TWh , dropCols = c("abrechnungsjahr","total"))
 plot_byET(bezirk_aes_sfh_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = paste0("1-2 FH buildings ",bezirk_proper_name) )
+```
+
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_aes_sfh_TWh,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", 1-2 Familiengebäude, Heizenergieverbrauch nach Energieträgern (TWh)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            columnWidths = rep(1,8),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            roundOffTo=6
+)
 ```
 
 ```{r}
@@ -1540,8 +1793,20 @@ points_line_lm(input_data = bezirk_spz_verbrauch_sfh,
                size_eq = 4,
                plot_title = paste0(bezirk_proper_name, " Specific consumption, 1-2 FH buildings"),
                xlab = "Jahr",
-               ylab = "kWh/m^2")
+               ylab = "kWh/q.m.")
 ```
+
+```{r,fig.width=3,fig.height=6}
+createTable(obj = bezirk_spz_verbrauch_sfh,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"\n1-2 Familiengebäude\nspezifischer Heizenergieverbrauch"),
+            columnNames = c("Jahr","kWh / q.m."),
+            columnWidths = c(1,1),
+            columnsToRound = "kWh / q.m."
+)
+```
+
 
 ```{r}
 i_subsection <- i_subsection + 1
@@ -1654,10 +1919,21 @@ g_strom
 ```
 
 
-```{r.fig.width=10,fig.height=6}
+```{r,fig.width=10,fig.height=6}
 plot_gridAllETs(spz_vrbrch_sfh_byET,geb_type="1-2FH")
 ```
 
+```{r,fig.width=8.75,fig.height=6}
+createTable(spz_vrbrch_sfh_byET,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", 1-2 Familiengebäude\nspezifischer Heizenergieverbrauch nach Energieträgern (kWh/q.m.)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            columnWidths = rep(1,8),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            roundOffTo=3
+)
+```
 
 
 ```{r}
@@ -1687,6 +1963,18 @@ plot_byET(bezirk_aes_sfh_props_cumsums , xlabel = "Jahr" , ylabel = "Anteile in 
 ```
 
 
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_aes_sfh_props,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name," 1-2 Familiengebäude, CO2 Emissionen, Anteile nach Energieträgern (%)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+)
+```
+
+
 ```{r}
 i_subsection <- i_subsection + 1
 ```
@@ -1694,14 +1982,15 @@ i_subsection <- i_subsection + 1
 ## `r i_section`.`r i_subsection`. 1-2 Familiengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 – 2018
 
 ```{r}
-plot_dualPlot(SV_sfh_byET$areas$total,
+plot_dualPlot(1e-6*SV_sfh_byET$areas$total,
               SV_sfh_byET$spzVrbch$total,
               2002:2018,
               "Jahr",
-              "1-2 FH Buildings (m2)",
-              "kWh/m2",
-              "Area",
-              "Energy consumption per m2"
+              "Nutzfläche (Mio. q.m.)",
+              "kWh/q.m.",
+              "Nutzfläche",
+              "spezifischer Heizenergieverbrauch",
+               paste0(bezirk_proper_name, ", 1-2 Familiengebäude")
 )
 ```
 
@@ -1770,6 +2059,20 @@ points_line_lm(input_data = bezirk_aes_mfh_TWh,
 ```
 
 
+```{r,fig.width=2.5,fig.height=6}
+createTable(obj = bezirk_aes_mfh_TWh[ , c("abrechnungsjahr" , "total")],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"\nMehrfamiliengebäude\nHeizenergieverbrauch"),
+            columnNames = c("Jahr","TWh"),
+            columnWidths = c(1,1),
+            columnsToRound = "TWh",
+            roundOffTo = 4
+)
+```
+
+
+
 ```{r}
 i_subsection <- i_subsection + 1
 ```
@@ -1780,6 +2083,20 @@ i_subsection <- i_subsection + 1
 bezirk_aes_mfh_TWh_cumsums <- getCumSums(bezirk_aes_mfh_TWh , dropCols = c("abrechnungsjahr","total"))
 plot_byET(bezirk_aes_mfh_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = paste0("MFH buildings ",bezirk_proper_name) )
 ```
+
+
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_aes_mfh_TWh,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", Mehrfamiliengebäude, Heizenergieverbrauch nach Energieträgern (TWh)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            columnWidths = rep(1,8),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            roundOffTo=6
+)
+```
+
 
 ```{r}
 i_subsection <- i_subsection + 1
@@ -1803,6 +2120,20 @@ points_line_lm(input_data = bezirk_spz_verbrauch_mfh,
                xlab = "Jahr",
                ylab = "kWh/m^2")
 ```
+
+
+```{r,fig.width=3,fig.height=6}
+createTable(obj = bezirk_spz_verbrauch_mfh,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,"\nMehrfamiliengebäude\nspezifischer Heizenergieverbrauch"),
+            columnNames = c("Jahr","kWh / q.m."),
+            columnWidths = c(1,1),
+            columnsToRound = "kWh / q.m."
+)
+```
+
+
 
 ```{r}
 bezirk_spz_verbrauch_mfh
@@ -1850,6 +2181,19 @@ plot_gridAllETs(spz_vrbrch_mfh_byET,geb_type="MFH")
 ```
 
 
+```{r,fig.width=8.75,fig.height=6}
+createTable(spz_vrbrch_mfh_byET,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", Mehrfamiliengebäude\nspezifischer Heizenergieverbrauch nach Energieträgern (kWh/q.m.)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            columnWidths = rep(1,8),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            roundOffTo=3
+)
+```
+
+
 ```{r}
 spz_vrbrch_mfh_byET
 ```
@@ -1870,6 +2214,17 @@ plot_byET(bezirk_aes_mfh_props_cumsums , xlabel = "Jahr" , ylabel = "Anteile in 
 ```
 
 
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_aes_mfh_props,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name," Mehrfamiliengebäude, CO2 Emissionen, Anteile nach Energieträgern (%)"),
+            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr"),
+            columnWidths = rep(1,7),
+            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+)
+```
+
 ```{r}
 i_subsection <- i_subsection + 1
 ```
@@ -1877,14 +2232,15 @@ i_subsection <- i_subsection + 1
 ## `r i_section`.`r i_subsection`. Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 – 2018
 
 ```{r}
-plot_dualPlot(SV_mfh_byET$areas$total,
+plot_dualPlot(1e-6*SV_mfh_byET$areas$total,
               SV_mfh_byET$spzVrbch$total,
               2002:2018,
               "Jahr",
-              "MFH Buildings (m2)",
-              "kWh/m2",
-              "Area",
-              "Energy consumption per m2"
+              "Nutzfläche (Mio. q.m.)",
+              "kWh/q.m.",
+              "Nutzfläche",
+              "spezifischer Heizenergieverbrauch",
+              paste0(bezirk_proper_name, ", Mehrfamiliengebäude")
 )
 ```
 

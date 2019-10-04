@@ -2,13 +2,16 @@
 title: "Berlin CO2 Leistungsbild"
 author: "Bhaskar Kamble"
 date: "15 August 2019"
-output: 
+output:
+  word_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
     code_folding: hide
-    toc: true
-    toc_depth: 3
     theme: united
-    toc_float: true
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
 ---
 
 
