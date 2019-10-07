@@ -3,15 +3,18 @@ title: "Berlin CO2 Leistungsbild"
 author: "Bhaskar Kamble"
 date: "15 August 2019"
 output:
-  word_document:
-    toc: yes
-    toc_depth: '3'
   html_document:
     code_folding: hide
     theme: united
     toc: yes
     toc_depth: 3
     toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  word_document:
+    toc: yes
+    toc_depth: '3'
 ---
 
 
@@ -1306,51 +1309,27 @@ i_subsubsection <- 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngebäude, co2-Emission aus der Beheizung von Wohnraum pro Einwohner
 
-```
-bezirk_population <- read.csv2("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/PopulationBezirke/BerlinBezirkPopulation.csv",stringsAsFactors = FALSE)
-names(bezirk_population) <- c("bezirk",2002:2018)
+```{r}
 #converting data from wide to long: http://www.cookbook-r.com/Manipulating_data/Converting_data_between_wide_and_long_format/
 # look at the reshape2 option. id.vars has to be bezirk
-require(reshape2)
-bezirk_population <- melt(bezirk_population,id.vars = "bezirk")
-#convert $variable and $value to numeric
-bezirk_population$variable <- as.character(bezirk_population$variable)
-bezirk_population$variable <- as.numeric(bezirk_population$variable)
-bezirk_population$value <- gsub("\\.","",bezirk_population$value)
-bezirk_population$value <- as.numeric(bezirk_population$value)
-names(bezirk_population) <- c("bezirk","abrechnungsjahr","population")
 
-bezirk_population$bezirk[ bezirk_population$bezirk=="Berlin-Mitte"] <- "mitte"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Charlottenburg Wilmersdorf"] <- "charlottenburg_wilmersdorf"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Friedrichshain - Kreuzberg"] <- "friedrichshain_kreuzberg"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Lichtenberg"] <- "lichtenberg"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Marzahn-Hellersdorf"] <- "marzahn_hellersdorf"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Neukölln"] <- "neukoelln"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Pankow"] <- "pankow"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Reinickendorf"] <- "reinickendorf"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Spandau"] <- "spandau"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Steglitz Zehlendorf"] <- "steglitz_zehlendorf"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Tempelhof-Schöneberg"] <- "tempelhof_schoeneberg"
-bezirk_population$bezirk[ bezirk_population$bezirk=="Treptow-Köpenick"] <- "treptow_koepenick"
-bezirk_population
-dcast(bezirk_population , abrechnungsjahr~bezirk,value.var = "population")
+#from:	Johannes Hengstenberg <johanneshengstenberg@gmail.com>
+#to:	Bhaskar Kamble <kbhaskar.iitk@gmail.com>
+#date:	Jun 17, 2019, 7:46 PM
+#subject:	Population Data for the Bezirke
+
+
+#from:	Johannes Hengstenberg <johanneshengstenberg@gmail.com>
+#to:	Bhaskar Kamble <kbhaskar.iitk@gmail.com>
+#date:	Jun 16, 2019, 3:09 PM
+#subject:	Population of Berlin
+
+
+#Now you know the population, so can find per capita co2 emissions.
 ```
 
 
 
-
-from:	Johannes Hengstenberg <johanneshengstenberg@gmail.com>
-to:	Bhaskar Kamble <kbhaskar.iitk@gmail.com>
-date:	Jun 17, 2019, 7:46 PM
-subject:	Population Data for the Bezirke
-
-
-from:	Johannes Hengstenberg <johanneshengstenberg@gmail.com>
-to:	Bhaskar Kamble <kbhaskar.iitk@gmail.com>
-date:	Jun 16, 2019, 3:09 PM
-subject:	Population of Berlin
-
-Now you know the population, so can find per capita co2 emissions.
 ```{r}
 source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getBerlinBezirkPopulation.R")
 bezirk_population <- getBerlinBezirkPopulation()
@@ -1410,7 +1389,7 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, alle Wohngebäude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
 
-*One Graph: CO2 Emissions in kg/head. All 12 lines in a single plot.*
+
 
 ```{r}
 #berlin_co2_all
@@ -1541,7 +1520,7 @@ i_subsubsection <- i_subsubsection + 1
 
 *One Graph: CO2 Emissions with 2002 value = 100 for each Bezirk. All 12 lines on the same plot.*
 
-The following object, modify it
+
 
 ```{r}
 #berlin_bezirke_all_co2perhead
@@ -1681,12 +1660,6 @@ bezirk_co2_percapita_linear_2018 <- bezirk_co2_percapita_linear_2018[bezirk_co2_
 #bezirk_co2_percapita_linear_2018
 ```
 
-```
-bezirk_co2_percapita_linear_2018$bezirk <- factor(
-      bezirk_co2_percapita_linear_2018$bezirk , 
-      levels = bezirk_co2_percapita_linear_2018$bezirk[order(bezirk_co2_percapita_linear_2018$wert)])
-ggplot(data=bezirk_co2_percapita_linear_2018,aes(x=bezirk,y=wert))+geom_bar(stat="identity")+coord_flip()
-```
 
 
 ```{r}
@@ -1731,9 +1704,10 @@ i_subsubsection <- i_subsubsection + 1
 *(Zwei Grafiken: absolute values and percentage values of change compared to 2002 and 2018 values as grouped bar charts.)
 Group barchart of only 2002 and 2018 values for each city district - either absolute values and percentage.*
 
-Use `bezirk_co2_percapita_linear`. This is the linear version of `bezirk_co2_percapita`, which is the same as `berlin_bezirke_all_co2perhead`.
+
 
 ```{r}
+#Use `bezirk_co2_percapita_linear`. This is the linear version of `bezirk_co2_percapita`, which is the same as `berlin_bezirke_all_co2perhead`.
 #bezirk_co2_percapita_linear
 ```
 
@@ -1844,19 +1818,53 @@ i_subsection <- i_subsection + 1
 
 ## `r i_section`.`r i_subsection` Prognose
 
-* Do the x + I(x^2) analysis.
+
 
 ```{r}
 i_subsubsection <- 1
 ```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle Wohngebäude, Prognose der co2-Emission aus Beheizung 2019-2030 in Mio. t (Trend Polynom 1. Grades)
+
+```{r}
+#berlin_co2_all
+linmodel <- lm(total~abrechnungsjahr,data=berlin_co2_all)
+```
+
+```{r}
+summary(linmodel)$r.squared
+```
+
+```{r}
+from2002_till_2030 <- data.frame(abrechnungsjahr=2002:2030)
+prognose <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predict(linmodel,newdata=from2002_till_2030)))
+```
+
+
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle Wohngebäude, Prognose der co2-Emission aus Beheizung 2019-2030 in Mio. t (Trend Polynom 2. Grades)
 
 ```{r}
 #berlin_co2_all
 quadmodel <- lm(total~abrechnungsjahr+I(abrechnungsjahr^2),data=berlin_co2_all)
+```
+
+
+```{r}
+summary(quadmodel)$r.squared
+```
+
+```{r}
 from2002_till_2030 <- data.frame(abrechnungsjahr=2002:2030)
 prognose <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predict(quadmodel,newdata=from2002_till_2030)))
+```
+
+```{r}
 ggplot(prognose , aes(x=abrechnungsjahr , y = pred))+geom_point()
 ```
 
@@ -1944,7 +1952,7 @@ createTable(obj = berlin_co2_sfh[, c("abrechnungsjahr","total")],
 )
 ```
 
-* Now split by ET
+
 
 ```{r}
 co2_sfh_allebezirke_byET <- co2_allebezirke_byET$sfh
@@ -1980,7 +1988,7 @@ i_subsubsection <- i_subsubsection+1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengebäude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t
 
-* Here co2 emissions split by the bezirke
+
 
 ```{r}
 berlin_co2_sfh_cumsums <- getCumSums(obj=berlin_co2_sfh , dropCols=c("abrechnungsjahr","total"))
@@ -2517,27 +2525,22 @@ i_subsubsection <- 1
 
 
 
+```{r}
+#**I'm using the micro census of 2014**
+#Put the following into a function: `getCo2PerCapitaBezirk_byGtype_method1.R` and #`getCo2PerCapitaBezirk_byGtype_method1()`.
+#source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getBezirkPopulations_by_gtype_method1.R")
+#bezirkPopulations_by_gtype <- getBezirkPopulations_by_gtype()
+#bezirk_co2_percapita_sfh_v1 <- 1e6*berlin_co2_sfh / bezirkPopulations_by_gtype$SFH
+#bezirk_co2_percapita_sfh_v1
 
-**I'm using the micro census of 2014**
 
 
+#This is clearly giving an extremely low value for some of the bezirks for sfh (friedrichshain-kreuzberg and mitte).
+
+#Do with the different method of finding avg number of people in each MFH and SFH flat. Write a function for the first method and the second method which finds the answer in a single step. Right now I find what fraction of ppl live in SFh and MFH in Berlin as a whole. Then I assume the same fractions hold in all Bezirke - but Friedrichshain-Kreuzberg has almost zero emissions from SFH buildings, because SFH buildings there do not exist.
+
+#Here is the second method:
 ```
-#Put the following into a function: `getCo2PerCapitaBezirk_byGtype_method1.R` and `getCo2PerCapitaBezirk_byGtype_method1()`.
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getBezirkPopulations_by_gtype_method1.R")
-bezirkPopulations_by_gtype <- getBezirkPopulations_by_gtype()
-bezirk_co2_percapita_sfh_v1 <- 1e6*berlin_co2_sfh / bezirkPopulations_by_gtype$SFH
-```
-
-```
-bezirk_co2_percapita_sfh_v1
-```
-
-
-This is clearly giving an extremely low value for some of the bezirks for sfh (friedrichshain-kreuzberg and mitte).
-
-Do with the different method of finding avg number of people in each MFH and SFH flat. Write a function for the first method and the second method which finds the answer in a single step. Right now I find what fraction of ppl live in SFh and MFH in Berlin as a whole. Then I assume the same fractions hold in all Bezirke - but Friedrichshain-Kreuzberg has almost zero emissions from SFH buildings, because SFH buildings there do not exist.
-
-Here is the second method:
 
 ```{r}
 source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCo2PerCapitaBezirk_byGtype_method2.R")
@@ -2545,8 +2548,9 @@ bezirk_co2_percapita_sfh <- getCo2PerCapitaBezirk_byGtype_method2(berlin_co2_sfh
 #bezirk_co2_percapita_sfh
 ```
 
-
-From this you can also find the total SFH per capita co2 emission from the total column.
+```{r}
+#From this you can also find the total SFH per capita co2 emission from the total column.
+```
 
 ```{r}
 points_line_lm(input_data = bezirk_co2_percapita_sfh,
