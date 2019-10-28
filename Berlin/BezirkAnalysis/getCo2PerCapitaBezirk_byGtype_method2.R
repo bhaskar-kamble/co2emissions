@@ -1,9 +1,9 @@
 getBerlinWohnungen <- function() {
   
-  source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R")
-  source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getRowSums.R")
+  source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R")
+  source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getRowSums.R")
   
-  bezirk_wohnungen <- read.csv2("D:/GITHUB_REPOS/co2emissions/Berlin/FindArea/areas_berlin_bezirke.csv")
+  bezirk_wohnungen <- read.csv2("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FindArea/areas_berlin_bezirke.csv")
   
   bezirk_wohnungen_all <- bezirk_wohnungen[ , c(    "abrechnungsjahr",
                                                     "bezirk",
@@ -66,7 +66,7 @@ getPopulationFromHaushalt2014 <- function(p1=5.5,
                                           p2=5.5,
                                           p3=5.5,
                                           p4=5.5) {
-  haushalt2014 <- read.csv2("D:/GITHUB_REPOS/co2emissions/Berlin/berlin_haushalte_2014.csv" , stringsAsFactors = FALSE)
+  haushalt2014 <- read.csv2("/home/kbhaskar/Github_Repos/co2emissions/Berlin/berlin_haushalte_2014.csv" , stringsAsFactors = FALSE)
   haushalt2014 <- haushalt2014[haushalt2014$Haushalte !=  "haushalte_total" ,]
   # multiply with 1000 all the numbers
   haushalt2014[,c("ALL","IFH","IIFH","MFH")] <- 1000*haushalt2014[,c("ALL","IFH","IIFH","MFH")]

@@ -19,13 +19,13 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE,message=FALSE,warning=FALSE,cache=FALSE)
+knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning=FALSE,cache=FALSE)
 ```
 
 # <font size="20">Teil 1.</font>
 
 ```{r}
-showResults <- "hide" # the other option is "show"
+showResults <- "show" # the options are "show" or "hide"
 ```
 
 
@@ -53,7 +53,7 @@ showResults <- "hide" # the other option is "show"
 ```
 
 ```{r}
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getAllBezirkeTotalCO2_v2.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getAllBezirkeTotalCO2_v2.R")
 alle_bezirke_co2 <- getAllBezirkeTotalCO2()
 ```
 
@@ -63,7 +63,7 @@ alle_bezirke_co2 <- getAllBezirkeTotalCO2()
 i_section <- 1
 ```
 
-# `r i_section`. Alle Stadtbezirke, CO2-Emission aus Beheizung, alle Wohngebäude
+# `r i_section`. Alle Stadtbezirke, CO2-Emission aus Beheizung, alle WohngebÃ¤ude
 
 ```{r}
 i_subsection <- 1
@@ -75,19 +75,41 @@ i_subsection <- 1
 
 ### Sample Size
 
+
+
 ```{r}
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getSampleSize.R")
+get_BezirkNames <- function(obj) {
+  obj[obj=="charlottenburg_wilmersdorf"] <- "Charlottenburg-Wilmersdorf"
+  obj[obj=="friedrichshain_kreuzberg"]   <- "Friedrichshain-Kreuzberg"
+  obj[obj=="lichtenberg"]                <- "Lichtenberg"
+  obj[obj=="marzahn_hellersdorf"]        <- "Marzahn-Hellersdorf"
+  obj[obj=="mitte"]                      <- "Mitte"
+  obj[obj=="neukoelln"]                  <- "NeukÃ¶lln"
+  obj[obj=="pankow"]                     <- "Pankow"
+  obj[obj=="reinickendorf"]              <- "Reinickendorf"
+  obj[obj=="spandau"]                    <- "Spandau"
+  obj[obj=="steglitz_zehlendorf"]        <- "Steglitz-Zehlendorf"
+  obj[obj=="tempelhof_schoeneberg"]      <- "Tempelhof-SchÃ¶neberg"
+  obj[obj=="treptow_koepenick"]          <- "Treptow-KÃ¶penick"
+  return(obj)
+}
+```
+
+
+```{r}
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getSampleSize.R")
 berlin_sample_size <- getSampleSize()
 ```
 
+
 ```{r}
 require(ggplot2)
-ggplot(berlin_sample_size$ALL) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="Stichprobengröße",title="Berlin, alle Wohngebäude (Stichprobengröße)")+scale_x_continuous(breaks=seq(2002,2018,2))
+ggplot(berlin_sample_size$ALL) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="StichprobengrÃ¶ÃŸe",title="Berlin, alle WohngebÃ¤ude (StichprobengrÃ¶ÃŸe)")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 
 ```{r,results = showResults}
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/createTable.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/createTable.R")
 berlin_sample_size$ALL[,c("abrechnungsjahr","total")]
 ```
 
@@ -95,11 +117,67 @@ berlin_sample_size$ALL[,c("abrechnungsjahr","total")]
 createTable(obj = berlin_sample_size$ALL[,c("abrechnungsjahr","total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude,\nStichprobengröße",
+            headerName = "Berlin, alle WohngebÃ¤ude,\nStichprobengrÃ¶ÃŸe",
             columnNames = c("Jahr","N"),
             columnWidths = c(1,1),
             addColTotals = TRUE)
 ```
+
+
+StichprobengrÃ¶ÃŸe nach Bezirken:
+
+```{r}
+#names(berlin_sample_size$ALL) <- get_BezirkNames(names(berlin_sample_size$ALL))
+```
+
+
+```{r,fig.width=10,fig.height=7}
+createTable(berlin_sample_size$ALL[,1:7],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, alle WohngebÃ¤ude, StichprobengrÃ¶ÃŸe nach Bezirken",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
+            columnWidths = rep(1,7),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+
+```{r,fig.width=10,fig.height=6}
+createTable(berlin_sample_size$ALL[, c(1,8:13)],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, alle WohngebÃ¤ude, StichprobengrÃ¶ÃŸe nach Bezirken",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
+            columnWidths = rep(1,7),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+
+
+```{r}
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getSampleSizeByET.R")
+berlin_sample_size_by_et <- getSampleSizeByET()
+berlin_sample_size_by_et$ALL <- berlin_sample_size_by_et$ALL[ , c("abrechnungsjahr", "erdgas", "waerme", "fluessiggas", "heizoel" ,"holzpellets", "strom", "total")]
+berlin_sample_size_by_et$SFH <- berlin_sample_size_by_et$SFH[ , c("abrechnungsjahr", "erdgas", "waerme", "fluessiggas", "heizoel" ,"holzpellets", "strom", "total")]
+berlin_sample_size_by_et$MFH <- berlin_sample_size_by_et$MFH[ , c("abrechnungsjahr", "erdgas", "waerme", "fluessiggas", "heizoel" ,"holzpellets", "strom", "total")]
+```
+
+```{r,fig.width=10,fig.height=7}
+
+createTable(berlin_sample_size_by_et$ALL,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, alle WohngebÃ¤ude, StichprobengrÃ¶ÃŸe nach EnergietrÃ¤gern",
+            columnNames =  c("Jahr","Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
+            columnWidths = rep(1,8),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+
+
 
 ```{r}
 i_subsubsection <- 1
@@ -108,8 +186,8 @@ i_subsubsection <- 1
 ### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, CO2-Emission aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
 
 ```{r}
-# * Berlin, summed over all Bezirke and all Energieträger.
-# * Berlin, summed over all Bezirke, split by Energieträger.
+# * Berlin, summed over all Bezirke and all Energietr?ger.
+# * Berlin, summed over all Bezirke, split by Energietr?ger.
 ```
  
 ```{r}
@@ -198,7 +276,7 @@ points_line_lm(input_data = berlin_co2_all,
                x_eq = 2010,
                y_eq = 3600,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude"),
+               plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle WohngebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kilo t.")
 ```
@@ -213,7 +291,7 @@ berlin_co2_all[, c("abrechnungsjahr","total")]
 createTable(obj = berlin_co2_all[, c("abrechnungsjahr","total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, \nCO2 Emissionen",
+            headerName = "Berlin, alle WohngebÃ¤ude, \nCO2 Emissionen",
             columnNames = c("Jahr","kilo t."),
             columnWidths = c(1,1),
             columnsToRound = "kilo t."
@@ -226,7 +304,7 @@ createTable(obj = berlin_co2_all[, c("abrechnungsjahr","total")],
 
 
 ```{r}
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getAllBezirkeByETCO2_v2.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getAllBezirkeByETCO2_v2.R")
 co2_allebezirke_byET <- getAllBezirkeByETCO2()
 co2_all_allebezirke_byET <- co2_allebezirke_byET$all
 #co2_all_allebezirke_byET
@@ -246,7 +324,7 @@ cols <- c(
           )
 plot_title <- NULL
 order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
-order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+order_labels <- rev(c("Erdgas","WÃ¤rme (N+F)","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom (D+WP)"))
 et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
 plot_byET <- function(obj,xlabel,ylabel,plottitle) {
   ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
@@ -274,13 +352,13 @@ plot_byET <- function(obj,xlabel,ylabel,plottitle) {
 ```
 
 ```{r}
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
 co2_all_allebezirke_byET_cumsums <- getCumSums(obj=co2_all_allebezirke_byET , dropCols=c("abrechnungsjahr","total"))
 #co2_all_allebezirke_byET_cumsums
 plot_byET(co2_all_allebezirke_byET_cumsums , 
           xlabel = "Jahr" , 
           ylabel = "kilo t." , 
-          plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, nach Energieträgern"))
+          plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle WohngebÃ¤ude, nach EnergietrÃ¤gern"))
 ```
 
 ```{r,results = showResults}
@@ -291,10 +369,10 @@ co2_all_allebezirke_byET
 createTable(co2_all_allebezirke_byET,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, CO2 Emissionen in kilo t. nach Energieträgern",
-            columnNames =  c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            headerName = "Berlin, alle WohngebÃ¤ude, CO2 Emissionen in kilo t. nach EnergietrÃ¤gern",
+            columnNames =  c("Jahr","Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
             columnWidths = rep(1,8),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt")
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
 )
 ```
 
@@ -321,21 +399,7 @@ i_subsubsection <- i_subsubsection + 1
 ```{r}
 bezirk_list <- names(berlin_co2_all)[!(names(berlin_co2_all)%in% c("abrechnungsjahr","total"))]
 #bezirk_list
-get_BezirkNames <- function(obj) {
-  obj[obj=="charlottenburg_wilmersdorf"] <- "Charlottenburg-Wilmersdorf"
-  obj[obj=="friedrichshain_kreuzberg"]   <- "Friedrichshain-Kreuzberg"
-  obj[obj=="lichtenberg"]                <- "Lichtenberg"
-  obj[obj=="marzahn_hellersdorf"]        <- "Marzahn-Hellersdorf"
-  obj[obj=="mitte"]                      <- "Mitte"
-  obj[obj=="neukoelln"]                  <- "Neukölln"
-  obj[obj=="pankow"]                     <- "Pankow"
-  obj[obj=="reinickendorf"]              <- "Reinickendorf"
-  obj[obj=="spandau"]                    <- "Spandau"
-  obj[obj=="steglitz_zehlendorf"]        <- "Steglitz-Zehlendorf"
-  obj[obj=="tempelhof_schoeneberg"]      <- "Tempelhof-Schöneberg"
-  obj[obj=="treptow_koepenick"]          <- "Treptow-Köpenick"
-  return(obj)
-}
+
 #data.frame(blist = bezirk_list , bname = get_BezirkNames(bezirk_list))
 bezirk_name <- get_BezirkNames(bezirk_list)
 ```
@@ -400,7 +464,7 @@ plot_byBezirke <- function(obj,xlabel,ylabel,plottitle) {
 
 
 ```{r}
-plot_byBezirke(berlin_co2_all_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, nach Bezirk"))
+plot_byBezirke(berlin_co2_all_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle WohngebÃ¤ude, nach Bezirk"))
 ```
 
 ```{r,results = showResults}
@@ -411,10 +475,10 @@ berlin_co2_all
 createTable(berlin_co2_all[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, alle WohngebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -423,10 +487,10 @@ createTable(berlin_co2_all[ , 1:7],
 createTable(berlin_co2_all[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, alle WohngebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -463,7 +527,7 @@ co2_all_allebezirke_byET_prop_cumsums <- getCumSums(obj=co2_all_allebezirke_byET
 ```
 
 ```{r}
-plot_byET(co2_all_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, Anteile nach Energieträgern"))
+plot_byET(co2_all_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle WohngebÃ¤ude, Anteile nach EnergietrÃ¤gern"))
 ```
 
 ```{r,results = showResults}
@@ -474,17 +538,17 @@ co2_all_allebezirke_byET_prop
 createTable(co2_all_allebezirke_byET_prop,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, CO2 Emissionen, Anteile nach Energieträgern (%)",
-            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr"),
+            headerName = "Berlin, alle WohngebÃ¤ude, CO2 Emissionen, Anteile nach EnergietrÃ¤gern (%)",
+            columnNames =  c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom")
 )
 ```
 
 ```{r}
 berlin_co2_all_prop <- find_proportions(berlin_co2_all,drop_cols=c("abrechnungsjahr","total"))
 berlin_co2_all_prop_cumsums <- getCumSums(berlin_co2_all_prop,dropCols="abrechnungsjahr")
-plot_byBezirke(berlin_co2_all_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, Anteile nach Bezirk"))
+plot_byBezirke(berlin_co2_all_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle WohngebÃ¤ude, Anteile nach Bezirk"))
 ```
 
 ```{r,results = showResults}
@@ -495,10 +559,10 @@ berlin_co2_all_prop
 createTable(berlin_co2_all_prop[ , c(1:6,13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, CO2 Emissionen, Anteile nach Bezirken (%)",
-            columnNames =  c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln","Jahr"),
+            headerName = "Berlin, alle WohngebÃ¤ude, CO2 Emissionen, Anteile nach Bezirken (%)",
+            columnNames =  c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -506,10 +570,10 @@ createTable(berlin_co2_all_prop[ , c(1:6,13)],
 createTable(berlin_co2_all_prop[ , c(7:12,13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, CO2 Emissionen, Anteile nach Bezirken (%)",
-            columnNames =  c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick","Jahr"),
+            headerName = "Berlin, alle WohngebÃ¤ude, CO2 Emissionen, Anteile nach Bezirken (%)",
+            columnNames =  c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -578,7 +642,7 @@ plot_reqdColumns(berlin_co2_all,
                  cols_to_plot = names(berlin_co2_all)[!(names(berlin_co2_all) %in% c("abrechnungsjahr","total"))],
                  yColsName = "Bezirk",
                  yVar = "kilo t.",
-                 plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, alle Wohngebäude"),
+                 plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, alle WohngebÃ¤ude"),
                  xlabel = "Jahr",
                  ylabel = "kilo t.")
 ```
@@ -602,7 +666,7 @@ for (ii in 1:12) {
                                        xlab = "Jahr",
                                        ylab = "kilo t.")
 }
-require(grid)
+#require(grid)
 require(gridExtra)
 grid.arrange(g_co2_bezirk[[1]],g_co2_bezirk[[2]],g_co2_bezirk[[3]],g_co2_bezirk[[4]],
              g_co2_bezirk[[5]],g_co2_bezirk[[6]],g_co2_bezirk[[7]],g_co2_bezirk[[8]],
@@ -619,10 +683,10 @@ berlin_co2_all
 createTable(berlin_co2_all[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, alle WohngebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -631,10 +695,10 @@ createTable(berlin_co2_all[ , 1:7],
 createTable(berlin_co2_all[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, alle WohngebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -643,7 +707,7 @@ createTable(berlin_co2_all[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO2-Emission aus der Beheizung von Wohnraum 2002-2018, Veränderung in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO2-Emission aus der Beheizung von Wohnraum 2002-2018, Ver?nderung in Prozent
 
 **(CO2 emitted by a bezirk for a particualar year - Average CO2 emitted by a bezirk in particular year)/(Average CO2 emitted by a bezirk in particular year) times 100**
 
@@ -729,9 +793,9 @@ createTable(berlin_co2_all_devFromMean[ , c(1:7)],
             fontSize = 10,
             isHeader = TRUE,
             headerName = "Berlin, CO2 Emissionen, Abweichung vom Mittelwert (%)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -740,9 +804,9 @@ createTable(berlin_co2_all_devFromMean[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
             headerName = "Berlin, CO2 Emissionen, Abweichung vom Mittelwert (%)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -763,13 +827,13 @@ i_subsubsection <- i_subsubsection + 1
 i_subsection <- i_subsection + 1
 ```
 
-## `r i_section`.`r i_subsection` Flächenbezug
+## `r i_section`.`r i_subsection` Fl?chenbezug
 
 ```{r}
 i_subsubsection <- 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, flächenbezogene co2 Emission aus der Beheizung von Wohnraum 2002-2018 in kg/m2 [AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, fl?chenbezogene co2 Emission aus der Beheizung von Wohnraum 2002-2018 in kg/m2 [AN]
 
 Here you have to get the areas of SFH and MFH buildings...
 
@@ -777,7 +841,7 @@ Here you have to get the areas of SFH and MFH buildings...
 * Short method: Do as in BerlinPresentationCO2BalanceUnified_v7.Rmd. I.e. read directly from the file for total Berlin areas.
 
 ```{r}
-totalArea <- read.table("D:/GITHUB_REPOS/co2emissions/Berlin/berlin_wohnflaeche.txt",header=TRUE)
+totalArea <- read.table("/home/kbhaskar/Github_Repos/co2emissions/Berlin/berlin_wohnflaeche.txt",header=TRUE)
 totalArea <- totalArea*1000000
 totalArea$totArea <- rowSums(totalArea)
 totalArea$abrechnungsjahr <- 2002:2018
@@ -822,7 +886,7 @@ points_line_lm(input_data = spez_co2_emission,
                x_eq = 2010,
                y_eq = 20,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, alle Wohngebäude"),
+               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, alle WohngebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kg/qm")
 ```
@@ -835,7 +899,7 @@ spez_co2_emission
 createTable(obj = spez_co2_emission[, c("abrechnungsjahr","spez_co2")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, \nSpezifische CO2 Emissionen",
+            headerName = "Berlin, alle WohngebÃ¤ude, \nSpezifische CO2 Emissionen",
             columnNames = c("Jahr","kg / q.m."),
             columnWidths = c(1,1),
             columnsToRound = "kg / q.m."
@@ -848,7 +912,7 @@ createTable(obj = spez_co2_emission[, c("abrechnungsjahr","spez_co2")],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, flächenbezogene co2 Emission aus der Beheizung von Wohnraum 2002-2018 in kg/m2 [AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, fl?chenbezogene co2 Emission aus der Beheizung von Wohnraum 2002-2018 in kg/m2 [AN]
 
 *Is this not similar to 7.2.1?*
 
@@ -887,7 +951,7 @@ plot_reqdColumns(bezirke_spez_co2,
                  cols_to_plot = names(bezirke_spez_co2)[!(names(bezirke_spez_co2) %in% c("abrechnungsjahr","total"))],
                  yColsName = "Bezirk",
                  yVar = "kg/qm",
-                 plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, alle Wohngebäude"),
+                 plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, alle WohngebÃ¤ude"),
                  xlabel = "Jahr",
                  ylabel = "kg / q.m.")
 ```
@@ -929,10 +993,10 @@ bezirke_spez_co2
 createTable(bezirke_spez_co2[ , c(1:7)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, Spezifische CO2 Emissionen nach Bezirken (kg / q.m.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, alle WohngebÃ¤ude, Spezifische CO2 Emissionen nach Bezirken (kg / q.m.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -940,10 +1004,10 @@ createTable(bezirke_spez_co2[ , c(1:7)],
 createTable(bezirke_spez_co2[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, Spezifische CO2 Emissionen nach Bezirken (kg / q.m.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, alle WohngebÃ¤ude, Spezifische CO2 Emissionen nach Bezirken (kg / q.m.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -956,7 +1020,7 @@ i_subsubsection <- i_subsubsection + 1
 ```
 
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, flächenbezogene co2 Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2 [AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, fl?chenbezogene co2 Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2 [AN]
 
 
 **2018 values for the specific CO2 emission in each bezirk**
@@ -1023,7 +1087,7 @@ plot_spezCO2_2018 <- function(obj,plot_title) {
 
 ```{r}
 plot_spezCO2_2018(obj = bezirke_spezco2_linear_2018 , 
-                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen 2018, alle Wohngebäude"))
+                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen 2018, alle WohngebÃ¤ude"))
 ```
 
 
@@ -1035,7 +1099,7 @@ bezirke_spezco2_linear_2018
 #createTable(obj = bezirke_spezco2_linear_2018[, c("bezirk","wert")],
 #            fontSize = 10,
 #            isHeader = TRUE,
-#            headerName = "Berlin, alle Wohngebäude,\nCO2 Emissionen (2018)",
+#            headerName = "Berlin, alle Wohngeb?ude,\nCO2 Emissionen (2018)",
 #            columnNames = c("Bezirk","kg / q.m."),
 #            columnWidths = c(1,1),
 #            columnsToRound = "kg / q.m."
@@ -1065,7 +1129,7 @@ createTable2018 <- function(obj,
 }
 
 createTable2018(obj = bezirke_spezco2_linear_2018[, c("bezirk","wert")],
-            headerName = "Berlin, alle Wohngebäude,\nCO2 Emissionen (2018)",
+            headerName = "Berlin, alle WohngebÃ¤ude,\nCO2 Emissionen (2018)",
             columnNames = c("Bezirk","kg / q.m."),
             columnWidths = c(2,1),
             columnsToRound = "kg / q.m."
@@ -1082,7 +1146,7 @@ i_subsubsection <- i_subsubsection + 1
 ```
 
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, flächenbezogene co2 Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002-2008, 2002=100
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, fl?chenbezogene co2 Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002-2008, 2002=100
 
 The per unit area co2 emission when the 2002 value is 100.
 
@@ -1115,7 +1179,7 @@ points_line_lm(input_data = get2002as100(spez_co2_emission , "abrechnungsjahr"),
                x_eq = 2010,
                y_eq = 60,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, alle Wohngebäude, 2002 Wert = 100"),
+               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, alle WohngebÃ¤ude, 2002 Wert = 100"),
                xlab = "Jahr",
                ylab = " ")
 ```
@@ -1129,7 +1193,7 @@ get2002as100(spez_co2_emission , "abrechnungsjahr")
 createTable(obj = get2002as100(spez_co2_emission , "abrechnungsjahr"),
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude,\nSpezifische CO2 Emissionen\n(2002 Wert = 100)",
+            headerName = "Berlin, alle WohngebÃ¤ude,\nSpezifische CO2 Emissionen\n(2002 Wert = 100)",
             columnNames = c("Jahr","Wert"),
             columnWidths = c(1,1),
             columnsToRound = "Wert"
@@ -1140,7 +1204,7 @@ createTable(obj = get2002as100(spez_co2_emission , "abrechnungsjahr"),
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Alle Stadtbezirke, alle Wohngebäude, flächenbezogene co2 Emission aus der Beheizung von Wohnraum, Entwicklung 2002-2018 und Niveau 2018 (Rang-folge)
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Alle Stadtbezirke, alle Wohngeb?ude, fl?chenbezogene co2 Emission aus der Beheizung von Wohnraum, Entwicklung 2002-2018 und Niveau 2018 (Rang-folge)
 
 **Specific CO2 emission in bezirk X in 2018 - Specific CO2 emission in Berlin in 2018**
 
@@ -1196,7 +1260,7 @@ plot_devFromBerlin2018 <- function(obj,
 }
 
 plot_devFromBerlin2018(bezirke_spezco2_linear_2018,
-                       plot_title = changeCO2_to_CO_2("Abweichung von Berlin 2018, Spezifische CO2 Emissionen, alle Wohngebäude"),
+                       plot_title = changeCO2_to_CO_2("Abweichung von Berlin 2018, Spezifische CO2 Emissionen, alle WohngebÃ¤ude"),
                        ylabel = "kg/m2")
 ```
 
@@ -1209,7 +1273,7 @@ bezirke_spezco2_linear_2018
 
 ```{r,fig.width=3.5,fig.height=7}
 createTable2018(obj = bezirke_spezco2_linear_2018[, c("bezirk","dev_from_berlin")],
-            headerName = "Bezirke, alle Wohngebäude,\nCO2 Emissionen (2018)\nAbweichung von Berlin",
+            headerName = "Bezirke, alle WohngebÃ¤ude,\nCO2 Emissionen (2018)\nAbweichung von Berlin",
             columnNames = c("Bezirk","kg / q.m."),
             columnWidths = c(2,1),
             columnsToRound = "kg / q.m."
@@ -1221,7 +1285,7 @@ createTable2018(obj = bezirke_spezco2_linear_2018[, c("bezirk","dev_from_berlin"
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle Wohngebäude, durchschnittliche Emissionsminderung je qm Nutzfläche im Zeitraum 2002-2018
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle Wohngeb?ude, durchschnittliche Emissionsminderung je qm Nutzfl?che im Zeitraum 2002-2018
 
 **Berlin, specific co2 emission with 2012 value as the reference**
 
@@ -1253,7 +1317,7 @@ barPlot_delta2012 <- function(obj,ylabel=NULL,plot_title=NULL) {
 ```{r}
 barPlot_delta2012(changeFrom2012(spez_co2_emission),
                   ylabel = "kg/m2",
-                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen, Berlin, alle Wohngebäude, zentriert um 2012"))
+                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen, Berlin, alle WohngebÃ¤ude, zentriert um 2012"))
 ```
 
 
@@ -1287,7 +1351,7 @@ createTableZentriertUm2012 <- function(obj,
   
 }
 createTableZentriertUm2012(changeFrom2012(spez_co2_emission)[,c("abrechnungsjahr","delta2012")],
-            headerName = "Berlin, alle Wohngebäude,\nSpezifiscche CO2 Emissionen\nZentriert um 2012",
+            headerName = "Berlin, alle WohngebÃ¤ude,\nSpezifiscche CO2 Emissionen\nZentriert um 2012",
             columnNames =  c("Jahr","kg / q.m."),
             columnWidths = rep(1,2),
             columnsToRound = c("kg / q.m.")
@@ -1307,7 +1371,7 @@ i_subsubsection <- 1
 ```
 
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngebäude, co2-Emission aus der Beheizung von Wohnraum pro Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngeb?ude, co2-Emission aus der Beheizung von Wohnraum pro Einwohner
 
 ```{r}
 #converting data from wide to long: http://www.cookbook-r.com/Manipulating_data/Converting_data_between_wide_and_long_format/
@@ -1331,7 +1395,7 @@ i_subsubsection <- 1
 
 
 ```{r}
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getBerlinBezirkPopulation.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getBerlinBezirkPopulation.R")
 bezirk_population <- getBerlinBezirkPopulation()
 #bezirk_population
 ```
@@ -1361,7 +1425,7 @@ points_line_lm(input_data = berlin_co2_percapita,
                x_eq = 2010,
                y_eq = 500,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, alle Wohngebäude"),
+               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, alle WohngebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kg")
 ```
@@ -1375,7 +1439,7 @@ berlin_co2_percapita
 ```{r,fig.width=2.5,fig.height=7}
 createTable(obj = berlin_co2_percapita,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, \nPro Kopf CO2 Emissionen",
+            headerName = "Berlin, alle WohngebÃ¤ude, \nPro Kopf CO2 Emissionen",
             columnNames = c("Jahr","kilo t."),
             columnWidths = c(1,1),
             columnsToRound = "kilo t."
@@ -1387,7 +1451,7 @@ createTable(obj = berlin_co2_percapita,
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, alle Wohngebäude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, alle Wohngeb?ude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
 
 
 
@@ -1412,7 +1476,7 @@ plot_reqdColumns(berlin_bezirke_all_co2perhead,
                  cols_to_plot = names(berlin_bezirke_all_co2perhead)[!(names(berlin_bezirke_all_co2perhead) %in% c("abrechnungsjahr","total"))],
                  yColsName = "Bezirk",
                  yVar = "co2 kg/head",
-                 plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen von Stadtbezirken, alle Wohngebäude"),
+                 plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen von Stadtbezirken, alle WohngebÃ¤ude"),
                  xlabel = "Jahr",
                  ylabel = "kg/Kopf")
 ```
@@ -1452,10 +1516,10 @@ berlin_bezirke_all_co2perhead
 createTable(berlin_bezirke_all_co2perhead[,1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, Pro Kopf CO2 Emissionen nach Bezirken (kg)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, alle WohngebÃ¤ude, Pro Kopf CO2 Emissionen nach Bezirken (kg)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -1463,10 +1527,10 @@ createTable(berlin_bezirke_all_co2perhead[,1:7],
 ```{r,fig.width=10,fig.height=7}
 createTable(berlin_bezirke_all_co2perhead[ , c(1,8:13)],
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, Pro Kopf CO2 Emissionen nach Bezirken (kg)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, alle WohngebÃ¤ude, Pro Kopf CO2 Emissionen nach Bezirken (kg)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -1474,7 +1538,7 @@ createTable(berlin_bezirke_all_co2perhead[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngebäude, co2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002-2018, 2002=100 
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngeb?ude, co2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002-2018, 2002=100 
 
 
 
@@ -1491,7 +1555,7 @@ points_line_lm(input_data = berlin_co2_percapita_2002as100,
                x_eq = 2010,
                y_eq = 70,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, alle Wohngebäude, 2002 Wert = 100"),
+               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, alle WohngebÃ¤ude, 2002 Wert = 100"),
                xlab = "Jahr",
                ylab = "kg")
 ```
@@ -1505,7 +1569,7 @@ berlin_co2_percapita_2002as100
 createTable(obj = berlin_co2_percapita_2002as100,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude,\nPro Kopf CO2 Emissionen\n(2002 Wert = 100)",
+            headerName = "Berlin, alle WohngebÃ¤ude,\nPro Kopf CO2 Emissionen\n(2002 Wert = 100)",
             columnNames = c("Jahr","Wert"),
             columnWidths = c(1,1),
             columnsToRound = "Wert"
@@ -1516,7 +1580,7 @@ createTable(obj = berlin_co2_percapita_2002as100,
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, alle Wohngebäude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2018, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, alle Wohngeb?ude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2018, 2002 = 100
 
 *One Graph: CO2 Emissions with 2002 value = 100 for each Bezirk. All 12 lines on the same plot.*
 
@@ -1549,7 +1613,7 @@ plot_reqdColumns(bezirk_prohead_2002As100_all,
                  yVar = "co2 pro head, 2002=100",
                  xlabel="Jahr",
                  ylabel = NULL,
-                 plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Stadtbezirken, alle Wohngebäude, 2002 Wert = 100"))
+                 plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Stadtbezirken, alle WohngebÃ¤ude, 2002 Wert = 100"))
 ```
 
 
@@ -1603,10 +1667,10 @@ bezirk_prohead_2002As100_all
 createTable(bezirk_prohead_2002As100_all[,1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, alle WohngebÃ¤ude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -1616,10 +1680,10 @@ createTable(bezirk_prohead_2002As100_all[,1:7],
 createTable(bezirk_prohead_2002As100_all[,c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, alle WohngebÃ¤ude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -1628,7 +1692,7 @@ createTable(bezirk_prohead_2002As100_all[,c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngebäude, co2-Emission aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngeb?ude, co2-Emission aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
 
 
 
@@ -1676,7 +1740,7 @@ plot_co2perhead_2018 <- function(obj,
 }
 plot_co2perhead_2018(bezirk_co2_percapita_linear_2018,
                      ylabel = "kg",
-                     plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, alle Wohngebäude"))
+                     plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, alle WohngebÃ¤ude"))
 ```
 
 
@@ -1686,7 +1750,7 @@ bezirk_co2_percapita_linear_2018
 
 ```{r,fig.width=3.5,fig.height=7}
 createTable2018(obj = bezirk_co2_percapita_linear_2018[, c("bezirk","wert")],
-            headerName = "Bezirke, alle Wohngebäude,\npro Kopf CO2 Emissionen (2018)",
+            headerName = "Bezirke, alle WohngebÃ¤ude,\npro Kopf CO2 Emissionen (2018)",
             columnNames = c("Bezirk","kg"),
             columnWidths = c(2,1),
             columnsToRound = "kg"
@@ -1698,7 +1762,7 @@ createTable2018(obj = bezirk_co2_percapita_linear_2018[, c("bezirk","wert")],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngebäude, co2-Emission aus der Beheizung von Wohnraum pro Einwohner, Veränderung 2002/2018 in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, alle Wohngeb?ude, co2-Emission aus der Beheizung von Wohnraum pro Einwohner, Ver?nderung 2002/2018 in Prozent
 
 
 *(Zwei Grafiken: absolute values and percentage values of change compared to 2002 and 2018 values as grouped bar charts.)
@@ -1743,7 +1807,7 @@ plot_groupBar(data_long,
               "wert",
               NULL,
               "kg",
-              changeCO2_to_CO_2("CO2 Emissionen pro Einwohner, 2002 und 2018, alle Wohngebäude"))
+              changeCO2_to_CO_2("CO2 Emissionen pro Einwohner, 2002 und 2018, alle WohngebÃ¤ude"))
 ```
 
 ```{r}
@@ -1824,7 +1888,7 @@ i_subsection <- i_subsection + 1
 i_subsubsection <- 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle Wohngebäude, Prognose der co2-Emission aus Beheizung 2019-2030 in Mio. t (Trend Polynom 1. Grades)
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle WohngebÃ¤ude, Prognose der co2-Emission aus Beheizung 2019-2030 in Mio. t (Trend Polynom 1. Grades)
 
 ```{r}
 #berlin_co2_all
@@ -1847,7 +1911,7 @@ i_subsubsection <- i_subsubsection + 1
 ```
 
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle Wohngebäude, Prognose der co2-Emission aus Beheizung 2019-2030 in Mio. t (Trend Polynom 2. Grades)
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, alle WohngebÃ¤ude, Prognose der co2-Emission aus Beheizung 2019-2030 in Mio. t (Trend Polynom 2. Grades)
 
 ```{r}
 #berlin_co2_all
@@ -1886,7 +1950,7 @@ i_subsection <- 1
 i_subsubsection <- 1
 ```
 
-# `r i_section`. Alle Stadtbezirke, co2-emission aus Beheizung, 1-2 Familiengebäude
+# `r i_section`. Alle Stadtbezirke, co2-emission aus Beheizung, 1-2 Familiengeb?ude
 
 ## `r i_section`.`r i_subsection` Absolute Zahlen
 
@@ -1894,7 +1958,7 @@ i_subsubsection <- 1
 
 ```{r}
 require(ggplot2)
-ggplot(berlin_sample_size$SFH) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="Stichprobengröße",title="Berlin, 1-2 Familiengebäude")+scale_x_continuous(breaks=seq(2002,2018,2))
+ggplot(berlin_sample_size$SFH) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="StichprobengrÃ¶ÃŸe",title="Berlin, 1-2 FamiliengebÃ¤ude")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 
@@ -1902,13 +1966,52 @@ ggplot(berlin_sample_size$SFH) + geom_point(aes(x=abrechnungsjahr,y=total))+labs
 createTable(obj = berlin_sample_size$SFH[,c("abrechnungsjahr","total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude,\nStichprobengröße",
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude,\nStichprobengrÃ¶ÃŸe",
             columnNames = c("Jahr","N"),
             columnWidths = c(1,1),
             addColTotals = TRUE)
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 Familiengebäude, co2-Emission aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
+
+
+```{r,fig.width=10,fig.height=7}
+createTable(berlin_sample_size$SFH[,1:7],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, StichprobengrÃ¶ÃŸe nach Bezirken",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
+            columnWidths = rep(1,7),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+
+```{r,fig.width=10,fig.height=6}
+createTable(berlin_sample_size$SFH[, c(1,8:13)],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, StichprobengrÃ¶ÃŸe nach Bezirken",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
+            columnWidths = rep(1,7),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+
+```{r,fig.width=10,fig.height=7}
+
+createTable(berlin_sample_size_by_et$SFH,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, StichprobengrÃ¶ÃŸe nach EnergietrÃ¤gern",
+            columnNames =  c("Jahr","Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
+            columnWidths = rep(1,8),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FamiliengebÃ¤ude, co2-Emission aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
 
 ```{r}
 #alle_bezirke_co2$sfh
@@ -1928,7 +2031,7 @@ points_line_lm(input_data = berlin_co2_sfh,
                x_eq = 2010,
                y_eq = 700,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude"),
+               plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kilo t.")
 ```
@@ -1944,7 +2047,7 @@ berlin_co2_sfh[ , c("abrechnungsjahr" , "total")]
 createTable(obj = berlin_co2_sfh[, c("abrechnungsjahr","total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin~1-2~Familiengebäude~CO[2]~Emissionen:~No~commas~No~newlines.",
+            headerName = "Berlin~1-2~FamiliengebÃ¤ude~CO[2]~Emissionen:~No~commas~No~newlines.",
             columnNames = c("Jahr","kilo t."),
             columnWidths = c(1,1),
             columnsToRound = "kilo t.",
@@ -1962,7 +2065,7 @@ co2_sfh_allebezirke_byET <- co2_allebezirke_byET$sfh
 ```{r}
 co2_sfh_allebezirke_byET_cumsums <- getCumSums(obj=co2_sfh_allebezirke_byET , dropCols=c("abrechnungsjahr","total"))
 #co2_all_allebezirke_byET_cumsums
-plot_byET(co2_sfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, nach Energiträger"))
+plot_byET(co2_sfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude, nach EnergitrÃ¤ger"))
 ```
 
 ```{r,results = showResults}
@@ -1973,10 +2076,10 @@ co2_sfh_allebezirke_byET
 createTable(co2_sfh_allebezirke_byET,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen nach Energieträgern (kilo t.)",
-            columnNames =  c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen nach EnergietrÃ¤gern (kilo t.)",
+            columnNames =  c("Jahr","Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
             columnWidths = rep(1,8),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt")
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
 )
 ```
 
@@ -1986,13 +2089,13 @@ createTable(co2_sfh_allebezirke_byET,
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengebäude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengeb?ude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t
 
 
 
 ```{r}
 berlin_co2_sfh_cumsums <- getCumSums(obj=berlin_co2_sfh , dropCols=c("abrechnungsjahr","total"))
-plot_byBezirke(berlin_co2_sfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, nach Bezirk"))
+plot_byBezirke(berlin_co2_sfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude, nach Bezirk"))
 ```
 
 ```{r,results = showResults}
@@ -2003,10 +2106,10 @@ berlin_co2_sfh
 createTable(berlin_co2_sfh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -2014,10 +2117,10 @@ createTable(berlin_co2_sfh[ , 1:7],
 createTable(berlin_co2_sfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -2025,12 +2128,12 @@ createTable(berlin_co2_sfh[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengebäude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018 in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FamiliengebÃ¤ude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018 in Prozent
 
 ```{r}
 co2_sfh_allebezirke_byET_prop <- find_proportions(co2_sfh_allebezirke_byET , drop_cols = c("abrechnungsjahr","total"))
 co2_sfh_allebezirke_byET_prop_cumsums <- getCumSums(obj=co2_sfh_allebezirke_byET_prop , dropCols = "abrechnungsjahr")
-plot_byET(co2_sfh_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, Anteile nach Energieträgern"))
+plot_byET(co2_sfh_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude, Anteile nach EnergietrÃ¤gern"))
 ```
 
 
@@ -2042,17 +2145,17 @@ co2_sfh_allebezirke_byET_prop
 createTable(co2_sfh_allebezirke_byET_prop,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen, Anteile nach Energieträgern (%)",
-            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen, Anteile nach EnergietrÃ¤gern (%)",
+            columnNames =  c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom")
 )
 ```
 
 ```{r}
 berlin_co2_sfh_prop <- find_proportions(berlin_co2_sfh,drop_cols=c("abrechnungsjahr","total"))
 berlin_co2_sfh_prop_cumsums <- getCumSums(berlin_co2_sfh_prop,dropCols="abrechnungsjahr")
-plot_byBezirke(berlin_co2_sfh_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, Anteile nach Bezirken"))
+plot_byBezirke(berlin_co2_sfh_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude, Anteile nach Bezirken"))
 ```
 
 ```{r,results = showResults}
@@ -2064,10 +2167,10 @@ berlin_co2_sfh_prop
 createTable(berlin_co2_sfh_prop[ , c(1:6,13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen, Anteile nach Bezirken (%)",
-            columnNames =  c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln","Jahr"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen, Anteile nach Bezirken (%)",
+            columnNames =  c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -2075,10 +2178,10 @@ createTable(berlin_co2_sfh_prop[ , c(1:6,13)],
 createTable(berlin_co2_sfh_prop[ , c(7:12,13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen, Anteile nach Bezirken (%)",
-            columnNames =  c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick","Jahr"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen, Anteile nach Bezirken (%)",
+            columnNames =  c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -2086,7 +2189,7 @@ createTable(berlin_co2_sfh_prop[ , c(7:12,13)],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengebäude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengeb?ude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
 
 **BOOKMARK**
 ```{r}
@@ -2095,7 +2198,7 @@ plot_reqdColumns(berlin_co2_sfh,
                  cols_to_plot = names(berlin_co2_sfh)[!(names(berlin_co2_sfh) %in% c("abrechnungsjahr","total"))],
                  yColsName = "Bezirk",
                  yVar = "CO2 Emissions",
-                 plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, 1-2 Familiengebäude"),
+                 plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, 1-2 FamiliengebÃ¤ude"),
                  xlabel = "Jahr",
                  ylabel = "kilo t.")
 ```
@@ -2118,10 +2221,10 @@ berlin_co2_sfh
 createTable(berlin_co2_sfh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -2129,10 +2232,10 @@ createTable(berlin_co2_sfh[ , 1:7],
 createTable(berlin_co2_sfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -2141,7 +2244,7 @@ createTable(berlin_co2_sfh[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengebäude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018, Veränderung in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengeb?ude, co2-emissionen aus der Beheizung von Wohnraum 2002-2018, Ver?nderung in Prozent
 
 **(CO2 emitted by a bezirk for a particular year - Average CO2 emitted by a bezirk in particular year)/(Average CO2 emitted by a bezirk in particular year) times 100**
 
@@ -2194,10 +2297,10 @@ berlin_co2_sfh_devFromMean
 createTable(berlin_co2_sfh_devFromMean[ , c(1:7)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen nach Bezirken, Abweichung vom jährlichen Mittelwert (%)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, CO2 Emissionen nach Bezirken, Abweichung vom jÃ¤hrlichen Mittelwert (%)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -2205,10 +2308,10 @@ createTable(berlin_co2_sfh_devFromMean[ , c(1:7)],
 createTable(berlin_co2_sfh_devFromMean[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, CO2 Emissionen nach Bezirken, Abweichung vom jährlichen Mittelwert (%)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, 1-2 Familiengeb?ude, CO2 Emissionen nach Bezirken, Abweichung vom jÃ¤hrlichen Mittelwert (%)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -2216,7 +2319,7 @@ createTable(berlin_co2_sfh_devFromMean[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 Familiengebäude, Veränderung der co2-emissionen aus der Beheizung von Wohnraum 2002-2018 in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FamiliengebÃ¤ude, VerÃ¤nderung der co2-emissionen aus der Beheizung von Wohnraum 2002-2018 in Prozent
 
 *Skip this
 
@@ -2226,9 +2329,9 @@ i_subsection <- i_subsection+1
 ```
 
 
-## `r i_section`.`r i_subsection`. Flächenbezug
+## `r i_section`.`r i_subsection`. FlÃ¤chenbezug
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in kg/m2[AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FamiliengebÃ¤ude, flÃ¤chenbezogene CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in kg/m2[AN]
 
 ```{r}
 bezirk_areas_sfh$abrechnungsjahr <- 2002:2018
@@ -2248,7 +2351,7 @@ points_line_lm(input_data = spez_co2_sfh,
                x_eq = 2010,
                y_eq = 35,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, 1-2 Familiengebäude"),
+               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kg/qm")
 ```
@@ -2261,7 +2364,7 @@ spez_co2_sfh
 createTable(obj = spez_co2_sfh[, c("abrechnungsjahr","spez_co2")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, \nSpezifische CO2 Emissionen",
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, \nSpezifische CO2 Emissionen",
             columnNames = c("Jahr","kg / q.m."),
             columnWidths = c(1,1),
             columnsToRound = "kg / q.m."
@@ -2272,7 +2375,7 @@ createTable(obj = spez_co2_sfh[, c("abrechnungsjahr","spez_co2")],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum 2002 - 2008 in kg/m2[AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengeb?ude, fl?chenbezogene CO2-Emission aus Beheizung von Wohnraum 2002 - 2008 in kg/m2[AN]
 
 ```{r}
 bezirke_spez_co2_sfh <- 1e6*berlin_co2_sfh/bezirk_areas_sfh
@@ -2289,7 +2392,7 @@ plot_reqdColumns(bezirke_spez_co2_sfh,
                  yVar = "CO2 Emissions in kg/m2",
                  xlabel = "Jahr",
                  ylabel = "kg / qm",
-                 plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, 1-2 Familiengebäude"))
+                 plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, 1-2 FamiliengebÃ¤ude"))
 ```
 
 
@@ -2326,10 +2429,10 @@ bezirke_spez_co2_sfh
 createTable(bezirke_spez_co2_sfh[ , c(1:7)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, spezifische CO2 Emissionen (kg / q.m.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, spezifische CO2 Emissionen (kg / q.m.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -2337,10 +2440,10 @@ createTable(bezirke_spez_co2_sfh[ , c(1:7)],
 createTable(bezirke_spez_co2_sfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, spezifische CO2 Emissionen (kg / q.m.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, spezifische CO2 Emissionen (kg / q.m.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -2349,7 +2452,7 @@ createTable(bezirke_spez_co2_sfh[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2[AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengeb?ude, fl?chenbezogene CO2-Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2[AN]
 
 **2018 values for the specific CO2 emission in each bezirk**
 
@@ -2376,7 +2479,7 @@ bezirke_spezco2_sfh_linear_2018 <- bezirke_spezco2_sfh_linear_2018[bezirke_spezc
 
 ```{r}
 plot_spezCO2_2018(obj = bezirke_spezco2_sfh_linear_2018 , 
-                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen 2018, 1-2 Familiengebäude"))
+                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen 2018, 1-2 FamiliengebÃ¤ude"))
 ```
 
 
@@ -2386,7 +2489,7 @@ bezirke_spezco2_sfh_linear_2018
 
 ```{r,fig.width=3.5,fig.height=5}
 createTable2018(obj = bezirke_spezco2_sfh_linear_2018[, c("bezirk","wert")],
-            headerName = "Berlin, 1-2 Familingebäude,\nCO2 Emissionen (2018)",
+            headerName = "Berlin, 1-2 FamilingebÃ¤ude,\nCO2 Emissionen (2018)",
             columnNames = c("Bezirk","kg / q.m."),
             columnWidths = c(2,1),
             columnsToRound = "kg / q.m."
@@ -2399,7 +2502,7 @@ createTable2018(obj = bezirke_spezco2_sfh_linear_2018[, c("bezirk","wert")],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002 - 2008, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, 1-2 Familiengeb?ude, fl?chenbezogene CO2-Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002 - 2008, 2002 = 100
 
 ```{r}
 #get2002as100(spez_co2_sfh , "abrechnungsjahr")
@@ -2414,7 +2517,7 @@ points_line_lm(input_data = get2002as100(spez_co2_sfh , "abrechnungsjahr"),
                x_eq = 2010,
                y_eq = 60,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, 1-2 Familiengebäude, 2002 Wert = 100"),
+               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude, 2002 Wert = 100"),
                xlab = "Jahr",
                ylab = " ")
 ```
@@ -2427,7 +2530,7 @@ get2002as100(spez_co2_sfh , "abrechnungsjahr")
 createTable(obj = get2002as100(spez_co2_sfh , "abrechnungsjahr"),
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude,\nspezifische CO2 Emissionen\n(2002 Wert = 100)",
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude,\nspezifische CO2 Emissionen\n(2002 Wert = 100)",
             columnNames = c("Jahr","Wert"),
             columnWidths = c(1,1),
             columnsToRound = "Wert"
@@ -2439,7 +2542,7 @@ createTable(obj = get2002as100(spez_co2_sfh , "abrechnungsjahr"),
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Alle Stadtbezirke, 1-2 Familiengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum, Entwicklung 2002 - 2018 und Niveau 2018 (Rang¬folge)
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Alle Stadtbezirke, 1-2 Familiengeb?ude, fl?chenbezogene CO2-Emission aus der Beheizung von Wohnraum, Entwicklung 2002 - 2018 und Niveau 2018 (Rang?folge)
 
 
 **Specific CO2 emission in bezirk X in 2018 - Specific CO2 emission in Berlin in 2018**
@@ -2465,7 +2568,7 @@ bezirke_spezco2_sfh_linear_2018$dev_from_berlin <- bezirke_spezco2_sfh_linear_20
 
 ```{r}
 plot_devFromBerlin2018(bezirke_spezco2_sfh_linear_2018,
-                       changeCO2_to_CO_2("Spezifische CO2 Emissionen, Abweichung von Berlin 2018, 1-2 Familiengebäude"),
+                       changeCO2_to_CO_2("Spezifische CO2 Emissionen, Abweichung von Berlin 2018, 1-2 FamiliengebÃ¤ude"),
                        "kg / q.m.")
 ```
 
@@ -2477,7 +2580,7 @@ bezirke_spezco2_sfh_linear_2018
 
 ```{r,fig.width=3.5,fig.height=6}
 createTable2018(obj = bezirke_spezco2_sfh_linear_2018[, c("bezirk","dev_from_berlin")],
-            headerName = "Bezirke, 1-2 Familiengebäude,\nCO2 Emissionen (2018)\nAbweichung von Berlin",
+            headerName = "Bezirke, 1-2 FamiliengebÃ¤ude,\nCO2 Emissionen (2018)\nAbweichung von Berlin",
             columnNames = c("Bezirk","kg / q.m."),
             columnWidths = c(2,1),
             columnsToRound = "kg / q.m."
@@ -2488,13 +2591,13 @@ createTable2018(obj = bezirke_spezco2_sfh_linear_2018[, c("bezirk","dev_from_ber
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, 1-2 Familiengebäude, durchschnittliche Emissionsminderung je qm Nutzfläche im Zeitraum 2012 - 2018
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, 1-2 Familiengeb?ude, durchschnittliche Emissionsminderung je qm Nutzfl?che im Zeitraum 2012 - 2018
 
 **Berlin, specific co2 emission with 2012 value as the reference**
 
 
 ```{r}
-barPlot_delta2012(changeFrom2012(spez_co2_sfh) , "kg/m2" , changeCO2_to_CO_2("Spezifische CO2 Berlin, 1-2 Familiengebäude, zentriert um 2012"))
+barPlot_delta2012(changeFrom2012(spez_co2_sfh) , "kg/m2" , changeCO2_to_CO_2("Spezifische CO2 Berlin, 1-2 FamiliengebÃ¤ude, zentriert um 2012"))
 ```
 
 ```{r,results = showResults}
@@ -2503,7 +2606,7 @@ changeFrom2012(spez_co2_sfh)
 
 ```{r,fig.width=2.5,fig.height=7}
 createTableZentriertUm2012(changeFrom2012(spez_co2_sfh)[,c("abrechnungsjahr","delta2012")],
-            headerName = "Berlin, 1-2 Familiengebäude,\nSpezifiscche CO2 Emissionen\nZentriert um 2012",
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude,\nSpezifiscche CO2 Emissionen\nZentriert um 2012",
             columnNames =  c("Jahr","kg / q.m."),
             columnWidths = rep(1,2),
             columnsToRound = c("kg / q.m.")
@@ -2520,7 +2623,7 @@ i_subsection <- i_subsection + 1
 i_subsubsection <- 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 FamiliengebÃ¤ude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
 
 
 
@@ -2543,7 +2646,7 @@ i_subsubsection <- 1
 ```
 
 ```{r}
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCo2PerCapitaBezirk_byGtype_method2.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getCo2PerCapitaBezirk_byGtype_method2.R")
 bezirk_co2_percapita_sfh <- getCo2PerCapitaBezirk_byGtype_method2(berlin_co2_sfh , "SFH")
 #bezirk_co2_percapita_sfh
 ```
@@ -2561,7 +2664,7 @@ points_line_lm(input_data = bezirk_co2_percapita_sfh,
                x_eq = 2010,
                y_eq = 500,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, 1-2 Familiengebäude"),
+               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kg")
 ```
@@ -2575,7 +2678,7 @@ bezirk_co2_percapita_sfh[ , c("abrechnungsjahr" , "total")]
 createTable(obj = bezirk_co2_percapita_sfh[ , c("abrechnungsjahr" , "total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude,\nPro Kopf CO2 Emissionen",
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude,\nPro Kopf CO2 Emissionen",
             columnNames = c("Jahr","kg"),
             columnWidths = c(1,1),
             columnsToRound = "kg"
@@ -2589,7 +2692,7 @@ createTable(obj = bezirk_co2_percapita_sfh[ , c("abrechnungsjahr" , "total")],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengeb?ude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
 
 
 
@@ -2624,10 +2727,10 @@ bezirk_co2_percapita_sfh
 createTable(bezirk_co2_percapita_sfh[,1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Bezirke, 1-2 Familiengebäude, Pro Kopf CO2 Emissionen (kg)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Bezirke, 1-2 FamiliengebÃ¤ude, Pro Kopf CO2 Emissionen (kg)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -2635,10 +2738,10 @@ createTable(bezirk_co2_percapita_sfh[,1:7],
 ```{r,fig.width=10,fig.height=7}
 createTable(bezirk_co2_percapita_sfh[ , c(1,8:13)],
             isHeader = TRUE,
-            headerName = "Bezirke, 1-2 Familiengebäude, Pro Kopf CO2 Emissionen (kg)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Bezirke, 1-2 Familiengeb?ude, Pro Kopf CO2 Emissionen (kg)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -2649,7 +2752,7 @@ createTable(bezirk_co2_percapita_sfh[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2008, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 FamiliengebÃ¤ude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2008, 2002 = 100
 
 
 ```{r}
@@ -2665,7 +2768,7 @@ points_line_lm(input_data = bezirk_co2_percapita_2002as100_sfh,
                x_eq = 2010,
                y_eq = 70,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, 1-2 Familiengebäude, 2002 Wert = 100"),
+               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, 1-2 FamiliengebÃ¤ude, 2002 Wert = 100"),
                xlab = "Jahr",
                ylab = "kg")
 ```
@@ -2673,7 +2776,7 @@ points_line_lm(input_data = bezirk_co2_percapita_2002as100_sfh,
 ```{r,fig.width=2.5,fig.height=7}
 createTable(obj = bezirk_co2_percapita_2002as100_sfh[ , c("abrechnungsjahr","total")],
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude,\nPro Kopf CO2 Emissionen\n(2002 Wert = 100)",
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude,\nPro Kopf CO2 Emissionen\n(2002 Wert = 100)",
             columnNames = c("Jahr","Wert"),
             columnWidths = c(1,1),
             columnsToRound = "Wert"
@@ -2686,7 +2789,7 @@ createTable(obj = bezirk_co2_percapita_2002as100_sfh[ , c("abrechnungsjahr","tot
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 FamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner
 
 
 ```{r}
@@ -2702,7 +2805,7 @@ plot_reqdColumns(bezirk_co2_percapita_2002as100_sfh,
                  yVar = "co2 pro head, 2002=100",
                  xlabel="Jahr",
                  ylabel = NULL,
-                 plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Stadtbezirken, 1-2 Familiengebäude, 2002 Wert = 100"))
+                 plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Stadtbezirken, 1-2 FamiliengebÃ¤ude, 2002 Wert = 100"))
 ```
 
 
@@ -2725,10 +2828,10 @@ bezirk_co2_percapita_2002as100_sfh
 createTable(bezirk_co2_percapita_2002as100_sfh[,1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -2737,10 +2840,10 @@ createTable(bezirk_co2_percapita_2002as100_sfh[,1:7],
 createTable(bezirk_co2_percapita_2002as100_sfh[,c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -2751,7 +2854,7 @@ createTable(bezirk_co2_percapita_2002as100_sfh[,c(1,8:13)],
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 FamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
 
 **I need the data for the population in SFH and MFH buildings**
 
@@ -2773,7 +2876,7 @@ bezirk_co2_percapita_sfh_linear_2018 <- bezirk_co2_percapita_sfh_linear_2018[bez
 
 plot_co2perhead_2018(bezirk_co2_percapita_sfh_linear_2018,
                      ylabel = "kg",
-                     plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, 1-2 Familiengebäude"))
+                     plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, 1-2 FamiliengebÃ¤ude"))
 ```
 
 ```{r,results = showResults}
@@ -2783,7 +2886,7 @@ bezirk_co2_percapita_sfh_linear_2018
 
 ```{r,fig.width=3.5,fig.height=5}
 createTable2018(obj = bezirk_co2_percapita_sfh_linear_2018[, c("bezirk","wert")],
-            headerName = "Bezirke, 1-2 Familiengebäude,\npro Kopf CO2 Emissionen (2018)",
+            headerName = "Bezirke, 1-2 FamiliengebÃ¤ude,\npro Kopf CO2 Emissionen (2018)",
             columnNames = c("Bezirk","kg"),
             columnWidths = c(2,1),
             columnsToRound = "kg"
@@ -2797,7 +2900,7 @@ createTable2018(obj = bezirk_co2_percapita_sfh_linear_2018[, c("bezirk","wert")]
 i_subsubsection <- i_subsubsection+1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 Familiengebäude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Veränderung 2002 / 2018 in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 FamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner, VerÃ¤nderung 2002 / 2018 in Prozent
 
 ```{r}
 is_2002_or_2018 <- bezirk_co2_percapita_sfh_linear$abrechnungsjahr==2002 |
@@ -2814,14 +2917,14 @@ plot_groupBar(data_long,
               "wert",
               NULL,
               "kg",
-              changeCO2_to_CO_2("CO2 Emissionen pro Einwohner, 2002 und 2018, 1-2 Familiengebäude"))
+              changeCO2_to_CO_2("CO2 Emissionen pro Einwohner, 2002 und 2018, 1-2 FamiliengebÃ¤ude"))
 ```
 
 ```{r}
 plot_groupBarPercent(data_long,
                      xlabel=NULL,
                      ylabel = NULL,
-                     plot_title = changeCO2_to_CO_2("pro Kopf CO2 Emissionen 2018, 1-2 Familiengebäude, 2002 Wert = 100"))
+                     plot_title = changeCO2_to_CO_2("pro Kopf CO2 Emissionen 2018, 1-2 FamiliengebÃ¤ude, 2002 Wert = 100"))
 ```
 
 ```{r,results = showResults}
@@ -2833,7 +2936,7 @@ data_wide
 
 ```{r,fig.width=6,fig.height=4.5}
 createTable20022018(data_wide,
-                    headerName = "Berlin, 1-2 Familiengebäude, Pro Kopf CO2 Emissionen\n2002 und 2018 Werte (kg)",
+                    headerName = "Berlin, 1-2 FamiliengebÃ¤ude, Pro Kopf CO2 Emissionen\n2002 und 2018 Werte (kg)",
                     columnNames = c("Bezirk","2002","2018"),
                     columnWidths = c(3,2,2),
                     columnsToRound = c("2002","2018"))
@@ -2851,7 +2954,7 @@ i_subsection <- i_subsection+1
 i_subsubsection <- 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 Familiengebäude, Prognose der CO2-Emission aus der Beheizung 2019-2030 in Mio. t (Trend Polynom 2. Grades)
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FamiliengebÃ¤ude, Prognose der CO2-Emission aus der Beheizung 2019-2030 in Mio. t (Trend Polynom 2. Grades)
 
 ```{r}
 quadmodel_sfh <- lm(total~abrechnungsjahr+I(abrechnungsjahr^2),data=berlin_co2_sfh)
@@ -2886,7 +2989,7 @@ i_subsection <- i_subsection + 1
 i_section <- i_section + 1
 ```
 
-# `r i_section`. Alle Stadtbezirke, CO2-Emission aus Beheizung, Mehrfamiliengebäude
+# `r i_section`. Alle Stadtbezirke, CO2-Emission aus Beheizung, MehrfamiliengebÃ¤ude
 
 ```{r}
 i_subsection <- 1
@@ -2902,21 +3005,57 @@ i_subsubsection <- 1
 
 ```{r}
 require(ggplot2)
-ggplot(berlin_sample_size$MFH) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="Stichprobengröße",title="Berlin, Mehrfamiliengebäude")+scale_x_continuous(breaks=seq(2002,2018,2))
+ggplot(berlin_sample_size$MFH) + geom_point(aes(x=abrechnungsjahr,y=total))+labs(x="Jahr",y="StichprobengrÃ¶ÃŸe",title="Berlin, MehrfamiliengebÃ¤ude")+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 ```{r,fig.width=2.5,fig.height=6}
 createTable(obj = berlin_sample_size$MFH[,c("abrechnungsjahr","total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude,\nStichprobengröße",
+            headerName = "Berlin, MehrfamiliengebÃ¤ude,\nStichprobengrÃ¶ÃŸe",
             columnNames = c("Jahr","N"),
             columnWidths = c(1,1),
             addColTotals = TRUE)
 ```
 
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in 1.000 t
+```{r,fig.width=10,fig.height=7}
+createTable(berlin_sample_size$MFH[,1:7],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, StichprobengrÃ¶ÃŸe nach Bezirken",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
+            columnWidths = rep(1,7),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+
+```{r,fig.width=10,fig.height=6}
+createTable(berlin_sample_size$MFH[, c(1,8:13)],
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, StichprobengrÃ¶ÃŸe nach Bezirken",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
+            columnWidths = rep(1,7),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+```{r,fig.width=10,fig.height=7}
+
+createTable(berlin_sample_size_by_et$MFH,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, StichprobengrÃ¶ÃŸe nach EnergietrÃ¤gern",
+            columnNames =  c("Jahr","Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
+            columnWidths = rep(1,8),
+            #columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
+)
+```
+
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, MehrfamiliengebÃ¤ude, CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in 1.000 t
 
 ```{r}
 berlin_co2_mfh <- getRowSums(alle_bezirke_co2$mfh , dropCols = "abrechnungsjahr")
@@ -2932,7 +3071,7 @@ points_line_lm(input_data = berlin_co2_mfh,
                x_eq = 2010,
                y_eq = 2000,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude"),
+               plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kilo t.")
 ```
@@ -2945,7 +3084,7 @@ berlin_co2_mfh[,c("abrechnungsjahr","total")]
 createTable(obj = berlin_co2_mfh[, c("abrechnungsjahr","total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehramiliengebäude\nCO2 Emissionen",
+            headerName = "Berlin, MehramiliengebÃ¤ude\nCO2 Emissionen",
             columnNames = c("Jahr","kilo t."),
             columnWidths = c(1,1),
             columnsToRound = "kilo t."
@@ -2967,7 +3106,7 @@ co2_mfh_allebezirke_byET_cumsums <- getCumSums(obj=co2_mfh_allebezirke_byET , dr
 ```
 
 ```{r}
-plot_byET(co2_mfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, nach Energieträgern"))
+plot_byET(co2_mfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude, nach EnergietrÃ¤gern"))
 ```
 
 ```{r,results = showResults}
@@ -2979,10 +3118,10 @@ co2_mfh_allebezirke_byET
 createTable(co2_mfh_allebezirke_byET,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen nach Energieträgern (kilo t.)",
-            columnNames =  c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen nach EnergietrÃ¤gern (kilo t.)",
+            columnNames =  c("Jahr","Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
             columnWidths = rep(1,8),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt")
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt")
 )
 ```
 
@@ -2991,7 +3130,7 @@ createTable(co2_mfh_allebezirke_byET,
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018 summiert in 1.000 t 
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018 summiert in 1.000 t 
 
 
 
@@ -2999,7 +3138,7 @@ i_subsubsection <- i_subsubsection + 1
 
 ```{r}
 berlin_co2_mfh_cumsums <- getCumSums(obj=berlin_co2_mfh , dropCols=c("abrechnungsjahr","total"))
-plot_byBezirke(berlin_co2_mfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, nach Bezirk"))
+plot_byBezirke(berlin_co2_mfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude, nach Bezirk"))
 ```
 
 ```{r,results = showResults}
@@ -3010,10 +3149,10 @@ berlin_co2_mfh
 createTable(berlin_co2_mfh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -3021,10 +3160,10 @@ createTable(berlin_co2_mfh[ , 1:7],
 createTable(berlin_co2_mfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -3032,12 +3171,12 @@ createTable(berlin_co2_mfh[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018 in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018 in Prozent
 
 ```{r}
 co2_mfh_allebezirke_byET_prop <- find_proportions(co2_mfh_allebezirke_byET , drop_cols = c("abrechnungsjahr","total"))
 co2_mfh_allebezirke_byET_prop_cumsums <- getCumSums(obj=co2_mfh_allebezirke_byET_prop , dropCols = "abrechnungsjahr")
-plot_byET(co2_mfh_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, Anteile nach Energieträgern"))
+plot_byET(co2_mfh_allebezirke_byET_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude, Anteile nach EnergietrÃ¤gern"))
 ```
 
 ```{r,results = showResults}
@@ -3048,10 +3187,10 @@ co2_mfh_allebezirke_byET_prop
 createTable(co2_mfh_allebezirke_byET_prop,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen, Anteile nach Energieträgern (%)",
-            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen, Anteile nach EnergietrÃ¤gern (%)",
+            columnNames =  c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom")
 )
 ```
 
@@ -3059,7 +3198,7 @@ createTable(co2_mfh_allebezirke_byET_prop,
 ```{r}
 berlin_co2_mfh_prop <- find_proportions(berlin_co2_mfh,drop_cols=c("abrechnungsjahr","total"))
 berlin_co2_mfh_prop_cumsums <- getCumSums(berlin_co2_mfh_prop,dropCols="abrechnungsjahr")
-plot_byBezirke(berlin_co2_mfh_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, Anteile nach Bezirk"))
+plot_byBezirke(berlin_co2_mfh_prop_cumsums,xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude, Anteile nach Bezirk"))
 ```
 
 ```{r,results = showResults}
@@ -3070,10 +3209,10 @@ berlin_co2_mfh_prop
 createTable(berlin_co2_mfh_prop[ , c(1:6,13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen, Anteile nach Bezirken (%)",
-            columnNames =  c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln","Jahr"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen, Anteile nach Bezirken (%)",
+            columnNames =  c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 
 ```
@@ -3082,10 +3221,10 @@ createTable(berlin_co2_mfh_prop[ , c(1:6,13)],
 createTable(berlin_co2_mfh_prop[ , c(7:12,13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen, Anteile nach Bezirken (%)",
-            columnNames =  c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick","Jahr"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen, Anteile nach Bezirken (%)",
+            columnNames =  c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick","Jahr"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -3093,7 +3232,7 @@ createTable(berlin_co2_mfh_prop[ , c(7:12,13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018 in 1.000 t
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018 in 1.000 t
 
 (Eine Grafik: co2 Emissionen je Bezirk und Jahr)
 Co2 emissions of all city districts by year in a single graph. (year on x-axis and co2 emission on y-axis).
@@ -3107,7 +3246,7 @@ plot_reqdColumns(berlin_co2_mfh,
                  yVar = "CO2 Emissions",
                  xlabel = "Jahr",
                  ylabel = "kilo t.",
-                 plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, Mehrfamiliengebäude"))
+                 plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, MehrfamiliengebÃ¤ude"))
 ```
 
 ```{r,fig.width=10,fig.height=10}
@@ -3127,10 +3266,10 @@ berlin_co2_mfh
 createTable(berlin_co2_mfh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -3138,10 +3277,10 @@ createTable(berlin_co2_mfh[ , 1:7],
 createTable(berlin_co2_mfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen nach Bezirken (kilo t.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen nach Bezirken (kilo t.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -3149,7 +3288,7 @@ createTable(berlin_co2_mfh[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018, Veränderung in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum 2002 - 2018, Ver?nderung in Prozent
 
 **(CO2 emitted by a bezirk for a particular year - Average CO2 emitted by a bezirk in particular year)/(Average CO2 emitted by a bezirk in particular year) times 100**
 
@@ -3198,10 +3337,10 @@ berlin_co2_mfh_devFromMean
 createTable(berlin_co2_mfh_devFromMean[ , c(1:7)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen nach Bezirken, Abweichung vom jährlichen Mittelwert (%)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen nach Bezirken, Abweichung vom jÃ¤hrlichen Mittelwert (%)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -3209,10 +3348,10 @@ createTable(berlin_co2_mfh_devFromMean[ , c(1:7)],
 createTable(berlin_co2_mfh_devFromMean[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, CO2 Emissionen nach Bezirken, Abweichung vom jährlichen Mittelwert (%)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, CO2 Emissionen nach Bezirken, Abweichung vom jÃ¤hrlichen Mittelwert (%)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -3220,7 +3359,7 @@ createTable(berlin_co2_mfh_devFromMean[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, Veränderung der CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, Ver?nderung der CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in Prozent
 
 Skip this
 
@@ -3231,9 +3370,9 @@ i_subsection <- i_subsection + 1
 i_subsubsection <- 1
 ```
 
-## `r i_section`.`r i_subsection`. Flächenbezug
+## `r i_section`.`r i_subsection`. FlÃ¤chenbezug
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in kg/m2[AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, MehrfamiliengebÃ¤ude, flÃ¤chenbezogene CO2-Emission aus der Beheizung von Wohnraum 2002 - 2018 in kg/m2[AN]
 
 ```{r}
 bezirk_areas_mfh$abrechnungsjahr <- 2002:2018
@@ -3252,7 +3391,7 @@ points_line_lm(input_data = spez_co2_mfh,
                x_eq = 2010,
                y_eq = 25,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, Mehrfamiliengebäude"),
+               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kg/qm")
 ```
@@ -3265,7 +3404,7 @@ spez_co2_mfh
 createTable(obj = spez_co2_mfh[, c("abrechnungsjahr","spez_co2")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, \nSpezifische CO2 Emissionen",
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, \nSpezifische CO2 Emissionen",
             columnNames = c("Jahr","kg / q.m."),
             columnWidths = c(1,1),
             columnsToRound = "kg / q.m."
@@ -3276,7 +3415,7 @@ createTable(obj = spez_co2_mfh[, c("abrechnungsjahr","spez_co2")],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum 2002 - 2008 in kg/m2[AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, flÃ¤chenbezogene CO2-Emission aus Beheizung von Wohnraum 2002 - 2008 in kg/m2[AN]
 
 BOOKMARK - Section 3.2.2.
 
@@ -3295,7 +3434,7 @@ plot_reqdColumns(bezirke_spez_co2_mfh,
                  yVar = "CO2 Emissions in kg/m2",
                  xlabel = "Jahr",
                  ylabel = "kg / qm",
-                 plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, Mehrfamiliengebäude"))
+                 plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, MehrfamiliengebÃ¤ude"))
 ```
 
 
@@ -3332,10 +3471,10 @@ bezirke_spez_co2_mfh
 createTable(bezirke_spez_co2_mfh[ , c(1:7)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, spezifische CO2 Emissionen (kg / q.m.)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, spezifische CO2 Emissionen (kg / q.m.)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -3343,10 +3482,10 @@ createTable(bezirke_spez_co2_mfh[ , c(1:7)],
 createTable(bezirke_spez_co2_mfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, spezifische CO2 Emissionen (kg / q.m.)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, spezifische CO2 Emissionen (kg / q.m.)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 
 ```
@@ -3357,7 +3496,7 @@ createTable(bezirke_spez_co2_mfh[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2[AN]
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, flÃ¤chenbezogene CO2-Emission aus der Beheizung von Wohnraum im Jahr 2018 in kg/m2[AN]
 
 **2018 values for the specific CO2 emission in each bezirk**
 
@@ -3386,7 +3525,7 @@ bezirke_spezco2_mfh_linear_2018 <- bezirke_spezco2_mfh_linear_2018[bezirke_spezc
 
 ```{r}
 plot_spezCO2_2018(obj = bezirke_spezco2_mfh_linear_2018 , 
-                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen 2018, Mehrfamiliengebäude"))
+                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen 2018, MehrfamiliengebÃ¤ude"))
 ```
 
 
@@ -3396,7 +3535,7 @@ bezirke_spezco2_mfh_linear_2018
 
 ```{r,fig.width=3.5,fig.height=4.5}
 createTable2018(obj = bezirke_spezco2_mfh_linear_2018[, c("bezirk","wert")],
-            headerName = "Berlin, Mehrfamilingebäude,\nspezifische CO2 Emissionen (2018)",
+            headerName = "Berlin, MehrfamilingebÃ¤ude,\nspezifische CO2 Emissionen (2018)",
             columnNames = c("Bezirk","kg / q.m."),
             columnWidths = c(2,1),
             columnsToRound = "kg / q.m."
@@ -3408,7 +3547,7 @@ createTable2018(obj = bezirke_spezco2_mfh_linear_2018[, c("bezirk","wert")],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002 - 2008, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, MehrfamiliengebÃ¤ude, flÃ¤chenbezogene CO2-Emission aus Beheizung von Wohnraum nach Stadtbezirken, 2002 - 2008, 2002 = 100
 
 ```{r}
 #get2002as100(spez_co2_mfh , "abrechnungsjahr")
@@ -3423,7 +3562,7 @@ points_line_lm(input_data = get2002as100(spez_co2_mfh , "abrechnungsjahr"),
                x_eq = 2010,
                y_eq = 60,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, Mehrfamiliengebäude, 2002 Wert = 100"),
+               plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude, 2002 Wert = 100"),
                xlab = "Jahr",
                ylab = " ")
 ```
@@ -3437,7 +3576,7 @@ get2002as100(spez_co2_mfh , "abrechnungsjahr")
 createTable(obj = get2002as100(spez_co2_mfh , "abrechnungsjahr"),
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude,\nspezifische CO2 Emissionen\n(2002 Wert = 100)",
+            headerName = "Berlin, MehrfamiliengebÃ¤ude,\nspezifische CO2 Emissionen\n(2002 Wert = 100)",
             columnNames = c("Jahr","Wert"),
             columnWidths = c(1,1),
             columnsToRound = "Wert"
@@ -3448,7 +3587,7 @@ createTable(obj = get2002as100(spez_co2_mfh , "abrechnungsjahr"),
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Alle Stadtbezirke, Mehrfamiliengebäude, flächenbezogene CO2-Emission aus der Beheizung von Wohnraum, Entwicklung 2002 - 2018 und Niveau 2018 (Rang¬folge)
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Alle Stadtbezirke, MehrfamiliengebÃ¤ude, flÃ¤chenbezogene CO2-Emission aus der Beheizung von Wohnraum, Entwicklung 2002 - 2018 und Niveau 2018 (Rang-folge)
 
 **Specific CO2 emission in bezirk X in 2018 - Specific CO2 emission in Berlin in 2018**
 
@@ -3469,7 +3608,7 @@ bezirke_spezco2_mfh_linear_2018$dev_from_berlin <- bezirke_spezco2_mfh_linear_20
 
 ```{r}
 plot_devFromBerlin2018(bezirke_spezco2_mfh_linear_2018,
-                       changeCO2_to_CO_2("Abweichung von Berlin 2018, Spezifische CO2 Emissionen Mehrfamiliengebäude"),
+                       changeCO2_to_CO_2("Abweichung von Berlin 2018, Spezifische CO2 Emissionen MehrfamiliengebÃ¤ude"),
                        "kg/m2")
 ```
 
@@ -3481,7 +3620,7 @@ bezirke_spezco2_mfh_linear_2018
 
 ```{r,fig.width=3.5,fig.height=4.5}
 createTable2018(obj = bezirke_spezco2_mfh_linear_2018[, c("bezirk","dev_from_berlin")],
-            headerName = "Bezirke, Mehrfamiliengebäude,\nspezifische CO2 Emissionen (2018)\nAbweichung von Berlin",
+            headerName = "Bezirke, MehrfamiliengebÃ¤ude,\nspezifische CO2 Emissionen (2018)\nAbweichung von Berlin",
             columnNames = c("Bezirk","kg / q.m."),
             columnWidths = c(2,1),
             columnsToRound = "kg / q.m."
@@ -3492,13 +3631,13 @@ createTable2018(obj = bezirke_spezco2_mfh_linear_2018[, c("bezirk","dev_from_ber
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, durchschnittliche Emissionsminderung je qm Nutzfläche im Zeitraum 2012 - 2018
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, MehrfamiliengebÃ¤ude, durchschnittliche Emissionsminderung je qm NutzflÃ¤che im Zeitraum 2012 - 2018
 
 **Berlin, specific co2 emission with 2012 value as the reference**
 
 
 ```{r}
-barPlot_delta2012(changeFrom2012(spez_co2_mfh), "kg/m2" , changeCO2_to_CO_2("Spezifische CO2 Berlin, Mehrfamiliengebäude, zentriert um 2012"))
+barPlot_delta2012(changeFrom2012(spez_co2_mfh), "kg/m2" , changeCO2_to_CO_2("Spezifische CO2 Berlin, MehrfamiliengebÃ¤ude, zentriert um 2012"))
 ```
 
 ```{r,results = showResults}
@@ -3507,7 +3646,7 @@ changeFrom2012(spez_co2_mfh)
 
 ```{r,fig.width=2.5,fig.height=6}
 createTableZentriertUm2012(changeFrom2012(spez_co2_mfh)[,c("abrechnungsjahr","delta2012")],
-            headerName = "Berlin, Mehrfamiliengebäude,\nSpezifiscche CO2 Emissionen\nZentriert um 2012",
+            headerName = "Berlin, MehrfamiliengebÃ¤ude,\nSpezifiscche CO2 Emissionen\nZentriert um 2012",
             columnNames =  c("Jahr","kg / q.m."),
             columnWidths = rep(1,2),
             columnsToRound = c("kg / q.m.")
@@ -3523,7 +3662,7 @@ i_subsubsection <- 1
 
 
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
 
 ```{r}
 #source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getCo2PerCapitaBezirk_byGtype_method2.R")
@@ -3541,7 +3680,7 @@ points_line_lm(input_data = bezirk_co2_percapita_mfh,
                x_eq = 2010,
                y_eq = 1200,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, Mehrfamiliengebäude"),
+               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude"),
                xlab = "Jahr",
                ylab = "kg")
 ```
@@ -3555,7 +3694,7 @@ bezirk_co2_percapita_mfh[ , c("abrechnungsjahr" , "total")]
 createTable(obj = bezirk_co2_percapita_mfh[ , c("abrechnungsjahr" , "total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude,\nPro Kopf CO2 Emissionen",
+            headerName = "Berlin, MehrfamiliengebÃ¤ude,\nPro Kopf CO2 Emissionen",
             columnNames = c("Jahr","kg"),
             columnWidths = c(1,1),
             columnsToRound = "kg"
@@ -3566,7 +3705,7 @@ createTable(obj = bezirk_co2_percapita_mfh[ , c("abrechnungsjahr" , "total")],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emission aus der Beheizung von Wohnraum pro Einwohner
 
 ```{r}
 plot_reqdColumns(bezirk_co2_percapita_mfh,
@@ -3576,7 +3715,7 @@ plot_reqdColumns(bezirk_co2_percapita_mfh,
                  yVar = "CO2PerCapita",
                  xlabel = "Jahr",
                  ylabel = "kg",
-                 plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Kopf, Mehrfamiliengebäude"))
+                 plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Kopf, MehrfamiliengebÃ¤ude"))
 ```
 
 
@@ -3598,20 +3737,20 @@ bezirk_co2_percapita_mfh
 createTable(bezirk_co2_percapita_mfh[,1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Bezirke, Mehrfamiliengebäude, Pro Kopf CO2 Emissionen (kg)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Bezirke, MehrfamiliengebÃ¤ude, Pro Kopf CO2 Emissionen (kg)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
 ```{r,fig.width=10,fig.height=6}
 createTable(bezirk_co2_percapita_mfh[ , c(1,8:13)],
             isHeader = TRUE,
-            headerName = "Bezirke, Mehrfamiliengebäude, Pro Kopf CO2 Emissionen (kg)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Bezirke, Mehrfamiliengeb?ude, Pro Kopf CO2 Emissionen (kg)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -3619,7 +3758,7 @@ createTable(bezirk_co2_percapita_mfh[ , c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2008, 2002 = 100
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2008, 2002 = 100
 
 ```{r}
 bezirk_co2_percapita_2002as100_mfh <- get2002as100(bezirk_co2_percapita_mfh , "abrechnungsjahr")
@@ -3634,7 +3773,7 @@ points_line_lm(input_data = bezirk_co2_percapita_2002as100_mfh,
                x_eq = 2010,
                y_eq = 70,
                size_eq = 4,
-               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, Mehrfamiliengebäude, 2002 Wert = 100"),
+               plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, MehrfamiliengebÃ¤ude, 2002 Wert = 100"),
                xlab = "Jahr",
                ylab = "kg")
 ```
@@ -3643,7 +3782,7 @@ points_line_lm(input_data = bezirk_co2_percapita_2002as100_mfh,
 ```{r,fig.width=2.5,fig.height=6}
 createTable(obj = bezirk_co2_percapita_2002as100_mfh[ , c("abrechnungsjahr","total")],
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude,\nPro Kopf CO2 Emissionen\n(2002 Wert = 100)",
+            headerName = "Berlin, MehrfamiliengebÃ¤ude,\nPro Kopf CO2 Emissionen\n(2002 Wert = 100)",
             columnNames = c("Jahr","Wert"),
             columnWidths = c(1,1),
             columnsToRound = "Wert"
@@ -3656,7 +3795,7 @@ i_subsubsection <- i_subsubsection + 1
 ```
 
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emission pro Einwohner aus der Beheizung von Wohnraum
 
 ```{r}
 plot_reqdColumns(bezirk_co2_percapita_2002as100_mfh,
@@ -3666,7 +3805,7 @@ plot_reqdColumns(bezirk_co2_percapita_2002as100_mfh,
                  yVar = "co2 pro head, 2002=100",
                  xlabel="Jahr",
                  ylabel = NULL,
-                 plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Stadtbezirken, Mehrfamiliengebäude, 2002 Wert = 100"))
+                 plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Stadtbezirken, MehrfamiliengebÃ¤ude, 2002 Wert = 100"))
 ```
 
 ```{r,fig.height=10,fig.width=10}
@@ -3686,10 +3825,10 @@ bezirk_co2_percapita_2002as100_mfh
 createTable(bezirk_co2_percapita_2002as100_mfh[,1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln")
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln")
 )
 ```
 
@@ -3697,10 +3836,10 @@ createTable(bezirk_co2_percapita_2002as100_mfh[,1:7],
 createTable(bezirk_co2_percapita_2002as100_mfh[,c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, Pro Kopf CO2 Emissionen nach Bezirken, 2002 Wert = 100",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick")
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick")
 )
 ```
 
@@ -3709,7 +3848,7 @@ createTable(bezirk_co2_percapita_2002as100_mfh[,c(1,8:13)],
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
 
 ```{r}
 bezirk_co2_percapita_mfh_linear <- linearizer(bezirk_co2_percapita_mfh,dropCols = NULL , xVar = "abrechnungsjahr")
@@ -3723,7 +3862,7 @@ bezirk_co2_percapita_mfh_linear_2018 <- bezirk_co2_percapita_mfh_linear_2018[bez
 
 plot_co2perhead_2018(bezirk_co2_percapita_mfh_linear_2018,
                      ylabel = "kg",
-                     plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, Mehrfamiliengebäude"))
+                     plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, MehrfamiliengebÃ¤ude"))
 ```
 
 ```{r,results = showResults}
@@ -3732,7 +3871,7 @@ bezirk_co2_percapita_mfh_linear_2018
 
 ```{r,fig.width=3.5,fig.height=4.5}
 createTable2018(obj = bezirk_co2_percapita_mfh_linear_2018[, c("bezirk","wert")],
-            headerName = "Bezirke, Mehrfamiliengebäude,\npro Kopf CO2 Emissionen (2018)",
+            headerName = "Bezirke, MehrfamiliengebÃ¤ude,\npro Kopf CO2 Emissionen (2018)",
             columnNames = c("Bezirk","kg"),
             columnWidths = c(2,1),
             columnsToRound = "kg"
@@ -3743,7 +3882,7 @@ createTable2018(obj = bezirk_co2_percapita_mfh_linear_2018[, c("bezirk","wert")]
 i_subsubsection <- i_subsubsection + 1
 ```
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, Mehrfamiliengebäude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Veränderung 2002 / 2018 in Prozent
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner, VerÃ¤nderung 2002 / 2018 in Prozent
 
 
 ```{r}
@@ -3753,7 +3892,7 @@ i_subsubsection <- 1
 
 ## `r i_section`.`r i_subsection`. Prognose
 
-### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, Mehrfamiliengebäude, Prognose der CO2-Emission aus Behei¬zung 2019 - 2030 in Mio. t (Trend Polynom 2. Grades)
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Berlin, MehrfamiliengebÃ¤ude, Prognose der CO2-Emission aus Beheizung 2019 - 2030 in Mio. t (Trend Polynom 2. Grades)
 
 ```{r}
 quadmodel_mfh <- lm(total~abrechnungsjahr+I(abrechnungsjahr^2),data=berlin_co2_mfh)
@@ -3795,9 +3934,9 @@ i_subsection <- 1
 ```
 
 
-# `r i_section`.	Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, alle Wohngebäude 
+# `r i_section`.	Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, alle WohngebÃ¤ude 
 
-## `r i_section`.`r i_subsection`.	Stadtbezirke, alle Wohngebäude, Heizenergieverbrauch 2002 - 2018
+## `r i_section`.`r i_subsection`.	Stadtbezirke, alle WohngebÃ¤ude, Heizenergieverbrauch 2002 - 2018
 
 * `getAllBezirkeTotalCO2.R` and `getAllBezirkeByETCO2.R` both invoke `mainScriptCO2Emissions_v2.R`.
 * `mainScriptCO2Emissions_v2.R` creates the attribute `energy_shares_absolute`. This is the energy produced by the respective ETs.
@@ -3837,7 +3976,7 @@ aes_by_ET_TWh[ , c("abrechnungsjahr" , "total")]
 createTable(obj = aes_by_ET_TWh[ , c("abrechnungsjahr" , "total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, \nHeizenergieverbrauch",
+            headerName = "Berlin, alle WohngebÃ¤ude, \nHeizenergieverbrauch",
             columnNames = c("Jahr","TWh"),
             columnWidths = c(1,1),
             columnsToRound = "TWh"
@@ -3845,7 +3984,7 @@ createTable(obj = aes_by_ET_TWh[ , c("abrechnungsjahr" , "total")],
 ```
 
 ```{r}
-plot_byET(aes_by_ET_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, alle Wohngebäude, nach Energieträgern")
+plot_byET(aes_by_ET_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, alle WohngebÃ¤ude, nach EnergietrÃ¤gern")
 ```
 
 ```{r,results = showResults}
@@ -3857,10 +3996,10 @@ aes_by_ET_TWh
 createTable(aes_by_ET_TWh,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, Heizenergieverbrauch nach Energieträgern (TWh)",
-            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            headerName = "Berlin, alle WohngebÃ¤ude, Heizenergieverbrauch nach EnergietrÃ¤gern (TWh)",
+            columnNames =  c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Jahr","Gesamt"),
             columnWidths = rep(1,8),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
             roundOffTo=3
 )
 ```
@@ -3875,7 +4014,7 @@ aes_by_bezirk_TWh_cumsums <- getCumSums(obj=aes_by_bezirk_TWh , dropCols = "abre
 ```
 
 ```{r}
-plot_byBezirke(aes_by_bezirk_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, alle Wohngebäude, nach Bezirk")
+plot_byBezirke(aes_by_bezirk_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, alle WohngebÃ¤ude, nach Bezirk")
 ```
 
 ```{r,results = showResults}
@@ -3887,10 +4026,10 @@ aes_by_bezirk_TWh
 createTable(aes_by_bezirk_TWh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berliner, alle WohngebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             roundOffTo=3
 )
 ```
@@ -3901,10 +4040,10 @@ createTable(aes_by_bezirk_TWh[ , 1:7],
 createTable(aes_by_bezirk_TWh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berliner, alle WohngebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             roundOffTo = 3
 )
 ```
@@ -3915,7 +4054,7 @@ createTable(aes_by_bezirk_TWh[ , c(1,8:13)],
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, alle Wohngebäude, Heizenergieverbrauch 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, alle WohngebÃ¤ude, Heizenergieverbrauch 2002 - 2018
 
 Eine Grafik: Heizenergieverbrauch aller 12 Bezirke in einer Grafik)
 One Graph: All 12 lines in a single graph.
@@ -3934,7 +4073,7 @@ plot_reqdColumns(aes_by_bezirk_TWh,
                  yVar = "Energy in TWh",
                  xlab = "Jahr",
                  ylab = "TWh",
-                 plot_title = "Energieverbrauch in Stadtbezirken, alle Wohngebäude")
+                 plot_title = "Energieverbrauch in Stadtbezirken, alle WohngebÃ¤ude")
 ```
 
 
@@ -3974,10 +4113,10 @@ aes_by_bezirk_TWh
 createTable(aes_by_bezirk_TWh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berliner, alle WohngebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             roundOffTo=3
 )
 ```
@@ -3986,10 +4125,10 @@ createTable(aes_by_bezirk_TWh[ , 1:7],
 createTable(aes_by_bezirk_TWh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, alle Wohngebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berliner, alle WohngebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             roundOffTo = 3
 )
 ```
@@ -3998,7 +4137,7 @@ createTable(aes_by_bezirk_TWh[ , c(1,8:13)],
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`.	Stadtbezirke, alle Wohngebäude, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
+## `r i_section`.`r i_subsection`.	Stadtbezirke, alle WohngebÃ¤ude, flÃ¤chenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
 
 
 * `bezirk_areas_all$total` gives the total areas of berlin (MFH+SFH).
@@ -4018,7 +4157,7 @@ points_line_lm(input_data = spz_verbrauch_all,
                x_eq = 2010,
                y_eq = 0.8,
                size_eq = 4,
-               plot_title = "Spezifischer Energieverbrauch in Berlin, alle Wohngebäude",
+               plot_title = "Spezifischer Energieverbrauch in Berlin, alle WohngebÃ¤ude",
                xlab = "Jahr",
                ylab = "kWh/q.m.")
 ```
@@ -4032,7 +4171,7 @@ spz_verbrauch_all
 createTable(obj = spz_verbrauch_all,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude, \nspezifischer Heizenergieverbrauch",
+            headerName = "Berlin, alle WohngebÃ¤ude, \nspezifischer Heizenergieverbrauch",
             columnNames = c("Jahr","kWh / q.m."),
             columnWidths = c(1,1),
             columnsToRound = "kWh / q.m."
@@ -4044,7 +4183,7 @@ createTable(obj = spz_verbrauch_all,
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, alle Wohngebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, alle WohngebÃ¤ude, flÃ¤chenbezogener Heizenergieverbrauch und beheizte WohnflÃ¤che 2002 - 2018
 
 Plot of the total area (to be combined with the specific energy consumption into one picture):
 
@@ -4086,9 +4225,9 @@ plot_dualPlot(1e-6*bezirk_areas_all$total,
               spz_verbrauch_all$kWh_per_m2,
               2002:2018,
               "Jahr",
-              "Wohnfläche, alle Wohngebäude (Mio. q.m.)",
+              "WohnflÃ¤che, alle WohngebÃ¤ude (Mio. q.m.)",
               "kWh / q.m.",
-              "Wohnfläche",
+              "WohnflÃ¤che",
               "Heizenergieverbrauch pro q.m.")
 ```
 
@@ -4103,10 +4242,10 @@ createTable(obj = data.frame(Jahr=2002:2018 , area=1e-6*bezirk_areas_all$total,
               spez_verbrauch = spz_verbrauch_all$kWh_per_m2),
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, alle Wohngebäude",
-            columnNames = c("Jahr","Wohnfläche\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)"),
+            headerName = "Berlin, alle WohngebÃ¤ude",
+            columnNames = c("Jahr","WohnflÃ¤che\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)"),
             columnWidths = c(1,1,1),
-            columnsToRound = c("Wohnfläche\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)")
+            columnsToRound = c("WohnflÃ¤che\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)")
 )
 
 ```
@@ -4123,9 +4262,9 @@ i_section <- i_section + 1
 i_subsection <- 1
 ```
 
-# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, 1-2 Familiengebäude 
+# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, 1-2 FamiliengebÃ¤ude 
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, Heizenergieverbrauch 2002 - 2018 summiert 
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 FamiliengebÃ¤ude, Heizenergieverbrauch 2002 - 2018 summiert 
 
 * Total energy split by ET:
 ```{r}
@@ -4144,7 +4283,7 @@ points_line_lm(input_data = aes_by_ET_TWh_sfh,
                x_eq = 2010,
                y_eq = 0.025,
                size_eq = 4,
-               plot_title = "Energieverbrauch in Berlin, 1-2 Familiengebäude",
+               plot_title = "Energieverbrauch in Berlin, 1-2 FamiliengebÃ¤ude",
                xlab = "Jahr",
                ylab = "TWh",
                slope_round_to = 4)
@@ -4159,7 +4298,7 @@ aes_by_ET_TWh_sfh[, c("abrechnungsjahr","total")]
 createTable(obj = aes_by_ET_TWh_sfh[ , c("abrechnungsjahr" , "total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, \nHeizenergieverbrauch",
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, \nHeizenergieverbrauch",
             columnNames = c("Jahr","TWh"),
             columnWidths = c(1,1),
             columnsToRound = "TWh",
@@ -4168,7 +4307,7 @@ createTable(obj = aes_by_ET_TWh_sfh[ , c("abrechnungsjahr" , "total")],
 ```
 
 ```{r}
-plot_byET(aes_by_ET_TWh_sfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, 1-2 Familiengebäude, nach Energieträgern")
+plot_byET(aes_by_ET_TWh_sfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, 1-2 FamiliengebÃ¤ude, nach EnergietrÃ¤gern")
 ```
 
 ```{r,results = showResults}
@@ -4180,10 +4319,10 @@ aes_by_ET_TWh_sfh
 createTable(aes_by_ET_TWh_sfh,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, Heizenergieverbrauch nach Energieträgern (TWh)",
-            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, Heizenergieverbrauch nach EnergietrÃ¤gern (TWh)",
+            columnNames =  c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Jahr","Gesamt"),
             columnWidths = rep(1,8),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
             roundOffTo=3
 )
 ```
@@ -4197,7 +4336,7 @@ aes_by_bezirk_TWh_sfh_cumsums <- getCumSums(obj=aes_by_bezirk_TWh_sfh , dropCols
 ```
 
 ```{r}
-plot_byBezirke(aes_by_bezirk_TWh_sfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, 1-2 Familiengebäude, nach Bezirk")
+plot_byBezirke(aes_by_bezirk_TWh_sfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, 1-2 FamiliengebÃ¤ude, nach Bezirk")
 ```
 
 ```{r,results = showResults}
@@ -4209,10 +4348,10 @@ aes_by_bezirk_TWh_sfh
 createTable(aes_by_bezirk_TWh_sfh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, 1-2 Familiengebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berliner, 1-2 FamiliengebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             roundOffTo=3
 )
 ```
@@ -4223,10 +4362,10 @@ createTable(aes_by_bezirk_TWh_sfh[ , 1:7],
 createTable(aes_by_bezirk_TWh_sfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, 1-2 Familiengebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berliner, 1-2 Familiengeb?ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             roundOffTo = 3
 )
 ```
@@ -4236,7 +4375,7 @@ createTable(aes_by_bezirk_TWh_sfh[ , c(1,8:13)],
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, Heizenergieverbrauch 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 FamiliengebÃ¤ude, Heizenergieverbrauch 2002 - 2018
 
 (Eine Grafik: Heizenergieverbrauch aller 12 Bezirke in einer Grafik)
 One Graph: All 12 lines in a single graph.
@@ -4251,7 +4390,7 @@ plot_reqdColumns(aes_by_bezirk_TWh_sfh,
                  yVar = "Energy in TWh",
                  xlab = "Jahr",
                  ylab = "TWh",
-                 plot_title = "Energieverbrauch in Stadtbezirken, 1-2 Familiengebäude")
+                 plot_title = "Energieverbrauch in Stadtbezirken, 1-2 FamiliengebÃ¤ude")
 ```
 
 
@@ -4291,10 +4430,10 @@ aes_by_bezirk_TWh_sfh
 createTable(aes_by_bezirk_TWh_sfh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, 1-2 Familiengebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berliner, 1-2 FamiliengebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             roundOffTo=3
 )
 ```
@@ -4305,10 +4444,10 @@ createTable(aes_by_bezirk_TWh_sfh[ , 1:7],
 createTable(aes_by_bezirk_TWh_sfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, 1-2 Familiengebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berliner, 1-2 Familiengeb?ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             roundOffTo = 3
 )
 ```
@@ -4317,7 +4456,7 @@ createTable(aes_by_bezirk_TWh_sfh[ , c(1,8:13)],
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengeb?ude, flÃ¤chenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
 
 
 
@@ -4332,7 +4471,7 @@ points_line_lm(input_data = spz_verbrauch_sfh,
                x_eq = 2010,
                y_eq = 1.25,
                size_eq = 4,
-               plot_title = "Spezifischer Energieverbrauch in Berlin, 1-2 Familiengebäude",
+               plot_title = "Spezifischer Energieverbrauch in Berlin, 1-2 FamiliengebÃ¤ude",
                xlab = "Jahr",
                ylab = "kWh/q.m.")
 ```
@@ -4345,7 +4484,7 @@ spz_verbrauch_sfh
 createTable(obj = spz_verbrauch_sfh,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude, \nspezifischer Heizenergieverbrauch",
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude, \nspezifischer Heizenergieverbrauch",
             columnNames = c("Jahr","kWh / q.m."),
             columnWidths = c(1,1),
             columnsToRound = "kWh / q.m."
@@ -4356,7 +4495,7 @@ createTable(obj = spz_verbrauch_sfh,
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 FamiliengebÃ¤ude, flÃ¤chenbezogener Heizenergieverbrauch und beheizte WohnflÃ¤che 2002 - 2018
 
 Plot of the 1-2 FH area (to be combined with the specific energy consumption into one picture):
 
@@ -4367,9 +4506,9 @@ plot_dualPlot(1e-6*bezirk_areas_sfh$total,
               spz_verbrauch_sfh$kWh_per_m2,
               2002:2018,
               "Jahr",
-              "Nutzfläche, 1-2 Familiengebäude (Mio. q.m.)",
+              "NutzflÃ¤che, 1-2 FamiliengebÃ¤ude (Mio. q.m.)",
               "kWh/m2",
-              "Nutzfläche",
+              "NutzflÃ¤che",
               "spezifischer Heizenergieverbrauch")
 ```
 
@@ -4387,10 +4526,10 @@ createTable(obj = data.frame(Jahr=2002:2018 , area=1e-6*bezirk_areas_sfh$total,
               spez_verbrauch = spz_verbrauch_sfh$kWh_per_m2),
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, 1-2 Familiengebäude",
-            columnNames = c("Jahr","Wohnfläche\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)"),
+            headerName = "Berlin, 1-2 FamiliengebÃ¤ude",
+            columnNames = c("Jahr","WohnflÃ¤che\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)"),
             columnWidths = c(1,1,1),
-            columnsToRound = c("Wohnfläche\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)")
+            columnsToRound = c("WohnflÃ¤che\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)")
 )
 ```
 
@@ -4408,9 +4547,9 @@ i_section <- i_section + 1
 i_subsection <- 1
 ```
 
-# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, Mehrfamiliengebäude 
+# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, MehrfamiliengebÃ¤ude 
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, Heizenergieverbrauch 2002 - 2018 summiert 
+## `r i_section`.`r i_subsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, Heizenergieverbrauch 2002 - 2018 summiert 
 
 * Total energy split by ET:
 ```{r}
@@ -4429,7 +4568,7 @@ points_line_lm(input_data = aes_by_ET_TWh_mfh,
                x_eq = 2010,
                y_eq = 0.025,
                size_eq = 4,
-               plot_title = "Energieverbrauch in Berlin, Mehrfamiliengebäude",
+               plot_title = "Energieverbrauch in Berlin, MehrfamiliengebÃ¤ude",
                xlab = "Jahr",
                ylab = "TWh",
                slope_round_to = 4)
@@ -4443,7 +4582,7 @@ aes_by_ET_TWh_mfh[ , c("abrechnungsjahr","total")]
 createTable(obj = aes_by_ET_TWh_mfh[ , c("abrechnungsjahr" , "total")],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, \nHeizenergieverbrauch",
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, \nHeizenergieverbrauch",
             columnNames = c("Jahr","TWh"),
             columnWidths = c(1,1),
             columnsToRound = "TWh",
@@ -4453,7 +4592,7 @@ createTable(obj = aes_by_ET_TWh_mfh[ , c("abrechnungsjahr" , "total")],
 
 
 ```{r}
-plot_byET(aes_by_ET_TWh_mfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, Mehrfamiliengebäude, nach Energieträgern")
+plot_byET(aes_by_ET_TWh_mfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = "Energieverbrauch in Berlin, MehrfamiliengebÃ¤ude, nach EnergietrÃ¤gern")
 ```
 
 ```{r,results = showResults}
@@ -4464,10 +4603,10 @@ aes_by_ET_TWh_mfh
 createTable(aes_by_ET_TWh_mfh,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, Heizenergieverbrauch nach Energieträgern (TWh)",
-            columnNames =  c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Jahr","Gesamt"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, Heizenergieverbrauch nach EnergietrÃ¤gern (TWh)",
+            columnNames =  c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Jahr","Gesamt"),
             columnWidths = rep(1,8),
-            columnsToRound = c("Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            columnsToRound = c("Erdgas","WÃ¤rme","FlÃ¼ssiggas","HeizÃ¶l","Holzpellets","Strom","Gesamt"),
             roundOffTo=3
 )
 ```
@@ -4483,7 +4622,7 @@ aes_by_bezirk_TWh_mfh_cumsums <- getCumSums(obj=aes_by_bezirk_TWh_mfh , dropCols
 ```
 
 ```{r}
-plot_byBezirke(aes_by_bezirk_TWh_mfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, Mehrfamiliengebäude, nach Bezirk")
+plot_byBezirke(aes_by_bezirk_TWh_mfh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle="Energieverbrauch in Berlin, MehrfamiliengebÃ¤ude, nach Bezirk")
 ```
 
 ```{r,results = showResults}
@@ -4494,10 +4633,10 @@ aes_by_bezirk_TWh_mfh
 createTable(aes_by_bezirk_TWh_mfh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, Mehrfamiliengebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berliner, MehrfamiliengebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             roundOffTo=3
 )
 ```
@@ -4506,10 +4645,10 @@ createTable(aes_by_bezirk_TWh_mfh[ , 1:7],
 createTable(aes_by_bezirk_TWh_mfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, Mehrfamiliengebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berliner, MehrfamiliengebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             roundOffTo = 3
 )
 ```
@@ -4521,7 +4660,7 @@ createTable(aes_by_bezirk_TWh_mfh[ , c(1,8:13)],
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude Wohngebäude, Heizenergieverbrauch 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengeb?ude WohngebÃ¤ude, Heizenergieverbrauch 2002 - 2018
 
 (Eine Grafik: Heizenergieverbrauch aller 12 Bezirke in einer Grafik)
 One Graph: All 12 lines in a single graph.
@@ -4536,7 +4675,7 @@ plot_reqdColumns(aes_by_bezirk_TWh_mfh,
                  yVar = "Energy in TWh",
                  xlab = "Jahr",
                  ylab = "TWh",
-                 plot_title = "Energieverbrauch in Stadtbezirken, Mehrfamiliengebäude")
+                 plot_title = "Energieverbrauch in Stadtbezirken, MehrfamiliengebÃ¤ude")
 ```
                  
                  
@@ -4575,10 +4714,10 @@ aes_by_bezirk_TWh_mfh
 createTable(aes_by_bezirk_TWh_mfh[ , 1:7],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, Mehrfamiliengebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            headerName = "Berliner, MehrfamiliengebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","Neukölln"),
+            columnsToRound = c("Charlottenburg-\nWilmersdorf","Friedrichshain-\nKreuzberg","Lichtenberg","Marzahn-\nHellersdorf","Mitte","NeukÃ¶lln"),
             roundOffTo=3
 )
 ```
@@ -4587,10 +4726,10 @@ createTable(aes_by_bezirk_TWh_mfh[ , 1:7],
 createTable(aes_by_bezirk_TWh_mfh[ , c(1,8:13)],
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berliner, Mehrfamiliengebäude, Heizenergieverbrauch nach Bezirken (TWh)",
-            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            headerName = "Berliner, MehrfamiliengebÃ¤ude, Heizenergieverbrauch nach Bezirken (TWh)",
+            columnNames =  c("Jahr","Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             columnWidths = rep(1,7),
-            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchöneberg","Treptow-\nKöpenick"),
+            columnsToRound = c("Pankow","Reinickendorf","Spandau","Steglitz-\nZehlendorf","Tempelhof-\nSchÃ¶neberg","Treptow-\nKÃ¶penick"),
             roundOffTo = 3
 )
 ```
@@ -4599,7 +4738,7 @@ createTable(aes_by_bezirk_TWh_mfh[ , c(1,8:13)],
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
+## `r i_section`.`r i_subsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, flÃ¤chenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/(m2[AN]*a) 
 
 
 
@@ -4614,7 +4753,7 @@ points_line_lm(input_data = spz_verbrauch_mfh,
                x_eq = 2010,
                y_eq = 1.1,
                size_eq = 4,
-               plot_title = "Spezifischer Energieverbrauch in Berlin, Mehrfamiliengebäude",
+               plot_title = "Spezifischer Energieverbrauch in Berlin, MehrfamiliengebÃ¤ude",
                xlab = "Jahr",
                ylab = "kWh/q.m.")
 ```
@@ -4627,7 +4766,7 @@ spz_verbrauch_mfh
 createTable(obj = spz_verbrauch_mfh,
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude, \nspezifischer Heizenergieverbrauch",
+            headerName = "Berlin, MehrfamiliengebÃ¤ude, \nspezifischer Heizenergieverbrauch",
             columnNames = c("Jahr","kWh / q.m."),
             columnWidths = c(1,1),
             columnsToRound = "kWh / q.m."
@@ -4640,7 +4779,7 @@ createTable(obj = spz_verbrauch_mfh,
 i_subsection <- i_subsection+1
 ```
 
-## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+## `r i_section`.`r i_subsection`. Stadtbezirke, MehrfamiliengebÃ¤ude, flÃ¤chenbezogener Heizenergieverbrauch und beheizte WohnflÃ¤che 2002 - 2018
 
 Plot of the MFH area (to be combined with the specific energy consumption into one picture):
 
@@ -4649,9 +4788,9 @@ plot_dualPlot(1e-6*bezirk_areas_mfh$total,
               spz_verbrauch_mfh$kWh_per_m2,
               2002:2018,
               "Jahr",
-              "Nutzfläche, Mehrfamiliengebäude (Mio. q.m.)",
+              "NutzflÃ¤che, MehrfamiliengebÃ¤ude (Mio. q.m.)",
               "kWh/m2",
-              "Nutzfläche",
+              "NutzflÃ¤che",
               "spezifischer Heizenergieverbrauch")
 ```
 
@@ -4667,14 +4806,14 @@ createTable(obj = data.frame(Jahr=2002:2018 , area=1e-6*bezirk_areas_mfh$total,
               spez_verbrauch = spz_verbrauch_mfh$kWh_per_m2),
             fontSize = 10,
             isHeader = TRUE,
-            headerName = "Berlin, Mehrfamiliengebäude",
-            columnNames = c("Jahr","Wohnfläche\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)"),
+            headerName = "Berlin, MehrfamiliengebÃ¤ude",
+            columnNames = c("Jahr","WohnflÃ¤che\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)"),
             columnWidths = c(1,1,1),
-            columnsToRound = c("Wohnfläche\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)")
+            columnsToRound = c("WohnflÃ¤che\n(Mio. q.m.)","spezifischer\nHeizenergie-\nverbrauch\n(kWh/q.m.)")
 )
 ```
 
-# Sample size in Bezirken, alle Wohngebäude
+# Sample size in Bezirken, alle Wohngeb?ude
 
 
 ```{r}
@@ -4687,7 +4826,7 @@ plot_reqdColumns(berlin_sample_size$ALL,
                  cols_to_plot = names(berlin_sample_size$ALL)[!(names(berlin_sample_size$ALL)) %in% c("abrechnungsjahr","total")],
                  yColsName = "Bezirk",
                  yVar = "N",
-                 plot_title = "Stichprobengröße, alle Wohngebäude",
+                 plot_title = "StichprobengrÃ¶ÃŸe, alle WohngebÃ¤ude",
                  xlabel = "Jahr",
                  ylabel = "N",
                  regLine = FALSE)
@@ -4712,7 +4851,7 @@ plot_reqdColumns(berlin_sample_size$SFH,
                  cols_to_plot = names(berlin_sample_size$SFH)[!(names(berlin_sample_size$SFH)) %in% c("abrechnungsjahr","total")],
                  yColsName = "Bezirk",
                  yVar = "N",
-                 plot_title = "Stichprobengröße, 1-2 Familiengebäude",
+                 plot_title = "StichprobengrÃ¶ÃŸe, 1-2 FamiliengebÃ¤ude",
                  xlabel = "Jahr",
                  ylabel = "N",
                  regLine = FALSE)
@@ -4738,7 +4877,7 @@ plot_reqdColumns(berlin_sample_size$MFH,
                  cols_to_plot = names(berlin_sample_size$MFH)[!(names(berlin_sample_size$MFH)) %in% c("abrechnungsjahr","total")],
                  yColsName = "Bezirk",
                  yVar = "N",
-                 plot_title = "Stichprobengröße, Mehrfamiliengebäude",
+                 plot_title = "StichprobengrÃ¶ÃŸe, MehrfamiliengebÃ¤ude",
                  xlabel = "Jahr",
                  ylabel = "N",
                  regLine = FALSE)

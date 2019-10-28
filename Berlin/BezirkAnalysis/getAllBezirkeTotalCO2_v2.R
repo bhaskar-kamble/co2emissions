@@ -55,7 +55,7 @@ getAllBezirkeTotalCO2 <- function() {
     et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
     
     
-    source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/mainScriptCO2Emissions_v2.R")
+    source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/mainScriptCO2Emissions_v2.R")
     return_SFH <- main_function("SFH" , bezirk , et_list)
     return_MFH <- main_function("MFH" , bezirk , et_list)
     #Get the Co2 emissions:

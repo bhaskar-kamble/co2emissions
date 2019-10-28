@@ -1,5 +1,5 @@
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/find_proportions.R")
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/find_proportions.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R")
 energy_proportions_by_et <- function(bezirk_data,et_list) {
   require(dplyr)
   by_year_ET <- group_by(bezirk_data,abrechnungsjahr,energietraeger)

@@ -1,6 +1,6 @@
-source("D:/GITHUB_REPOS/visualization-project2-smurfs/cleanData.R")
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getBerlinData.R")
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/getRowSums.R")
+source("/home/kbhaskar/Github_Repos/visualization-project2-smurfs/cleanData.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getBerlinData.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getRowSums.R")
 
 getSampleSize <- function() {
   

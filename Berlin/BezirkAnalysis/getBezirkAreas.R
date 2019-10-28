@@ -1,9 +1,9 @@
 #source("appendLinearTrend.R")
-source("D:/GITHUB_REPOS/co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R")
 # Bezirk Areas are in 100m-square.
 getBezirkAreas <- function(bezirk) {
   #bezirk_areas <- read.csv2("../FindArea/areas_berlin_bezirke.csv")
-  bezirk_areas <- read.csv2("D:/GITHUB_REPOS/co2emissions/Berlin/FindArea/areas_berlin_bezirke.csv")
+  bezirk_areas <- read.csv2("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FindArea/areas_berlin_bezirke.csv")
   bezirk_areas <- bezirk_areas[ , c("bezirk",
                                     "wohnflaeche_gebaeude_insgesamt",
                                     "wohnflaeche_gebaeude_1FH",
