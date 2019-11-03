@@ -1,0 +1,19 @@
+Teil 1
+
+
+Berlin_LeistungsbildTeil1_v12.Rmd went a bit wrong with the pdf file. It is not showing the side pane.
+
+Changed it to Berlin_LeistungsbildTeil1_v12test.Rmd, This then became Berlin_LeistungsbildTeil1_v13.Rmd
+
+v14: same as v13.
+
+
+Berlin_LeistungsbildTeil1_v14_Savefigs.Rmd: Trying to save figures as svg files.
+
+Berlin_LeistungsbildTeil1_v15_Savefigs.Rmd is saved from Berlin_LeistungsbildTeil1_v14_Savefigs.Rmd.
+
+####
+
+Berlin_LeistungsbildTeil2_v6_charlottenburgwilmersdorf.Rmd is now saved as Berlin_LeistungsbildTeil2_v6_Savefigs.Rmd to save the figures.
+
+Berlin_LeistungsbildTeil2_v6_Savefigs.Rmd saved as Berlin_LeistungsbildTeil2_v7_Savefigs.Rmd.

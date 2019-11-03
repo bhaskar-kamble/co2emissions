@@ -1,0 +1,29 @@
+---
+title: "CO2 Bilanzen Berlin, Teil 1"
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
+  beamer_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Berlin CO2 Bilanzen
+
+# Stichprobengröße
+
+---
+
+![](../Teil1/ALL_Section____fig_1.svg){width=80%}
+
+
+---
+
+![](../Teil1/ALL_Section____fig_2.svg){width=80%}
+
+
+---
+
+![](../Teil1/ALL_Section____fig_3.svg){width=60%}

@@ -3,15 +3,15 @@ title: "Berlin CO2 Leistungsbild"
 author: "Bhaskar Kamble"
 date: "15 August 2019"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
   html_document:
     code_folding: hide
     theme: united
     toc: yes
     toc_depth: 3
     toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
 ---
 
 
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning=FALSE,cache=FALSE)
 # <font size="20">Teil 2.</font>
 
 ```{r}
-showResults <- "show" #options: "show" or "hide"
+showResults <- "hide" #options: "show" or "hide"
 ```
 
 ```{r}
@@ -199,7 +199,7 @@ bezirk_list  <- c(
 
 ```{r}
 i_bezirk <- 0
-i_section <- 6
+i_section <- 0
 ```
 
 
@@ -241,7 +241,7 @@ require(ggplot2)
 ggplot(berlin_sample_size$ALL) + geom_point(aes(x=abrechnungsjahr,y=get(bezirk)))+labs(x="Jahr",y="Stichprobengröße",title=paste0(bezirk_proper_name , ", alle Wohngebäude (Stichprobengröße)"))+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
-```{r}
+```{r,results = showResults}
 berlin_sample_size$ALL[ , c("abrechnungsjahr",bezirk)]
 ```
 
@@ -317,7 +317,7 @@ points_line_lm(input_data = bezirk_co2_all,
                ylab = "kilo t.")
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_all[ , c("abrechnungsjahr","total")]
 ```
 
@@ -346,7 +346,7 @@ bezirk_co2_all_cumsums <- getCumSums(bezirk_co2_all , dropCols = c("abrechnungsj
 plot_byET(bezirk_co2_all_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = paste0("CO2 Emissionen, alle Wohngebäude, ",bezirk_proper_name) )
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_all
 ```
 
@@ -373,7 +373,7 @@ bezirk_co2_all_prop_cumsums <- getCumSums(bezirk_co2_all_prop,dropCols="abrechnu
 plot_byET(bezirk_co2_all_prop_cumsums , xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = paste0("CO2 Emissionen, alle Wohngebäude, ",bezirk_proper_name) )
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_all_prop
 ```
 
@@ -428,7 +428,7 @@ points_line_lm(input_data = bezirk_spzco2_all,
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirk_spzco2_all[, c("abrechnungsjahr","spzco2")]
 ```
 
@@ -486,14 +486,14 @@ plot_dualPlot(
   bezirk_spzco2_all$spzco2,
   2002:2018,
   "Jahr",
-  "Nutzfl?che, (Mio. q.m.)",
+  "Nutzfläche, (Mio. q.m.)",
   "kg/q.m.",
-  "Nutzfl?che",
+  "Nutzfläche",
   "spezifische CO2 Emissionen",main = paste0(bezirk_proper_name, ", alle Wohngebäude")
   )
 ```
 
-```{r}
+```{r,results = showResults}
 data.frame(Jahr=2002:2018,Area=bezirk_total_area$areaALL,Spez_CO2 = bezirk_spzco2_all$spzco2)
 ```
 
@@ -522,7 +522,7 @@ i_subsubsection <- i_subsubsection + 1
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`. alle Wohngebäude, CO2-Emissionen aus der Beheizung von Wohnraum pro Einwohner 2002 - 2018
 
-```{r}
+```{r,results = showResults}
 source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getBerlinBezirkPopulation.R")
 bezirk_population <- getBerlinBezirkPopulation()
 bezirk_population[,c("abrechnungsjahr",bezirk)]# and 
@@ -660,7 +660,16 @@ createTable(obj = berlin_sample_size$SFH[,c("abrechnungsjahr",bezirk)],
             addColTotals = TRUE)
 ```
 
-
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_sample_size$SFH,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", 1-2  Familiengebäude, Stichprobengröße nach Energieträgern"),
+            columnNames =  c("Jahr", "Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            columnWidths = rep(1,8),
+            #columnsToRound = c("Jahr", "Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+)
+```
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`, 1-2 Familiengebäude, CO2-Emissionen aus Beheizung 2002 - 2018 in kilo t.
 
@@ -685,7 +694,7 @@ points_line_lm(input_data = bezirk_co2_sfh,
                ylab = "kilo t.")
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_sfh[, c("abrechnungsjahr","total")]
 ```
 
@@ -713,7 +722,7 @@ bezirk_co2_sfh_cumsums <- getCumSums(bezirk_co2_sfh , dropCols = c("abrechnungsj
 plot_byET(bezirk_co2_sfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = paste0("CO2 Emissionen, 1-2 Familiengebäude ",bezirk_proper_name) )
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_sfh
 ```
 
@@ -744,7 +753,7 @@ plot_byET(bezirk_co2_sfh_prop_cumsums , xlabel = "Jahr" , ylabel = "Anteile in %
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirk_co2_sfh_prop
 ```
 
@@ -793,7 +802,7 @@ points_line_lm(input_data = bezirk_spzco2_sfh,
                ylab = "kg / q.m.")
 ``` 
 
-```{r}
+```{r,results = showResults}
 bezirk_spzco2_sfh
 ```
 
@@ -839,7 +848,7 @@ plot_dualPlot(
   paste0(bezirk_proper_name, ", 1-2 Familiengebäude"))
 ```
 
-```{r}
+```{r,results = showResults}
 data.frame(Jahr=2002:2018,Area=bezirk_total_area$areaSFH,Spez_CO2 = bezirk_spzco2_sfh$spzco2)
 ```
 
@@ -969,7 +978,7 @@ i_subsubsection <- i_subsubsection + 1
 
 ```{r}
 require(ggplot2)
-ggplot(berlin_sample_size$MFH) + geom_point(aes(x=abrechnungsjahr,y=get(bezirk)))+labs(x="Jahr",y="Stichprobengr??e",title=paste0(bezirk_proper_name , ", Mehrfamiliengeb?ude (Stichprobengr??e)"))+scale_x_continuous(breaks=seq(2002,2018,2))
+ggplot(berlin_sample_size$MFH) + geom_point(aes(x=abrechnungsjahr,y=get(bezirk)))+labs(x="Jahr",y="Stichprobengr??e",title=paste0(bezirk_proper_name , ", Mehrfamiliengeb?ude (Stichprobengröße)"))+scale_x_continuous(breaks=seq(2002,2018,2))
 ```
 
 
@@ -981,6 +990,17 @@ createTable(obj = berlin_sample_size$MFH[,c("abrechnungsjahr",bezirk)],
             columnNames = c("Jahr","N"),
             columnWidths = c(1,1),
             addColTotals = TRUE)
+```
+
+```{r,fig.width=8.75,fig.height=6}
+createTable(bezirk_sample_size$MFH,
+            fontSize = 10,
+            isHeader = TRUE,
+            headerName = paste0(bezirk_proper_name,", Mehrfamiliengebäude, Stichprobengröße nach Energieträgern"),
+            columnNames =  c("Jahr", "Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt"),
+            columnWidths = rep(1,8),
+            #columnsToRound = c("Jahr", "Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom")
+)
 ```
 
 ### `r i_section`.`r i_subsection`.`r i_subsubsection`, Mehrfamiliengebäude, CO2-Emissionen aus Beheizung 2002 - 2018 in units
@@ -1084,7 +1104,7 @@ i_subsubsection <- i_subsubsection + 1
 
 
 
-```{r}
+```{r,results = showResults}
 bezirk_spzco2_mfh <- data.frame(abrechnungsjahr=2002:2018 ,   spzco2 = 1e6*(bezirk_co2_mfh$total / bezirk_total_area$areaMFH) )
 bezirk_spzco2_mfh
 ```
@@ -1315,7 +1335,7 @@ bezirk_aes_all_TWh_cumsums <- getCumSums(bezirk_aes_all_TWh , dropCols = c("abre
 plot_byET(bezirk_aes_all_TWh_cumsums , xlabel = "Jahr" , ylabel = "TWh" , plottitle = paste0("All buildings ",bezirk_proper_name) )
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_aes_all_TWh
 ```
 
@@ -1356,7 +1376,7 @@ points_line_lm(input_data = bezirk_spz_verbrauch_all,
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirk_spz_verbrauch_all
 ```
 
@@ -1476,6 +1496,9 @@ spz_vrbrch_all_byET <- SV_all_byET$spzVrbch
 
 
 ```{r}
+for (colName in names(spz_vrbrch_all_byET)) {
+  spz_vrbrch_all_byET[[colName]][is.nan(spz_vrbrch_all_byET[[colName]])] <- 0.0
+}
 y_max <- 2.15
 g_erdgas <- points_line_lm(input_data = spz_vrbrch_all_byET,
                            xVar = "abrechnungsjahr",
@@ -1555,7 +1578,7 @@ g_holzpellets
 g_strom
 ```
 
-```{r}
+```{r,results = showResults}
 spz_vrbrch_all_byET
 ```
 
@@ -1632,7 +1655,7 @@ bezirk_aes_all_props_cumsums <- getCumSums(bezirk_aes_all_props , dropCols = "ab
 plot_byET(bezirk_aes_all_props_cumsums , xlabel = "Jahr" , ylabel = "Anteile in %" , plottitle = paste0("Energy Consumption All buildings ",bezirk_proper_name) )
 ```
 
-```{r}
+```{r,results = showResults}
 bezirk_aes_all_props
 ```
 
@@ -1852,7 +1875,7 @@ i_subsection <- i_subsection + 1
 
 
 
-```{r}
+```{r,results = showResults}
 SV_sfh_byET <- getSpzVrbrchByET("SFH",
                                 bezirk_aes_sfh,
                                 bezirk_total_area,
@@ -1865,6 +1888,9 @@ spz_vrbrch_sfh_byET
 
 
 ```{r}
+for (colName in names(spz_vrbrch_sfh_byET)) {
+  spz_vrbrch_sfh_byET[[colName]][is.nan(spz_vrbrch_sfh_byET[[colName]])] <- 0.0
+}
 y_max <- 2.15
 g_erdgas <- points_line_lm(input_data = spz_vrbrch_sfh_byET,
                            xVar = "abrechnungsjahr",
@@ -1962,15 +1988,15 @@ createTable(spz_vrbrch_sfh_byET,
 ```
 
 
-```{r}
+```{r,results = showResults}
 bezirk_aes_sfh
 ```
 
-```{r}
+```{r,results = showResults}
 SV_sfh_byET$aes
 ```
 
-```{r}
+```{r,results = showResults}
 SV_sfh_byET$areas
 ```
 
@@ -2159,7 +2185,7 @@ createTable(obj = bezirk_spz_verbrauch_mfh,
 
 
 
-```{r}
+```{r,results = showResults}
 bezirk_spz_verbrauch_mfh
 ```
 
@@ -2201,6 +2227,10 @@ spz_vrbrch_mfh_byET <- SV_mfh_byET$spzVrbch
 
 
 ```{r,fig.width=10,fig.height=6}
+#spz_vrbrch_mfh_byET$fluessiggas <- 0 
+for (colName in names(spz_vrbrch_mfh_byET)) {
+  spz_vrbrch_mfh_byET[[colName]][is.nan(spz_vrbrch_mfh_byET[[colName]])] <- 0.0
+}
 plot_gridAllETs(spz_vrbrch_mfh_byET,geb_type="MFH")
 ```
 
