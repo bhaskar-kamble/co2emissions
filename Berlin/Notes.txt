@@ -17,3 +17,9 @@ Berlin_LeistungsbildTeil1_v15_Savefigs.Rmd is saved from Berlin_LeistungsbildTei
 Berlin_LeistungsbildTeil2_v6_charlottenburgwilmersdorf.Rmd is now saved as Berlin_LeistungsbildTeil2_v6_Savefigs.Rmd to save the figures.
 
 Berlin_LeistungsbildTeil2_v6_Savefigs.Rmd saved as Berlin_LeistungsbildTeil2_v7_Savefigs.Rmd.
+
+####
+
+Making the presentation in folder SlidesTeil1. Teil1_Slides_v2.Rmd is the relevant Rmd file.
+
+####

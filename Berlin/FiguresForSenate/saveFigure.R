@@ -14,7 +14,7 @@ saveFigure <- function(plotFig=TRUE,
   if (Teil==2) {
     pathToFile <- "/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/Teil2/"
   }
-  figName <- paste0(gtypeForFig,"_Section_",section,"_",subsection,"_",subsubsection,"_fig_",figIndex,".svg")
+  figName <- paste0(gtypeForFig,"_Section_",section,"_",subsection,"_",subsubsection,"_fig_",figIndex,".png")
   figName <- paste0(pathToFile , figName)
   if (!is.null(figWidth) & !is.null(figHeight)) {
     ggsave(figName , 
