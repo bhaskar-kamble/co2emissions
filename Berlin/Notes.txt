@@ -23,3 +23,5 @@ Berlin_LeistungsbildTeil2_v6_Savefigs.Rmd saved as Berlin_LeistungsbildTeil2_v7_
 Making the presentation in folder SlidesTeil1. Teil1_Slides_v2.Rmd is the relevant Rmd file.
 
 ####
+
+For Teil2, the relevant Rmd file for creating the pictures and also the pdf document is Berlin_LeistungsbildTeil2_v7_Savefigs.Rmd.

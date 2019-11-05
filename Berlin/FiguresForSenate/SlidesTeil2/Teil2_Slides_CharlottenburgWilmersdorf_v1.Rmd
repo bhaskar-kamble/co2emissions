@@ -1,0 +1,233 @@
+---
+title: "Charlottenburg-Wilmersdorf CO2 Bilanzen"
+author: "Bhaskar Kamble, Johannes Hengstenberg"
+date: "3/11/2019"
+output: 
+  beamer_presentation:
+  fig_caption: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,message=FALSE)
+```
+
+```{r}
+i_bezirk <- 1
+```
+
+```{r}
+bezirk_list  <- c(
+  "charlottenburg_wilmersdorf",
+  "friedrichshain_kreuzberg",
+  "lichtenberg",
+  "marzahn_hellersdorf",
+  "mitte",
+  "neukoelln",
+  "pankow"    ,             
+  "reinickendorf",
+  "spandau",
+  "steglitz_zehlendorf" ,
+  "tempelhof_schoeneberg",
+  "treptow_koepenick"                              
+)
+```
+
+
+
+```{r}
+files_in_teil_2 <- list.files(path = paste0(
+  "/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/Teil2/",bezirk_list[i_bezirk]
+))
+png_in_teil_2 <- files_in_teil_2[grep("png" , files_in_teil_2)]
+path_to_file <- paste0("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/Teil2/",bezirk_list[i_bezirk] , "/")
+```
+
+
+
+# Alle Wonngebäude, CO2 Emissionen aus Beheizung (kilo t.)
+
+```{r}
+#Section 1.1.1
+i <- 2
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+# Alle Wonngebäude, CO2 Emissionen aus Beheizung (Anteile von Energieträgern)
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+
+# Alle Wonngebäude, spezifische CO2 Emissionen
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+# Alle Wonngebäude, CO2 Emissionen pro Einwohner
+
+```{r}
+i <- 6
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 1-2 Familiengebäude, CO2 Emissionen (kilo t.)
+
+```{r}
+i <- 24
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+
+# 1-2 Familiengebäude, CO2 Emissionen (Anteile von Energieträgern)
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+# 1-2 Familiengebäude, spezifische CO2 Emissionen
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+# 1-2 Familiengebäude, CO2 Emissionen pro Einwohner
+
+```{r}
+i <- 28
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Mehrfamiliengebäude, CO2 Emissionen (kilo t.)
+
+```{r}
+i <- 13
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+
+# Mehrfamiliengebäude, CO2 Emissionen (Anteile von Energieträgern)
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+# Mehrfamiliengebäude, spezifische CO2 Emissionen
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+
+# Mehrfamiliengebäude, CO2 Emissionen pro Einwohner
+
+```{r}
+i <- 17
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_2[i]))
+i <- i + 1
+```
+

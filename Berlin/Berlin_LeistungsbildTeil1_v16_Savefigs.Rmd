@@ -2348,7 +2348,11 @@ prognose_lin <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predi
 ```
 
 ```{r}
-ggplot(prognose_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title = "Polynom 1. Grades")
+b0_grad1 <- round(as.numeric(linmodel$coefficients[1]) , 2)
+b1_grad1 <- round(as.numeric(linmodel$coefficients[2]) , 2)
+eq_grad1 <- paste0("y = ", b1_grad1 , "x + ", b0_grad1)
+ggplot(prognose_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title = "CO2 Emissionen in Berlin, alle Wohngebäude (Polynom 1. Grades)",y="kilo t.",x="Jahr"
+)+annotate(geom="text",label=eq_grad1,x=2015,y=0.65*max(prognose_lin$pred),size=5) + ylim(0,max(prognose_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -2387,7 +2391,13 @@ prognose_quad <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(pred
 ```
 
 ```{r}
-ggplot(prognose_quad , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title = "Polynom 2. Grades")
+b0_grad2 <- round(as.numeric(quadmodel$coefficients[1]) , 2)
+b1_grad2 <- round(as.numeric(quadmodel$coefficients[2]) , 2)
+b2_grad2 <- round(as.numeric(quadmodel$coefficients[3]) , 2)
+eq_grad2 <- paste0("y = ",b2_grad2,"x^2 + ",b1_grad2 , "x + ", b0_grad2)
+ggplot(prognose_quad , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title = "CO2 Emissionen in Berlin, alle Wohngebäude (Polynom 2. Grades)",y="kilo t.",x="Jahr")+annotate(
+  geom="text",label=eq_grad2,x=2015,y=0.65*max(prognose_quad$pred),size=5
+  ) + ylim(0,max(prognose_quad$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3545,7 +3555,14 @@ summary(quadmodel_sfh)$r.squared
 ```{r}
 from2002_till_2030 <- data.frame(abrechnungsjahr=2002:2030)
 prognose_sfh_lin <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predict(linmodel_sfh,newdata=from2002_till_2030)))
-ggplot(prognose_sfh_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="Polynom 1. Grades")
+b0_grad1 <- round(as.numeric(linmodel_sfh$coefficients[1]) , 2)
+b1_grad1 <- round(as.numeric(linmodel_sfh$coefficients[2]) , 2)
+eq_grad1 <- paste0("y = ", b1_grad1 , "x + ", b0_grad1)
+
+ggplot(prognose_sfh_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="CO2 Emissionen in Berlin, 1-2 Familiengebäude (Polynom 1. Grades)",y="kilo t.",x="Jahr")+annotate(
+  geom="text",label=eq_grad1,x=2015,y=0.65*max(prognose_sfh_lin$pred),size=5
+  ) + ylim(0,max(prognose_sfh_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
+
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3556,8 +3573,14 @@ figIndex <- saveFigure(gtypeForFig=gtypeForFig ,
 
 ```{r}
 from2002_till_2030 <- data.frame(abrechnungsjahr=2002:2030)
+b0_grad2 <- round(as.numeric(quadmodel_sfh$coefficients[1]) , 2)
+b1_grad2 <- round(as.numeric(quadmodel_sfh$coefficients[2]) , 2)
+b2_grad2 <- round(as.numeric(quadmodel_sfh$coefficients[3]) , 2)
+eq_grad2 <- paste0("y = ",b2_grad2,"x^2 + ",b1_grad2 , "x + ", b0_grad2)
 prognose_sfh_quad <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predict(quadmodel_sfh,newdata=from2002_till_2030)))
-ggplot(prognose_sfh_quad , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="Polynom 2. Grades")
+ggplot(prognose_sfh_quad , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="CO2 Emissionen in Berlin, 1-2 Familiengebäude (Polynom 2. Grades)",y="kilo t.",x="Jahr")+annotate(
+  geom="text",label=eq_grad2,x=2015,y=0.65*max(prognose_sfh_quad$pred),size=5
+) + ylim(0,max(prognose_sfh_quad$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
                        subsection = i_subsection,
@@ -4616,7 +4639,13 @@ summary(quadmodel_mfh)$r.squared
 ```{r}
 from2002_till_2030 <- data.frame(abrechnungsjahr=2002:2030)
 prognose_mfh_lin <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predict(linmodel_mfh,newdata=from2002_till_2030)))
-ggplot(prognose_mfh_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="Polynom 1. Grades")
+b0_grad1 <- round(as.numeric(linmodel_mfh$coefficients[1]) , 2)
+b1_grad1 <- round(as.numeric(linmodel_mfh$coefficients[2]) , 2)
+eq_grad1 <- paste0("y = ", b1_grad1 , "x + ", b0_grad1)
+ggplot(prognose_mfh_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="CO2 Emissionen in Berlin, Mehrfamiliengebäude (Polynom 1. Grades)",y="kilo t.",x="Jahr"
+)+annotate(
+  geom="text",label=eq_grad1,x=2015,y=0.65*max(prognose_mfh_lin$pred),size=5
+  ) + ylim(0,max(prognose_mfh_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -4628,7 +4657,13 @@ figIndex <- saveFigure(gtypeForFig=gtypeForFig ,
 ```{r}
 from2002_till_2030 <- data.frame(abrechnungsjahr=2002:2030)
 prognose_mfh_quad <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predict(quadmodel_mfh,newdata=from2002_till_2030)))
-ggplot(prognose_mfh_quad , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="Polynom 2. Grades")
+b0_grad2 <- round(as.numeric(quadmodel_mfh$coefficients[1]) , 2)
+b1_grad2 <- round(as.numeric(quadmodel_mfh$coefficients[2]) , 2)
+b2_grad2 <- round(as.numeric(quadmodel_mfh$coefficients[3]) , 2)
+eq_grad2 <- paste0("y = ",b2_grad2,"x^2 + ",b1_grad2 , "x + ", b0_grad2)
+ggplot(prognose_mfh_quad , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="CO2 Emissionen in Berlin, Mehrfamiliengebäude (Polynom 2. Grades)",y="kilo t.",x="Jahr")+annotate(
+  geom="text",label=eq_grad2,x=2015,y=0.65*max(prognose_mfh_quad$pred),size=5
+) + ylim(0,max(prognose_mfh_quad$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
                        subsection = i_subsection,

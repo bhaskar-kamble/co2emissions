@@ -198,7 +198,7 @@ bezirk_list  <- c(
 
 
 ```{r}
-i_bezirk <- 11
+i_bezirk <- 0
 i_section <- 0
 ```
 
