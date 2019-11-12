@@ -1,4 +1,4 @@
-saveFigure <- function(plotFig=TRUE,
+saveFigure <- function(plotFig=FALSE,
                        gtypeForFig,
                        section=NULL,
                        subsection=NULL,

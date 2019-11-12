@@ -1,4 +1,4 @@
-1st slide - johannes with cross, cosubscript 2
+
 
 # Dont show sample size
 
@@ -13,3 +13,10 @@
 # Slide 100 is truncated
 # 108
 # kg/Kopf
+
+
+######################
+
+I presented Teil1_Slides_v5_Cover at the senate on 6 November.
+Saved again as Teil1_Slides_v5_Cover - this includes the stichprongröße
+In turn the above saved as CO2BilanzAusWohnraumBerlin.pdf

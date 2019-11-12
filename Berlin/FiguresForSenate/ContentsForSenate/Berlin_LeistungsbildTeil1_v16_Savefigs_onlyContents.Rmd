@@ -1,0 +1,737 @@
+---
+title: "CO$_2$-Bilanz Berlin aus der Beheizung von Wohnraum"
+author: "Dr. Johannes Hengstenberg und Dr. Bhaskar Kamble"
+date: "06 November 2019"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    code_folding: hide
+    theme: united
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  word_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,message=FALSE,warning=FALSE,cache=FALSE)
+```
+
+
+```{r}
+i_section <- 1
+```
+
+# `r i_section`. Berlin, MFH + 1-2 FH, CO$_2$-Emissionen aus Beheizung
+
+```{r}
+i_subsection <- 1
+```
+
+## `r i_section`.`r i_subsection` Absolute Zahlen
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t, nach Energieträgern
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t, nach Bezirken
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Anteile nach Energieträgern in Prozent
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Anteile nach Bezirken in Prozent
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
+
+(Zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Veränderung in Prozent
+
+$x$ = CO$_2$-Emissionen für alle Bezirke
+
+$y$ = Durchschnittliche CO$_2$-Emissionen nach Bezirk und Jahr
+
+$\left( \frac{x-y}{y} \right) \times100$
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Flächenbezug
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in kg/m$^2$
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in kg/m$^2$
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum im Jahr 2018 in kg/m$^2$
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, flächenbezogene CO$_2$-Emissionen aus Beheizung von Wohnraum nach Stadtbezirken, 2002-2008, 2002 Wert = 100
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum, Abweichung von Berlin im Jahr 2018
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Emission pro Einwohner
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, CO$_2$-Emissionen pro Einwohner aus der Beheizung von Wohnraum, 2002-2018, 2002 Wert = 100 
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MFH + 1-2 FH, CO$_2$-Emissionen pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2018, 2002 = 100
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH + 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Veränderung 2002/2018
+
+(Zwei Grafiken.)
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Prognose
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH + 1-2 FH, Prognose der CO$_2$-Emissionen aus Beheizung 2019-2030 in Mio. t 
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Diskussion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+i_section <- i_section + 1
+```
+
+# `r i_section`. Berlin, 1-2 FH, CO$_2$-Emissionen aus Beheizung
+
+```{r}
+i_subsection <- 1
+```
+
+## `r i_section`.`r i_subsection` Absolute Zahlen
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t, nach Energieträgern
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t, nach Bezirken
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Anteile nach Energieträgern in Prozent
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Anteile nach Bezirken in Prozent
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
+
+(Zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Veränderung in Prozent
+
+$x$ = CO$_2$-Emissionen für alle Bezirke
+
+$y$ = Durchschnittliche CO$_2$-Emissionen nach Bezirk und Jahr
+
+$\left( \frac{x-y}{y} \right) \times100$
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Flächenbezug
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in kg/m$^2$
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in kg/m$^2$
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum im Jahr 2018 in kg/m$^2$
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, flächenbezogene CO$_2$-Emissionen aus Beheizung von Wohnraum nach Stadtbezirken, 2002-2008, 2002 Wert = 100
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum, Abweichung von Berlin im Jahr 2018
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Emission pro Einwohner
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FH, CO$_2$-Emissionen pro Einwohner aus der Beheizung von Wohnraum, 2002-2018, 2002 Wert = 100 
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, 1-2 FH, CO$_2$-Emissionen pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2018, 2002 = 100
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, 1-2 FH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Veränderung 2002/2018
+
+(Zwei Grafiken.)
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Prognose
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, 1-2 FH, Prognose der CO$_2$-Emissionen aus Beheizung 2019-2030 in Mio. t 
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Diskussion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+i_section <- i_section + 1
+```
+
+# `r i_section`. Berlin, MFH, CO$_2$-Emissionen aus Beheizung
+
+```{r}
+i_subsection <- 1
+```
+
+## `r i_section`.`r i_subsection` Absolute Zahlen
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t, nach Energieträgern
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 summiert in 1.000 t, nach Bezirken
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Anteile nach Energieträgern in Prozent
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Anteile nach Bezirken in Prozent
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in 1.000 t
+
+(Zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018, Veränderung in Prozent
+
+$x$ = CO$_2$-Emissionen für alle Bezirke
+
+$y$ = Durchschnittliche CO$_2$-Emissionen nach Bezirk und Jahr
+
+$\left( \frac{x-y}{y} \right) \times100$
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Flächenbezug
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in kg/m$^2$
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum 2002-2018 in kg/m$^2$
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum im Jahr 2018 in kg/m$^2$
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, flächenbezogene CO$_2$-Emissionen aus Beheizung von Wohnraum nach Stadtbezirken, 2002-2008, 2002 Wert = 100
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, flächenbezogene CO$_2$-Emissionen aus der Beheizung von Wohnraum, Abweichung von Berlin im Jahr 2018
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Emission pro Einwohner
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH, CO$_2$-Emissionen pro Einwohner aus der Beheizung von Wohnraum, 2002-2018, 2002 Wert = 100 
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection`. Stadtbezirke, MFH, CO$_2$-Emissionen pro Einwohner aus der Beheizung von Wohnraum, 2002 - 2018, 2002 = 100
+
+(zwei Grafiken.)
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Niveau im Jahr 2018 in t/Einwohner
+
+```{r}
+i_subsubsection <- i_subsubsection + 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Stadtbezirke, MFH, CO$_2$-Emissionen aus der Beheizung von Wohnraum pro Einwohner, Veränderung 2002/2018
+
+(Zwei Grafiken.)
+
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Prognose
+
+```{r}
+i_subsubsection <- 1
+```
+
+### `r i_section`.`r i_subsection`.`r i_subsubsection` Berlin, MFH, Prognose der CO$_2$-Emissionen aus Beheizung 2019-2030 in Mio. t 
+```{r}
+i_subsection <- i_subsection + 1
+```
+
+## `r i_section`.`r i_subsection` Diskussion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+i_section <- i_section+1
+```
+
+
+
+
+
+
+
+
+# `r i_section`.	Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, alle Wohngebäude 
+
+
+
+```{r}
+i_subsection <- 1
+```
+
+## `r i_section`.`r i_subsection`. Stadtbezirke, alle Wohngebäude, Heizenergieverbrauch 2002 - 2018
+
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+## `r i_section`.`r i_subsection`.	Stadtbezirke, alle Wohngebäude, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/m$_2$
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+## `r i_section`.`r i_subsection`. Stadtbezirke, alle Wohngebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+
+## `r i_section`.`r i_subsection`. Diskussion
+
+
+
+
+
+```{r}
+i_section <- i_section + 1
+i_subsection <- 1
+```
+
+# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, 1-2 Familiengebäude 
+
+
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 FH, Heizenergieverbrauch 2002 - 2018
+
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 FH, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/m$_2$
+
+
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+## `r i_section`.`r i_subsection`. Stadtbezirke, 1-2 Familiengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+
+## `r i_section`.`r i_subsection`. Diskussion
+
+
+
+
+
+
+
+
+```{r}
+i_section <- i_section + 1
+i_subsection <- 1
+```
+
+# `r i_section`. Heizenergieverbrauch nach Stadtbezirken 2002 - 2018, Mehrfamiliengebäude 
+
+## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, Heizenergieverbrauch 2002 - 2018
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch 2002 - 2018 in kWh/m$_2$
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+## `r i_section`.`r i_subsection`. Stadtbezirke, Mehrfamiliengebäude, flächenbezogener Heizenergieverbrauch und beheizte Wohnfläche 2002 - 2018
+
+```{r}
+i_subsection <- i_subsection+1
+```
+
+
+## `r i_section`.`r i_subsection`. Diskussion
+

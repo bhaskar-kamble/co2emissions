@@ -1,0 +1,1138 @@
+---
+title: "Berlin CO2 Bilanzen (2002-2018)"
+author: "Dr. Johannes Hengstenberg und Dr. Bhaskar Kamble"
+date: "3/11/2019"
+output: 
+  beamer_presentation:
+    includes:
+      in_header: /home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/header_pagenrs.tex
+  powerpoint_presentation:
+  fig_caption: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,message=FALSE)
+```
+
+
+```{r}
+files_in_teil_1 <- list.files(path = "/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/Teil1")
+png_in_teil_1 <- files_in_teil_1[grep("png" , files_in_teil_1)]
+#png_in_teil_1
+path_to_file <- "/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/Teil1/"
+```
+
+
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/CoverSlide.png" )
+```
+
+# \textcolor{black}{Inhalte}
+
+- Daten
+- Methodik
+- CO$_2$ Emissionen, alle Wohngebäude
+- CO$_2$ Emissionen, 1-2 Familiengebäude
+- CO$_2$ Emissionen, Mehrfamiliengebäude
+- Statistik zur Wohnfläche und Einwohnerzahl
+- Zusammenfassung
+
+# \textcolor{black}{Daten}
+
+co2online Datenbank:
+
+- ca. 2 Mio. Datensätze für Deutschland über Energieverbrauch in Wohngebäuden in Deutschland.
+- 50.000 Datensätze für Berlin.
+
+Statistisches Bundesamt, Berlin und Brandenburg:
+
+- Statistik zur Einwohnerzahl, Gebäudeanzahl und Wohnfläche in Berlin.
+
+Senatsverwaltung für Wirtschaft, Energie und Betriebe (Abteilung Energie, Digitalisierung, Innovation)
+
+- CO$_2$ Emissionsfaktoren.
+
+
+
+
+# \textcolor{black}{Methodik}
+
+von der co2online Datenbank:
+
+- Jahr
+- Gebäudetyp
+- Heizenergieverbrauch
+- PLZ
+- Gebäude Wohnfläche
+- Energieträger
+
+# \textcolor{black}{Methodik}
+
+von der co2online Datenbank:
+
+- spezifischer Energieverbrauch (Energie pro q.m.) für Gebäudetyp und Jahr.
+
+vom statistischen Bundesamt:
+
+- Wohnfläche für Gebäudetyp und Jahr.
+
+Ergebnis:
+
+- **Gesamter Heizenergieverbrauch für Gebäudetyp und Jahr.**
+
+
+# \textcolor{black}{Methodik}
+
+von der co2online Datenbank:
+
+- Energieträger Anteile für Gebäudetyp und Jahr.
+
+Ergebnis:
+
+- Heizenergieverbrauch von Energieträgern für Gebäudetyp und Jahr.
+
+Zusammen mit CO$_2$ Emissionsfaktoren für Energieträger:
+
+- **CO$_2$ Emissionen für Gebäudetyp und Jahr.**
+
+
+
+
+
+# \textcolor{black}{Alle Wohngebäude, CO$_2$-Emissionen aus Beheizung in Kilotonnen (kt)}
+
+```{r}
+#Section 1.1.1
+i <- 4
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i + 1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i + 1
+```
+
+---
+
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Alle Wohngebäude, CO$_2$-Emissionen aus Beheizung (anteilig)}
+
+```{r}
+#Section 1.1.3
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Stadtbezirke, alle Wohngebäude, CO$_2$-Emissionen aus Beheizung}
+
+```{r}
+#Section 1.1.4
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Stadtbezirke, alle Wohngebäude, CO$_2$-Emissionen aus Beheizung, Veränderung in Prozent}
+
+---
+
+```{r}
+#Section 1.1.5
+```
+
+$x$ = CO$_2$-Emissionen für alle Bezirke
+
+$y$ = Durchschnittliche CO$_2$-Emissionen nach Bezirk und Jahr
+
+$\left( \frac{x-y}{y} \right) \times100$
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Flächenbezug, alle Wohngebäude}
+
+```{r}
+#Section 1.2.1
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Flächenbezogene CO$_2$-Emissionen, alle Wohngebäude, 2018 Werte}
+
+```{r}
+#Section 1.2.3
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen, alle Wohngebäude, Abweichung Berlin 2018}
+
+```{r}
+#Section 1.2.5
+i <- 17
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+
+
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen, alle Wohngebäude, zentriert um 2012}
+
+```{r}
+#Section 1.2.6
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+
+# \textcolor{black}{CO$_2$-Emissionen pro Einwohner, alle Wohngebäude}
+
+```{r}
+#Section 1.3.1
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{CO$_2$-Emissionen pro Einwohner, alle Wohngebäude, 2018 Werte}
+
+```{r}
+#Section 1.3.5
+```
+
+```{r}
+i <- 25
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Prognose}
+
+```{r}
+i <- 28
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# \textcolor{black}{1-2 Familiengebäude}
+
+---
+
+# CO$_2$-Emissionen, 1-2 Familiengbäude (kt)
+
+```{r}
+#Section 2.1.1
+```
+
+```{r}
+i <- 74
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{CO$_2$-Emissionen, 1-2 Familiengbäude (anteilig)}
+
+```{r}
+#Section 2.1.3
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Stadtbezirke, CO$_2$-Emissionen, 1-2 Familiengbäude (kt)}
+
+```{r}
+#Section 2.1.4
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Stadtbezirke, 1-2 Familiengbäude, CO$_2$-Emissionen aus Beheizung, Veränderung in Prozent}
+
+```{r}
+#Section 2.1.5
+```
+
+
+---
+
+$x$ = CO$_2$-Emissionen für alle Bezirke
+
+$y$ = Durchschnittliche CO$_2$-Emissionen nach Bezirk und Jahr
+
+$\left( \frac{x-y}{y} \right) \times100$
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen, 1-2 Familiengbäude}
+
+```{r}
+#Section 2.2.1
+```
+
+
+```{r}
+i <- 82
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Stadtbezirke, spezifische CO$_2$-Emissionen, 1-2 Familiengbäude}
+
+```{r}
+#Section 2.2.2
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Stadtbezirke, 2018 Werte, spezifische CO$_2$-Emissionen 1-2 Familiengbäude}
+
+```{r}
+#Section 2.2.3
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen, 1-2 Familiengbäude, Abweichung von Berlin 2018}
+
+```{r}
+#Section 2.2.5
+```
+
+---
+
+```{r}
+i <- 87
+```
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen, 1-2 Familiengbäude, zentriert um 2012}
+
+```{r}
+#Section 2.2.6
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{CO$_2$-Emissionen pro Einwohner, 1-2 Familiengebäude}
+
+```{r}
+#Section 2.3.1
+```
+
+```{r}
+i <- 89
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+```{r}
+#Section 2.3.2
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{CO$_2$-Emissionen pro Einwohner, 1-2 Familiengebäude, 2018 Werte}
+
+```{r}
+#Section 2.3.5
+i <- 95
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Prognose}
+
+
+```{r}
+#Section 2.3.5
+i <- 98
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+# \textcolor{black}{Mehrfamiliengebäude}
+
+# \textcolor{black}{CO$_2$-Emissionen Mehrfamiliengebäude, kilo t.}
+
+```{r}
+#Section 3.1.1
+i <- 39
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{CO$_2$-Emissionen Mehrfamiliengebäude (anteilig)}
+
+```{r}
+#Section 3.1.3
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Stadtbezirke CO$_2$-Emissionen Mehrfamiliengebäude}
+
+```{r}
+#Section 3.1.4
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Stadtbezirke, Mehrfamiliengebäude, CO$_2$-Emissionen aus Beheizung, Veränderung in Prozent}
+
+```{r}
+#Section 3.1.5
+```
+
+---
+
+$x$ = CO$_2$-Emissionen für alle Bezirke
+
+$y$ = Durchschnittliche CO$_2$-Emissionen nach Bezirk und Jahr
+
+$\left( \frac{x-y}{y} \right) \times100$
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen Mehrfamiliengebäude}
+
+```{r}
+#Section 3.2.1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen Mehrfamiliengebäude, 2018 Werte}
+
+```{r}
+#Section 3.2.3
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen Mehrfamiliengebäude, 2018 Abweichung von Berlin}
+
+```{r}
+#Section 3.2.5
+i <- 52
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Spezifische CO$_2$-Emissionen Mehrfamiliengebäude zentriert um 2012}
+
+```{r}
+#Section 3.2.6
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{CO$_2$-Emissionen pro Einwohner, Mehrfamiliengebäude}
+
+```{r}
+# Section 3.3.1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Pro Einwohner, Mehrfamiliengebäude, 2018 Werte}
+
+```{r}
+# Section 3.3.5
+i <- 60
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+# \textcolor{black}{Prognose}
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[i]))
+i <- i+1
+```
+
+
+# \textcolor{black}{Statistik zur Wohnfläche}
+
+```{r}
+plot_reqdColumns <- function(input_data,   # data frame
+                             xVar,         # column name of "input_data" to be plotted on the x-axis
+                             cols_to_plot, #column names of "input_data" to be plotted on the y-axis
+                             yColsName,    # for eg. if cols_to_plot = c("Bonn","Berlin"), then this can be City
+                             yVar,        # for eg. "population" if the columns for "Berlin" etc. show population
+                             plot_title = NULL,
+                             xlabel = NULL,
+                             ylabel = NULL,
+                             regLine = TRUE
+) {
+  
+  input_data <- input_data[ , c(xVar , cols_to_plot)]
+  names(input_data) <- get_BezirkNames(names(input_data))
+  
+  #convert data to long format
+  require(reshape2)
+  input_data <- melt(input_data , id.vars = xVar )
+  names(input_data) <- c(xVar , yColsName , yVar)
+  
+  require(ggplot2)
+  return_object <- 
+    ggplot(input_data
+    )+geom_point(aes(x=get(xVar),y=get(yVar),col=get(yColsName))
+    ) + geom_smooth(method="lm",aes(x=get(xVar),y=get(yVar),col=get(yColsName)),se=FALSE
+    )+scale_color_discrete(name = yColsName
+    )+labs(x=xlabel,y=ylabel,title=plot_title)+ylim(0,max(input_data[[yVar]]))
+  
+  if (regLine==FALSE) {
+    return_object <- 
+      ggplot(input_data
+      )+geom_point(aes(x=get(xVar),y=get(yVar),col=get(yColsName))
+      )+scale_color_discrete(name = yColsName
+      )+labs(x=xlabel,y=ylabel,title=plot_title)+ylim(0,max(input_data[[yVar]]))
+  }
+  
+  detach("package:reshape2")
+  #detach("package:ggplot2")
+  
+  return(return_object) 
+}
+
+####
+
+#######
+
+
+get_BezirkNames <- function(obj) {
+  obj[obj=="charlottenburg_wilmersdorf"] <- "Charlottenburg-Wilmersdorf"
+  obj[obj=="friedrichshain_kreuzberg"]   <- "Friedrichshain-Kreuzberg"
+  obj[obj=="lichtenberg"]                <- "Lichtenberg"
+  obj[obj=="marzahn_hellersdorf"]        <- "Marzahn-Hellersdorf"
+  obj[obj=="mitte"]                      <- "Mitte"
+  obj[obj=="neukoelln"]                  <- "Neukölln"
+  obj[obj=="pankow"]                     <- "Pankow"
+  obj[obj=="reinickendorf"]              <- "Reinickendorf"
+  obj[obj=="spandau"]                    <- "Spandau"
+  obj[obj=="steglitz_zehlendorf"]        <- "Steglitz-Zehlendorf"
+  obj[obj=="tempelhof_schoeneberg"]      <- "Tempelhof-Schöneberg"
+  obj[obj=="treptow_koepenick"]          <- "Treptow-Köpenick"
+  return(obj)
+}
+
+bezirk_areas <- read.csv2("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FindArea/areas_berlin_bezirke.csv",stringsAsFactors = FALSE)
+
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getBezirkAreas.R")
+
+bezirk_list <- sort(unique(bezirk_areas$bezirk))
+
+#getBezirkAreas(bezirk_list[1])
+
+bezirke_areas_sfh <- data.frame(abrechnungsjahr = 2002:2018 )
+bezirke_areas_mfh <- data.frame(abrechnungsjahr = 2002:2018 )
+for (i in 1:length(bezirk_list)) {
+  bezirke_areas_sfh[[bezirk_list[i] ]] <- getBezirkAreas(bezirk_list[i])$areaSFH
+  bezirke_areas_mfh[[bezirk_list[i] ]] <- getBezirkAreas(bezirk_list[i])$areaMFH
+}
+bezirke_areas_all <- bezirke_areas_mfh + bezirke_areas_sfh
+#area originally in 100 sq.m. Convert to million sq. m.
+bezirke_areas_sfh <- 1e-4*bezirke_areas_sfh
+bezirke_areas_mfh <- 1e-4*bezirke_areas_mfh
+bezirke_areas_all <- 1e-4*bezirke_areas_all
+bezirke_areas_sfh$abrechnungsjahr <- 2002:2018
+bezirke_areas_mfh$abrechnungsjahr <- 2002:2018
+bezirke_areas_all$abrechnungsjahr <- 2002:2018
+
+bezirke_areas_all$total <- rowSums(bezirke_areas_all[, names(bezirke_areas_all)!="abrechnungsjahr"])
+bezirke_areas_sfh$total <- rowSums(bezirke_areas_sfh[, names(bezirke_areas_sfh)!="abrechnungsjahr"])
+bezirke_areas_mfh$total <- rowSums(bezirke_areas_mfh[, names(bezirke_areas_mfh)!="abrechnungsjahr"])
+```
+
+
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/areas_berlin_all.png")
+```
+
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/areas_all.png")
+```
+
+
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/areas_berlin_sfh.png")
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/areas_sfh.png")
+```
+
+---
+
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/areas_berlin_mfh.png")
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/areas_mfh.png.png")
+```
+
+
+# \textcolor{black}{Statistik zur Einwohnerzahl}
+
+
+
+```{r}
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getCo2PerCapitaBezirk_byGtype_method2.R")
+pop_bybezirk_mfh <- getPopulationBezirk_byGtype("MFH")
+pop_bybezirk_sfh <- getPopulationBezirk_byGtype("SFH")
+pop_bybezirk_all <- getPopulationBezirk_byGtype("ALL")
+#pop_bybezirk_mfh <- pop_bybezirk_mfh[names(pop_bybezirk_mfh)!="total"]
+#pop_bybezirk_sfh <- pop_bybezirk_sfh[names(pop_bybezirk_sfh)!="total"]
+#pop_bybezirk_all <- pop_bybezirk_all[names(pop_bybezirk_all)!="total"]
+pop_bybezirk_mfh <- 1e-4*pop_bybezirk_mfh
+pop_bybezirk_sfh <- 1e-4*pop_bybezirk_sfh
+pop_bybezirk_all <- 1e-4*pop_bybezirk_all
+pop_bybezirk_all$abrechnungsjahr <- 2002:2018
+pop_bybezirk_mfh$abrechnungsjahr <- 2002:2018
+pop_bybezirk_sfh$abrechnungsjahr <- 2002:2018
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/population_berlin_all.png")
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/population_all.png")
+```
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/population_berlin_sfh.png")
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/population_sfh.png")
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/population_berlin_mfh.png")
+```
+
+
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics("/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/SlidesTeil1/population_mfh.png")
+```
+
+
+
+
+
+
+
+
+# \textcolor{black}{Stichprobengröße}
+
+
+
+```{r}
+files_in_teil_1 <- list.files(path = "/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/Teil1")
+png_in_teil_1 <- files_in_teil_1[grep("png" , files_in_teil_1)]
+#png_in_teil_1
+path_to_file <- "/home/kbhaskar/Github_Repos/co2emissions/Berlin/FiguresForSenate/Teil1/"
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[1]))
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[2]))
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[3]))
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[36]))
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[37]))
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[38]))
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[71]))
+```
+
+---
+
+```{r, fig.align='center' , out.width="1\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[72]))
+```
+
+---
+
+```{r, fig.align='center' , out.width="0.8\\linewidth"}
+knitr::include_graphics(paste0( path_to_file ,  png_in_teil_1[73]))
+```
+
+
+
+
+
+
+
+
+
+
+
+# \textcolor{black}{Zusammenfassung}
+
+- CO$_2$-Bilanzen in Berlin aus Beheizung von Wohnraum.
+- Daten von co2online gGmbH und statistischem Bundesamt.
+- Bezug auf Bezirke, Energieträger und Gebäudetyp.
+
+# \textcolor{black}{Weitere Fragen}
+
+- Jetziger Wert der spezifsicher CO$_2$-Emissionen: ca. 30-40 kg/m$^2$.
+
+- Was muss gemacht werden, um das Ziel von 7 kg/m$^2$ bis 2050 zu erreichen? ("Klimaneutrales Berlin 2050", Senatsverwaltung für Stadtentwicklung und Umwelt, S. 12)
+
+
+- Bezirke, die besonders effizient oder ineffizient sind im Bezug auf CO$_2$-Emissionen. (Gebäudebaujahr, Sanierungsmaßnahmen, Einwohnerzahl, etc.)
+
+- Einfluss der Änderung der beheizten Flächen, des flächenbezogenen Heizenergieverbrauchs, des Energieträgerwechsels und der Dekarbonisierung auf die CO$_2$-Emissionen.
+
+---
+
+Dr. Bhaskar Kamble
+
+bhaskar.kamble@senercon.de
+
+SEnerCon GmbH 
+
+Großgörschen Straße 23
+
+Berlin 10829
