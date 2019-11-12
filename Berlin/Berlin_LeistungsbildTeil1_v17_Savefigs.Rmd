@@ -58,7 +58,11 @@ alle_bezirke_co2 <- getAllBezirkeTotalCO2()
 ```
 
 
-
+```{r}
+yco2 <- "Mio. t"
+yco2perhead <- "kg / Kopf"
+ypezco2 <- expression(kg/m^2)
+```
 
 
 
@@ -200,7 +204,12 @@ points_line_lm <- function(input_data,
                            ylab,
                            slope_round_to = 2,
                            intercept_round_to = 0,
-                           regLine = TRUE) {
+                           regLine = TRUE,
+                           kt_to_mt = FALSE) {
+  if (kt_to_mt) {
+    source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/convert_kilo_to_megaton.R")
+    input_data <- convert_kilo_to_megaton(input_data , "abrechnungsjahr")
+  }
   linmod <- lm(data=input_data , formula = get(yVar)~get(xVar))
   coeff_a <- as.numeric(coefficients(linmod)[1])
   coeff_b <- as.numeric(coefficients(linmod)[2])
