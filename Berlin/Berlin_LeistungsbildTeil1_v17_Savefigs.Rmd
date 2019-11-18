@@ -60,8 +60,8 @@ alle_bezirke_co2 <- getAllBezirkeTotalCO2()
 
 ```{r}
 yco2 <- "Mio. t"
-yco2perhead <- "kg / Kopf"
-ypezco2 <- expression(kg/m^2)
+yco2perhead <- "kg/Kopf"
+yspezco2 <- expression(kg/m^2)
 ```
 
 
@@ -152,8 +152,14 @@ plot_reqdColumns <- function(input_data,   # data frame
                              plot_title = NULL,
                              xlabel = NULL,
                              ylabel = NULL,
-                             regLine = TRUE
+                             regLine = TRUE,
+                             kt_to_mt = FALSE
 ) {
+  
+  if (kt_to_mt) {
+    source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/convert_kilo_to_megaton.R")
+    input_data <- convert_kilo_to_megaton(input_data , "abrechnungsjahr")
+  }
   
   input_data <- input_data[ , c(xVar , cols_to_plot)]
   names(input_data) <- get_BezirkNames(names(input_data))
@@ -209,6 +215,9 @@ points_line_lm <- function(input_data,
   if (kt_to_mt) {
     source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/convert_kilo_to_megaton.R")
     input_data <- convert_kilo_to_megaton(input_data , "abrechnungsjahr")
+    y_eq <- 0.001*y_eq
+    ymin <- 0.001*ymin
+    ymax <- 0.001*ymax
   }
   linmod <- lm(data=input_data , formula = get(yVar)~get(xVar))
   coeff_a <- as.numeric(coefficients(linmod)[1])
@@ -267,7 +276,7 @@ bezirk_list <- c("charlottenburg_wilmersdorf",
                  "treptow_koepenick")
 bezirk_name <- c("Charlottenburg-Wilmersdorf","Friedrichshain-Kreuzberg","Lichtenberg","Marzahn-Hellersdorf","Mitte","Neukölln",                  
   "Pankow","Reinickendorf","Spandau","Steglitz-Zehlendorf","Tempelhof-Schöneberg","Treptow-Köpenick")
-plot_bezirkeGridPlot <- function(obj,ylabel,regLine=TRUE) {
+plot_bezirkeGridPlot <- function(obj,ylabel,regLine=TRUE,slope_round_to=2,kt_to_mt=FALSE) {
   max_y_val <- max(obj[ , names(obj)[!(names(obj) %in% c("abrechnungsjahr","total"))]])
   g_return <- list()
   require(ggplot2)
@@ -283,7 +292,9 @@ plot_bezirkeGridPlot <- function(obj,ylabel,regLine=TRUE) {
                                      plot_title = bezirk_name[ii],
                                      xlab = "Jahr",
                                      ylab = ylabel,
-                                     regLine = regLine)
+                                     slope_round_to = slope_round_to,
+                                     regLine = regLine,
+                                     kt_to_mt = kt_to_mt)
   }
   return(g_return)
 }
@@ -631,7 +642,8 @@ points_line_lm(input_data = berlin_co2_all,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude"),
                xlab = "Jahr",
-               ylab = "kilo t.")
+               ylab = yco2,
+               kt_to_mt = TRUE)
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
                        subsection = i_subsection,
@@ -684,7 +696,11 @@ plot_title <- NULL
 order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
 order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
 et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
-plot_byET <- function(obj,xlabel,ylabel,plottitle) {
+plot_byET <- function(obj,xlabel,ylabel,plottitle,kt_to_mt=FALSE) {
+  if (kt_to_mt) {
+    source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/convert_kilo_to_megaton.R")
+    obj <- convert_kilo_to_megaton(obj , "abrechnungsjahr")
+  }
   ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
   )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
   )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
@@ -715,8 +731,9 @@ co2_all_allebezirke_byET_cumsums <- getCumSums(obj=co2_all_allebezirke_byET , dr
 #co2_all_allebezirke_byET_cumsums
 plot_byET(co2_all_allebezirke_byET_cumsums , 
           xlabel = "Jahr" , 
-          ylabel = "kilo t." , 
-          plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, nach Energieträgern"))
+          ylabel = yco2 , 
+          plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, nach Energieträgern"),
+          kt_to_mt = TRUE)
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
                        subsection = i_subsection,
@@ -789,11 +806,12 @@ order_labels_bez <- bezirk_name
 
 
 
-
-
-
 ```{r}
-plot_byBezirke <- function(obj,xlabel,ylabel,plottitle) {
+plot_byBezirke <- function(obj,xlabel,ylabel,plottitle,kt_to_mt=FALSE) {
+  if (kt_to_mt) {
+    source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/convert_kilo_to_megaton.R")
+    obj <- convert_kilo_to_megaton(obj , "abrechnungsjahr")
+  }
   names(obj) <- get_BezirkNames(names(obj))
   ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(bezirk_name[1]),color=bezirk_name[1]),size=5
   )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(bezirk_name[2]),color=bezirk_name[2])
@@ -827,7 +845,7 @@ plot_byBezirke <- function(obj,xlabel,ylabel,plottitle) {
 
 
 ```{r}
-plot_byBezirke(berlin_co2_all_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, nach Bezirk"))
+plot_byBezirke(berlin_co2_all_cumsums , xlabel = "Jahr" , ylabel = yco2 , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, alle Wohngebäude, nach Bezirk"),kt_to_mt = TRUE)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -983,7 +1001,8 @@ plot_reqdColumns(berlin_co2_all,
                  yVar = "kilo t.",
                  plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, alle Wohngebäude"),
                  xlabel = "Jahr",
-                 ylabel = "kilo t.")
+                 ylabel = yco2,
+                 kt_to_mt = TRUE)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -1009,7 +1028,9 @@ for (ii in 1:12) {
                                        size_eq = 4,
                                        plot_title = bezirk_name[ii],
                                        xlab = "Jahr",
-                                       ylab = "kilo t.")
+                                       ylab = yco2,
+                                       slope_round_to = 4,
+                                       kt_to_mt = TRUE)
 }
 #require(grid)
 require(gridExtra)
@@ -1252,7 +1273,7 @@ points_line_lm(input_data = spez_co2_emission,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, alle Wohngebäude"),
                xlab = "Jahr",
-               ylab = "kg/qm")
+               ylab = yspezco2)
 figIndex <- 1
 
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -1324,7 +1345,7 @@ plot_reqdColumns(bezirke_spez_co2,
                  yVar = "kg/qm",
                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, alle Wohngebäude"),
                  xlabel = "Jahr",
-                 ylabel = "kg / q.m.")
+                 ylabel = yspezco2)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -1351,7 +1372,7 @@ for (ii in 1:12) {
                                        size_eq = 4,
                                        plot_title = bezirk_name[ii],#Here put bezirk_name[ii]
                                        xlab = "Jahr",
-                                       ylab = "kg/qm")
+                                       ylab = yspezco2)
 }
 require(grid)
 require(gridExtra)
@@ -1466,7 +1487,7 @@ plot_spezCO2_2018 <- function(obj,plot_title) {
   return(
     ggplot(data=obj,aes(x=bezirk,y=wert,fill=wert))+geom_bar(stat="identity")+scale_fill_gradient(
       low="green",high="red"
-    )+theme(legend.position="none",axis.text.x=element_text(angle=45,hjust=1))+labs(x=" ",y="kg/qm",title=plot_title)#+coord_flip()
+    )+theme(legend.position="none",axis.text.x=element_text(angle=45,hjust=1))+labs(x=" ",y=yspezco2,title=plot_title)#+coord_flip()
   )
 }
 ```
@@ -1659,7 +1680,7 @@ plot_devFromBerlin2018 <- function(obj,
 
 plot_devFromBerlin2018(bezirke_spezco2_linear_2018,
                        plot_title = changeCO2_to_CO_2("Abweichung von Berlin 2018, Spezifische CO2 Emissionen, alle Wohngebäude"),
-                       ylabel = "kg / q.m.")
+                       ylabel = yspezco2)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -1720,7 +1741,7 @@ barPlot_delta2012 <- function(obj,ylabel=NULL,plot_title=NULL) {
 
 ```{r}
 barPlot_delta2012(changeFrom2012(spez_co2_emission),
-                  ylabel = "kg / q.m.",
+                  ylabel = yspezco2,
                   plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen, Berlin, alle Wohngebäude, zentriert um 2012"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -1837,7 +1858,7 @@ points_line_lm(input_data = berlin_co2_percapita,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, alle Wohngebäude"),
                xlab = "Jahr",
-               ylab = "kg")
+               ylab = yco2perhead)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -1894,7 +1915,7 @@ plot_reqdColumns(berlin_bezirke_all_co2perhead,
                  yVar = "co2 kg/head",
                  plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen von Stadtbezirken, alle Wohngebäude"),
                  xlabel = "Jahr",
-                 ylabel = "kg/Kopf")
+                 ylabel = yco2perhead)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -1919,7 +1940,7 @@ for (ii in 1:12) {
                                        size_eq = 4,
                                        plot_title = bezirk_name[ii],
                                        xlab = "Jahr",
-                                       ylab = "kg/Kopf")
+                                       ylab = yco2perhead)
 }
 require(grid)
 require(gridExtra)
@@ -2171,7 +2192,7 @@ plot_co2perhead_2018 <- function(obj,
   )
 }
 plot_co2perhead_2018(bezirk_co2_percapita_linear_2018,
-                     ylabel = "kg",
+                     ylabel = yco2perhead,
                      plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, alle Wohngebäude"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -2244,7 +2265,7 @@ plot_groupBar <- function(obj,yVar,xlabel=NULL,ylabel=NULL,plot_title=NULL) {
 plot_groupBar(data_long,
               "wert",
               NULL,
-              "kg",
+              yco2perhead,
               changeCO2_to_CO_2("CO2 Emissionen pro Einwohner, 2002 und 2018, alle Wohngebäude"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -2357,11 +2378,11 @@ prognose_lin <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predi
 ```
 
 ```{r}
-b0_grad1 <- round(as.numeric(linmodel$coefficients[1]) , 2)
-b1_grad1 <- round(as.numeric(linmodel$coefficients[2]) , 2)
+b0_grad1 <- 0.001*round(as.numeric(linmodel$coefficients[1]) , 2)
+b1_grad1 <- 0.001*round(as.numeric(linmodel$coefficients[2]) , 2)
 eq_grad1 <- paste0("y = ", b1_grad1 , "x + ", b0_grad1)
-ggplot(prognose_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title = "CO2 Emissionen in Berlin, alle Wohngebäude (Polynom 1. Grades)",y="kilo t.",x="Jahr"
-)+annotate(geom="text",label=eq_grad1,x=2015,y=0.65*max(prognose_lin$pred),size=5) + ylim(0,max(prognose_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
+ggplot(convert_kilo_to_megaton(prognose_lin,"abrechnungsjahr") , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title = "CO2 Emissionen in Berlin, alle Wohngebäude (Polynom 1. Grades)",y=yco2,x="Jahr"
+)+annotate(geom="text",label=eq_grad1,x=2015,y=0.001*0.65*max(prognose_lin$pred),size=5) + ylim(0,0.001*max(prognose_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -2466,7 +2487,9 @@ points_line_lm(input_data = berlin_co2_sfh,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude"),
                xlab = "Jahr",
-               ylab = "kilo t.")
+               ylab = yco2,
+               slope_round_to = 3,
+               kt_to_mt = TRUE)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -2504,7 +2527,7 @@ co2_sfh_allebezirke_byET <- co2_allebezirke_byET$sfh
 ```{r}
 co2_sfh_allebezirke_byET_cumsums <- getCumSums(obj=co2_sfh_allebezirke_byET , dropCols=c("abrechnungsjahr","total"))
 #co2_all_allebezirke_byET_cumsums
-plot_byET(co2_sfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, nach Energiträger"))
+plot_byET(co2_sfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = yco2 , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, nach Energiträger"),kt_to_mt = TRUE)
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
                        subsection = i_subsection,
@@ -2539,7 +2562,7 @@ i_subsubsection <- i_subsubsection+1
 
 ```{r}
 berlin_co2_sfh_cumsums <- getCumSums(obj=berlin_co2_sfh , dropCols=c("abrechnungsjahr","total"))
-plot_byBezirke(berlin_co2_sfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, nach Bezirk"))
+plot_byBezirke(berlin_co2_sfh_cumsums , xlabel = "Jahr" , ylabel = yco2 , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, 1-2 Familiengebäude, nach Bezirk"),kt_to_mt = TRUE)
 
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -2661,7 +2684,8 @@ plot_reqdColumns(berlin_co2_sfh,
                  yVar = "CO2 Emissions",
                  plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, 1-2 Familiengebäude"),
                  xlabel = "Jahr",
-                 ylabel = "kilo t.")
+                 ylabel = yco2,
+                 kt_to_mt = TRUE)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -2672,7 +2696,7 @@ figIndex <- saveFigure(gtypeForFig=gtypeForFig ,
 
 
 ```{r,fig.height=10,fig.width=10}
-gg_co2_sfh <- plot_bezirkeGridPlot(berlin_co2_sfh,ylabel="kilo t.")
+gg_co2_sfh <- plot_bezirkeGridPlot(berlin_co2_sfh,ylabel=yco2,slope_round_to = 4,kt_to_mt = TRUE)
 require(grid)
 require(gridExtra)
 grid.arrange(gg_co2_sfh[[1]],gg_co2_sfh[[2]],gg_co2_sfh[[3]],gg_co2_sfh[[4]],
@@ -2839,7 +2863,7 @@ points_line_lm(input_data = spez_co2_sfh,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, 1-2 Familiengebäude"),
                xlab = "Jahr",
-               ylab = "kg / q.m.")
+               ylab = yspezco2)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -2884,7 +2908,7 @@ plot_reqdColumns(bezirke_spez_co2_sfh,
                  yColsName = "Bezirk",
                  yVar = "CO2 Emissions in kg/m2",
                  xlabel = "Jahr",
-                 ylabel = "kg / qm",
+                 ylabel = yspezco2,
                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, 1-2 Familiengebäude"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -2911,7 +2935,7 @@ for (ii in 1:12) {
                                        size_eq = 4,
                                        plot_title = bezirk_name[ii],
                                        xlab = "Jahr",
-                                       ylab = "kg/qm")
+                                       ylab = yspezco2)
 }
 require(grid)
 require(gridExtra)
@@ -3090,7 +3114,7 @@ bezirke_spezco2_sfh_linear_2018$dev_from_berlin <- bezirke_spezco2_sfh_linear_20
 ```{r}
 plot_devFromBerlin2018(bezirke_spezco2_sfh_linear_2018,
                        changeCO2_to_CO_2("Spezifische CO2 Emissionen, Abweichung von Berlin 2018, 1-2 Familiengebäude"),
-                       "kg / q.m.")
+                       yspezco2)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3124,7 +3148,7 @@ i_subsubsection <- i_subsubsection+1
 
 
 ```{r}
-barPlot_delta2012(changeFrom2012(spez_co2_sfh) , "kg/m2" , changeCO2_to_CO_2("Spezifische CO2 Berlin, 1-2 Familiengebäude, zentriert um 2012"))
+barPlot_delta2012(changeFrom2012(spez_co2_sfh) , yspezco2 , changeCO2_to_CO_2("Spezifische CO2 Berlin, 1-2 Familiengebäude, zentriert um 2012"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3199,7 +3223,7 @@ points_line_lm(input_data = bezirk_co2_percapita_sfh,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, 1-2 Familiengebäude"),
                xlab = "Jahr",
-               ylab = "kg")
+               ylab = yco2perhead)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3243,7 +3267,7 @@ plot_reqdColumns(bezirk_co2_percapita_sfh,
                  yColsName = "Bezirk",
                  yVar = "CO2PerCapita",
                  xlabel = "Jahr",
-                 ylabel = "kg",
+                 ylabel = yco2perhead,
                  plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Kopf, 1-2 FH"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -3255,7 +3279,7 @@ figIndex <- saveFigure(gtypeForFig=gtypeForFig ,
 
 
 ```{r,fig.width=10,fig.height=10}
-gg_co2perhead_bezirke <- plot_bezirkeGridPlot(bezirk_co2_percapita_sfh , ylabel = "kg / Kopf")
+gg_co2perhead_bezirke <- plot_bezirkeGridPlot(bezirk_co2_percapita_sfh , ylabel = yco2perhead)
 require(grid)
 require(gridExtra)
 grid.arrange(gg_co2perhead_bezirke[[1]],gg_co2perhead_bezirke[[2]],gg_co2perhead_bezirke[[3]],gg_co2perhead_bezirke[[4]],
@@ -3324,7 +3348,7 @@ points_line_lm(input_data = bezirk_co2_percapita_2002as100_sfh,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, 1-2 Familiengebäude, 2002 Wert = 100"),
                xlab = "Jahr",
-               ylab = "kg")
+               ylab = " ")
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3450,7 +3474,7 @@ bezirk_co2_percapita_sfh_linear_2018 <- bezirk_co2_percapita_sfh_linear_2018[bez
 bezirk_co2_percapita_sfh_linear_2018 <- bezirk_co2_percapita_sfh_linear_2018[bezirk_co2_percapita_sfh_linear_2018$bezirk!="total" , ]
 
 plot_co2perhead_2018(bezirk_co2_percapita_sfh_linear_2018,
-                     ylabel = "kg",
+                     ylabel = yco2perhead,
                      plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, 1-2 Familiengebäude"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -3497,7 +3521,7 @@ data_long <- data_long[ data_long$bezirk!="total" , ]
 plot_groupBar(data_long,
               "wert",
               NULL,
-              "kg",
+              yco2perhead,
               changeCO2_to_CO_2("CO2 Emissionen pro Einwohner, 2002 und 2018, 1-2 Familiengebäude"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -3564,13 +3588,13 @@ summary(quadmodel_sfh)$r.squared
 ```{r}
 from2002_till_2030 <- data.frame(abrechnungsjahr=2002:2030)
 prognose_sfh_lin <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predict(linmodel_sfh,newdata=from2002_till_2030)))
-b0_grad1 <- round(as.numeric(linmodel_sfh$coefficients[1]) , 2)
-b1_grad1 <- round(as.numeric(linmodel_sfh$coefficients[2]) , 2)
+b0_grad1 <- 0.001*round(as.numeric(linmodel_sfh$coefficients[1]) , 2)
+b1_grad1 <- 0.001*round(as.numeric(linmodel_sfh$coefficients[2]) , 2)
 eq_grad1 <- paste0("y = ", b1_grad1 , "x + ", b0_grad1)
 
-ggplot(prognose_sfh_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="CO2 Emissionen in Berlin, 1-2 Familiengebäude (Polynom 1. Grades)",y="kilo t.",x="Jahr")+annotate(
-  geom="text",label=eq_grad1,x=2015,y=0.65*max(prognose_sfh_lin$pred),size=5
-  ) + ylim(0,max(prognose_sfh_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
+ggplot(convert_kilo_to_megaton(prognose_sfh_lin,"abrechnungsjahr") , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="CO2 Emissionen in Berlin, 1-2 Familiengebäude (Polynom 1. Grades)",y=yco2,x="Jahr")+annotate(
+  geom="text",label=eq_grad1,x=2015,y=0.001*0.65*max(prognose_sfh_lin$pred),size=5
+  ) + ylim(0,0.001*max(prognose_sfh_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
 
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -3663,7 +3687,9 @@ points_line_lm(input_data = berlin_co2_mfh,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude"),
                xlab = "Jahr",
-               ylab = "kilo t.")
+               ylab = yco2,
+               slope_round_to = 4,
+               kt_to_mt = TRUE)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3702,7 +3728,7 @@ co2_mfh_allebezirke_byET_cumsums <- getCumSums(obj=co2_mfh_allebezirke_byET , dr
 ```
 
 ```{r}
-plot_byET(co2_mfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, nach Energieträgern"))
+plot_byET(co2_mfh_allebezirke_byET_cumsums , xlabel = "Jahr" , ylabel = yco2 , plottitle = changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, nach Energieträgern"),kt_to_mt = TRUE)
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
                        subsection = i_subsection,
@@ -3739,7 +3765,7 @@ i_subsubsection <- i_subsubsection + 1
 
 ```{r}
 berlin_co2_mfh_cumsums <- getCumSums(obj=berlin_co2_mfh , dropCols=c("abrechnungsjahr","total"))
-plot_byBezirke(berlin_co2_mfh_cumsums , xlabel = "Jahr" , ylabel = "kilo t." , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, nach Bezirk"))
+plot_byBezirke(berlin_co2_mfh_cumsums , xlabel = "Jahr" , ylabel = yco2 , plottitle=changeCO2_to_CO_2("CO2 Emissionen in Berlin, Mehrfamiliengebäude, nach Bezirk"),kt_to_mt = TRUE)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3863,8 +3889,9 @@ plot_reqdColumns(berlin_co2_mfh,
                  yColsName = "Bezirk",
                  yVar = "CO2 Emissions",
                  xlabel = "Jahr",
-                 ylabel = "kilo t.",
-                 plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, Mehrfamiliengebäude"))
+                 ylabel = yco2,
+                 plot_title = changeCO2_to_CO_2("CO2 Emissionen von Stadtbezirken, Mehrfamiliengebäude"),
+                 kt_to_mt = TRUE)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -3874,7 +3901,7 @@ figIndex <- saveFigure(gtypeForFig=gtypeForFig ,
 ```
 
 ```{r,fig.width=10,fig.height=10}
-gg_co2_mfh <- plot_bezirkeGridPlot(berlin_co2_mfh,ylabel="kilo t.")
+gg_co2_mfh <- plot_bezirkeGridPlot(berlin_co2_mfh,ylabel=yco2,slope_round_to = 4,kt_to_mt = TRUE)
 require(grid)
 require(gridExtra)
 grid.arrange(gg_co2_mfh[[1]],gg_co2_mfh[[2]],gg_co2_mfh[[3]],gg_co2_mfh[[4]],
@@ -4036,7 +4063,7 @@ points_line_lm(input_data = spez_co2_mfh,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen in Berlin, Mehrfamiliengebäude"),
                xlab = "Jahr",
-               ylab = "kg / q.m.")
+               ylab = yspezco2)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -4083,7 +4110,7 @@ plot_reqdColumns(bezirke_spez_co2_mfh,
                  yColsName = "Bezirk",
                  yVar = "CO2 Emissions in kg/m2",
                  xlabel = "Jahr",
-                 ylabel = "kg / qm",
+                 ylabel = yspezco2,
                  plot_title = changeCO2_to_CO_2("Spezifische CO2 Emissionen von Stadtbezirken, Mehrfamiliengebäude"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -4110,7 +4137,7 @@ for (ii in 1:12) {
                                        size_eq = 4,
                                        plot_title = bezirk_name[ii],
                                        xlab = "Jahr",
-                                       ylab = "kg / q.m.")
+                                       ylab = yspezco2)
 }
 require(grid)
 require(gridExtra)
@@ -4287,7 +4314,7 @@ bezirke_spezco2_mfh_linear_2018$dev_from_berlin <- bezirke_spezco2_mfh_linear_20
 ```{r}
 plot_devFromBerlin2018(bezirke_spezco2_mfh_linear_2018,
                        changeCO2_to_CO_2("Abweichung von Berlin 2018, Spezifische CO2 Emissionen Mehrfamiliengebäude"),
-                       "kg / q.m.")
+                       yspezco2)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -4321,7 +4348,7 @@ i_subsubsection <- i_subsubsection + 1
 
 
 ```{r}
-barPlot_delta2012(changeFrom2012(spez_co2_mfh), "kg/m2" , changeCO2_to_CO_2("Spezifische CO2 Berlin, Mehrfamiliengebäude, zentriert um 2012"))
+barPlot_delta2012(changeFrom2012(spez_co2_mfh), yspezco2 , changeCO2_to_CO_2("Spezifische CO2 Berlin, Mehrfamiliengebäude, zentriert um 2012"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -4372,7 +4399,7 @@ points_line_lm(input_data = bezirk_co2_percapita_mfh,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, Mehrfamiliengebäude"),
                xlab = "Jahr",
-               ylab = "kg")
+               ylab = yco2perhead)
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -4410,7 +4437,7 @@ plot_reqdColumns(bezirk_co2_percapita_mfh,
                  yColsName = "Bezirk",
                  yVar = "CO2PerCapita",
                  xlabel = "Jahr",
-                 ylabel = "kg",
+                 ylabel = yco2perhead,
                  plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Kopf, Mehrfamiliengebäude"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -4422,7 +4449,7 @@ figIndex <- saveFigure(gtypeForFig=gtypeForFig ,
 
 
 ```{r,fig.width=10,fig.height=10}
-gg_co2perhead_bezirke <- plot_bezirkeGridPlot(bezirk_co2_percapita_mfh , ylabel = "kg / Kopf")
+gg_co2perhead_bezirke <- plot_bezirkeGridPlot(bezirk_co2_percapita_mfh , ylabel = yco2perhead)
 require(grid)
 require(gridExtra)
 grid.arrange(gg_co2perhead_bezirke[[1]],gg_co2perhead_bezirke[[2]],gg_co2perhead_bezirke[[3]],gg_co2perhead_bezirke[[4]],
@@ -4486,7 +4513,7 @@ points_line_lm(input_data = bezirk_co2_percapita_2002as100_mfh,
                size_eq = 4,
                plot_title = changeCO2_to_CO_2("Pro Kopf CO2 Emissionen in Berlin, Mehrfamiliengebäude, 2002 Wert = 100"),
                xlab = "Jahr",
-               ylab = "kg")
+               ylab = " ")
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
@@ -4593,7 +4620,7 @@ bezirk_co2_percapita_mfh_linear_2018 <- bezirk_co2_percapita_mfh_linear_2018[bez
 bezirk_co2_percapita_mfh_linear_2018 <- bezirk_co2_percapita_mfh_linear_2018[bezirk_co2_percapita_mfh_linear_2018$bezirk!="total" , ]
 
 plot_co2perhead_2018(bezirk_co2_percapita_mfh_linear_2018,
-                     ylabel = "kg",
+                     ylabel = yco2perhead,
                      plot_title = changeCO2_to_CO_2("CO2 Emissionen pro Einwohner in Stadtbezirken 2018, Mehrfamiliengebäude"))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
@@ -4648,13 +4675,13 @@ summary(quadmodel_mfh)$r.squared
 ```{r}
 from2002_till_2030 <- data.frame(abrechnungsjahr=2002:2030)
 prognose_mfh_lin <- data.frame(abrechnungsjahr = 2002:2030 , pred = as.numeric(predict(linmodel_mfh,newdata=from2002_till_2030)))
-b0_grad1 <- round(as.numeric(linmodel_mfh$coefficients[1]) , 2)
-b1_grad1 <- round(as.numeric(linmodel_mfh$coefficients[2]) , 2)
+b0_grad1 <- 0.001*round(as.numeric(linmodel_mfh$coefficients[1]) , 2)
+b1_grad1 <- 0.001*round(as.numeric(linmodel_mfh$coefficients[2]) , 2)
 eq_grad1 <- paste0("y = ", b1_grad1 , "x + ", b0_grad1)
-ggplot(prognose_mfh_lin , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="CO2 Emissionen in Berlin, Mehrfamiliengebäude (Polynom 1. Grades)",y="kilo t.",x="Jahr"
+ggplot(convert_kilo_to_megaton(prognose_mfh_lin,"abrechnungsjahr") , aes(x=abrechnungsjahr , y = pred))+geom_point()+labs(title="CO2 Emissionen in Berlin, Mehrfamiliengebäude (Polynom 1. Grades)",y=yco2,x="Jahr"
 )+annotate(
-  geom="text",label=eq_grad1,x=2015,y=0.65*max(prognose_mfh_lin$pred),size=5
-  ) + ylim(0,max(prognose_mfh_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
+  geom="text",label=eq_grad1,x=2015,y=0.001*0.65*max(prognose_mfh_lin$pred),size=5
+  ) + ylim(0,0.001*max(prognose_mfh_lin$pred))+scale_x_continuous(breaks=seq(2002,2030,4))
 figIndex <- 1
 figIndex <- saveFigure(gtypeForFig=gtypeForFig , 
                        section = i_section,
