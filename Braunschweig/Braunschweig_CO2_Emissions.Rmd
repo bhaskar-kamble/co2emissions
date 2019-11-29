@@ -1,0 +1,96 @@
+---
+title: "CO2 Emissions Braunschweig"
+author: "Bhaskar Kamble"
+date: "28 11 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+source("/home/kbhaskar/Github_Repos/co2emissions/Braunschweig/mainCO2_braunschweig.R")
+et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+```
+
+```{r}
+sfh_data <- main_function("SFH" , et_list )
+mfh_data <- main_function("MFH" , et_list )
+```
+
+```{r}
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
+```
+
+```{r}
+ET_shares_sfh <- getCumSums(sfh_data$energy_prop_table , "abrechnungsjahr")
+ET_shares_mfh <- getCumSums(mfh_data$energy_prop_table , "abrechnungsjahr")
+```
+
+```{r}
+require(ggplot2)
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+plot_title <- NULL
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+plot_byET <- function(obj,xlabel,ylabel,plottitle,kt_to_mt=FALSE) {
+  if (kt_to_mt) {
+    source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/convert_kilo_to_megaton.R")
+    obj <- convert_kilo_to_megaton(obj , "abrechnungsjahr")
+  }
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle) + theme(
+    plot.title=element_text(size=10), 
+    axis.title.x=element_text(size=15, face="bold"), 
+    axis.title.y = element_text(size=15, face="bold"), 
+    legend.text = element_text(size=12), 
+    axis.text.x=element_text(size=10,face="bold"), 
+    axis.text.y=element_text(size=10,face="bold"), 
+    legend.key.size=unit(2, "lines")
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+```{r}
+plot_byET(obj = ET_shares_sfh,
+          xlabel = "Jahr",
+          ylabel = "ET share in %",
+          plottitle = "Braunschweig, SFH")
+```
+
+```{r}
+plot_byET(obj = ET_shares_mfh,
+          xlabel = "Jahr",
+          ylabel = "ET share in %",
+          plottitle = "Braunschweig, MFH")
+```
+
+The numbers are as follows for 1-2 FH:
+```{r}
+sfh_data$energy_prop_table
+```
+
+```{r}
+mfh_data$energy_prop_table
+```
