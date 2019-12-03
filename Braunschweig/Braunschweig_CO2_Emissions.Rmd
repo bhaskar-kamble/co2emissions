@@ -2,12 +2,26 @@
 title: "CO2 Emissions Braunschweig"
 author: "Bhaskar Kamble"
 date: "28 11 2019"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
+    theme: united
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  word_document:
+    toc: yes
+    toc_depth: '3'
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning=FALSE)
 ```
+
+# Part 1 - prelims
 
 ```{r}
 source("/home/kbhaskar/Github_Repos/co2emissions/Braunschweig/mainCO2_braunschweig.R")
@@ -94,3 +108,106 @@ sfh_data$energy_prop_table
 ```{r}
 mfh_data$energy_prop_table
 ```
+
+
+
+Right now the data given is as follows:
+
+<img src="DataVonKrosigk.png" width="600">
+
+# Part 2
+
+```{r}
+names(sfh_data)
+```
+
+
+Plot also the specific verbrauch.
+
+```{r}
+ggplot(sfh_data$spz_verbrauch_mean , aes(x=abrechnungsjahr,y=mean_spzverbrauch))+geom_point()+ylim(c(0,190))
+```
+
+```{r}
+ggplot(mfh_data$spz_verbrauch_mean , aes(x=abrechnungsjahr,y=mean_spzverbrauch))+geom_point()+ylim(c(0,170))
+```
+
+
+I think you should replace the specific verbrauch by its linear trebd in the main script itself - done.
+
+
+You have `energy_shares_absolute` for both `gtype`.
+
+```{r}
+aes_cumsums_sfh <- getCumSums(sfh_data$energy_shares_absolute,dropCols="abrechnungsjahr")
+aes_cumsums_mfh <- getCumSums(mfh_data$energy_shares_absolute,dropCols="abrechnungsjahr")
+```
+  
+```{r}
+plot_byET(obj = aes_cumsums_sfh,
+          xlabel = "Jahr",
+          ylabel = "ET shares in kWh",
+          plottitle = "Braunschweig, SFH")
+```
+
+```{r}
+plot_byET(obj = aes_cumsums_mfh,
+          xlabel = "Jahr",
+          ylabel = "ET shares in kWh",
+          plottitle = "Braunschweig, MFH")
+```
+
+I don't like the above cumulative way of reperesenting.
+
+I should do something like this, for each ET separately, and show as a grid:
+
+```{r}
+ggplot(mfh_data$energy_prop_table,aes(x=abrechnungsjahr,y=erdgas))+geom_point()+ylim(c(0,100))+geom_smooth(method="lm")
+```
+
+Anyway, what is the total energy consumption (MFH+SFH) split across all the ETs?
+
+```{r}
+aes_all <- sfh_data$energy_shares_absolute + mfh_data$energy_shares_absolute
+aes_all$abrechnungsjahr <- 2002:2018
+```
+
+The proportions for ET in 2018:
+
+```{r}
+ET_prop_2018 <- function(obj) {
+  obj_new <- obj[,  names(obj)!="abrechnungsjahr"]
+  obj_new$gesamt <- rowSums(obj_new)
+  for (varName in names(obj_new)){
+    obj_new[[varName]] <- obj_new[[varName]]/obj_new$gesamt
+  }
+  return(obj_new)
+}
+```
+
+```{r}
+aes_all_prop <- ET_prop_2018(aes_all)
+aes_sfh_prop <- ET_prop_2018(sfh_data$energy_shares_absolute)
+aes_mfh_prop <- ET_prop_2018(mfh_data$energy_shares_absolute)
+aes_all_prop[aes_all_prop<0] <- 0
+aes_mfh_prop[aes_mfh_prop<0] <- 0
+aes_sfh_prop[aes_sfh_prop<0] <- 0
+aes_all_prop <- 100*aes_all_prop
+aes_sfh_prop <- 100*aes_sfh_prop
+aes_mfh_prop <- 100*aes_mfh_prop
+aes_all_prop$abrechnungsjahr <- 2002:2018
+aes_sfh_prop$abrechnungsjahr <- 2002:2018
+aes_mfh_prop$abrechnungsjahr <- 2002:2018
+aes_all_prop <- aes_all_prop[, c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets", "strom","gesamt")]
+aes_mfh_prop <- aes_all_prop[, c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets", "strom","gesamt")]
+aes_sfh_prop <- aes_all_prop[, c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets", "strom","gesamt")]
+namesCol <- c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt")
+names(aes_all_prop) <- namesCol
+names(aes_sfh_prop) <- namesCol
+names(aes_mfh_prop) <- namesCol
+wd <- "/home/kbhaskar/Github_Repos/co2emissions/Braunschweig/"
+write.csv2(aes_all_prop , file=paste0(wd,"ET_Anteile_alle.csv") , row.names=F,fileEncoding = "UTF-8")
+write.csv2(aes_sfh_prop , file=paste0(wd,"ET_Anteile_1-2FH.csv") , row.names=F,fileEncoding = "UTF-8")
+write.csv2(aes_mfh_prop , file=paste0(wd,"ET_Anteile_MFH.csv") , row.names=F,fileEncoding = "UTF-8")
+```
+
