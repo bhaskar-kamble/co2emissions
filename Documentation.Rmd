@@ -1,0 +1,70 @@
+---
+title: "Documentation of CO2 Balances"
+author: "Bhaskar Kamble"
+date: "12/12/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Part 1. The main scripts
+
+The starting point is the folder `co2emissions` in the github repo: https://github.com/bhaskar-kamble/co2emissions
+
+If you want to get the co2 emissions for a region "X", create a folder "X" in the `co2emissions` folder.
+
+The concrete examples of Konstanz and Rhein Neckar Kreis are already available in the above repo, which you can follow along and compare for the hypothetical case of "X" (https://github.com/bhaskar-kamble/co2emissions/tree/master/Konstanz).
+
+The main script is the file `mainCO2_X.R` in the folder "X". This script calls the following scripts. Please note that script 1 (`getRegionData.R`), and scripts 5-13 are general and do not depend on the region. You do not need to write them or modify them again, and also their locations are fixed:
+
+1. .../co2emissions/RheinNeckarKreis/getRegionData.R
+
+2. .../co2emissions/X/get_X_Areas.R
+3. .../co2emissions/X/getSpecificConsumptionX.
+4. .../co2emissions/X/getCO2CoeffX.R
+
+5. .../cleanData.R
+
+6. .../co2emissions/Berlin/BezirkAnalysis/energy_proportions_by_et.R
+7. .../co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R
+8. .../co2emissions/Berlin/BezirkAnalysis/area_proportions_by_et.R
+9. .../co2emissions/Berlin/BezirkAnalysis/find_proportions.R
+10. .../co2emissions/Berlin/BezirkAnalysis/getTotalConsumption.R
+11. .../co2emissions/Berlin/BezirkAnalysis/getAbsoluteEnergyShares.R
+12. .../co2emissions/Berlin/BezirkAnalysis/getCO2Emissions.R
+13. .../co2emissions/Berlin/BezirkAnalysis/getRowSums.R
+
+However, scripts 2-4 are region-specific. That is, you need to create them again for each region, and are located in the folder "X". Script 2 gets the heated surface areas of the region from official statistical data and converts them into the format required by `mainCO2_X.R`. Script 3 requires the weather data of "X" in the proper format. Script 3 requires the co2 coefficients data for X and returns them in the format required by `mainCO2_X.R`.
+
+Once scripts 2-4 for region X are ready, carry out the following steps to find the energy consumption / co2 emissions, etc.
+
+1. In the file `mainCO2_X.R`, in line 25, replace the region name by X (`region <- "X"`).
+2. Run in R or rstudio `source(.../mainCO2_X.R)`.
+3. Run `et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")`.
+4. Run `sfh_data <- main_function("SFH" , et_list )`.
+5. Run `mfh_data <- main_function("MFH" , et_list )`.
+ 
+The objects `sfh_data` and `mfh_data` contain all the necessary information for 1-2 Family houses and multifamily houses, respectively.
+
+They both contain the following items for 1-2FH and MFH, respectively:
+
+1. `region_data`: The co2online data (baujahr, verbrauch etc) filtered for region X.
+2. `energy_prop_table`: Percentage of Energieträger in the consumption.
+3. `area_prop_table`:  Percentage of Energieträger in the area heated.
+4. `totalArea` : Total area of region X, both MFH and SFH.
+5. `spz_verbrauch_mean`: Specific energy consumption.
+6. `totalConsumption`: Total energy consumption for X (Item 5 times Item 4).
+7. `energy_shares_absolute`: Total energy consumption for X split by Energieträger.
+8. `co2_coeff`: co2 coefficients for region X.
+9. `co2_emissions`: co2 emisions for region X split by ET.
+
+The above files contain the data necessary for making graphs.
+
+# Part 2. Creating graphs and report
+
+Additional scripts are required for making graphs and reports. The R-markdown facility in rstudio offers the means to integrate reports and code and generate pdf or html outputs. The additional scripts for plotting, the plots thus generated, and the report are written in the `X_CO2_Emissions.Rmd` file. (For Konstanz, it is `Konstanz_CO2_Emissions.Rmd`, available at https://github.com/bhaskar-kamble/co2emissions/blob/master/Konstanz/Konstanz_CO2_Emissions.Rmd) The datafor co2 emissions, energy consumption etc. are obtained in this Rmd file as mentioned in part 1, the plots are generated with the plotting scripts in the Rmd file, and the report is integrated along with it.
+

@@ -10,6 +10,7 @@ getRegionData <- function(gtype,region) { #gtype can be either SFH or MFH
   if (gtype == "SFH") {
     
     load("/home/kbhaskar/Github_Repos/co2emissions/SFH20022018_v3.RData")
+    SFH20022018$Landkreis_von_GS <- iconv(SFH20022018$Landkreis_von_GS, to = "UTF-8", sub = "X")
     
     SFH20022018$abrechnungsjahr <- as.integer(SFH20022018$abrechnungsjahr)
     SFH20022018$verbrauch_gesamt_kwh <- gsub("," , "." , SFH20022018$verbrauch_gesamt_kwh)
@@ -44,6 +45,7 @@ getRegionData <- function(gtype,region) { #gtype can be either SFH or MFH
   if (gtype == "MFH") {
     
     load("/home/kbhaskar/Github_Repos/co2emissions/MFH20022018_v3.RData")
+    MFH20022018$Landkreis_von_GS <- iconv(MFH20022018$Landkreis_von_GS, to = "UTF-8", sub = "X")
     MFH20022018$gtype <- "MFH"
     
     #subset data by region here---

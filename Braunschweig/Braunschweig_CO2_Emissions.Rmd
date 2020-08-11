@@ -199,15 +199,99 @@ aes_all_prop$abrechnungsjahr <- 2002:2018
 aes_sfh_prop$abrechnungsjahr <- 2002:2018
 aes_mfh_prop$abrechnungsjahr <- 2002:2018
 aes_all_prop <- aes_all_prop[, c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets", "strom","gesamt")]
-aes_mfh_prop <- aes_all_prop[, c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets", "strom","gesamt")]
-aes_sfh_prop <- aes_all_prop[, c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets", "strom","gesamt")]
+aes_mfh_prop <- aes_mfh_prop[, c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets", "strom","gesamt")]
+aes_sfh_prop <- aes_sfh_prop[, c("abrechnungsjahr","erdgas","waerme","fluessiggas","heizoel","holzpellets", "strom","gesamt")]
 namesCol <- c("Jahr","Erdgas","Wärme","Flüssiggas","Heizöl","Holzpellets","Strom","Gesamt")
 names(aes_all_prop) <- namesCol
 names(aes_sfh_prop) <- namesCol
 names(aes_mfh_prop) <- namesCol
 wd <- "/home/kbhaskar/Github_Repos/co2emissions/Braunschweig/"
-write.csv2(aes_all_prop , file=paste0(wd,"ET_Anteile_alle.csv") , row.names=F,fileEncoding = "UTF-8")
-write.csv2(aes_sfh_prop , file=paste0(wd,"ET_Anteile_1-2FH.csv") , row.names=F,fileEncoding = "UTF-8")
-write.csv2(aes_mfh_prop , file=paste0(wd,"ET_Anteile_MFH.csv") , row.names=F,fileEncoding = "UTF-8")
+write.csv2(aes_all_prop , file=paste0(wd,"ET_Anteile_alle_v2.csv") , row.names=F,fileEncoding = "UTF-8")
+write.csv2(aes_sfh_prop , file=paste0(wd,"ET_Anteile_1-2FH_v2.csv") , row.names=F,fileEncoding = "UTF-8")
+write.csv2(aes_mfh_prop , file=paste0(wd,"ET_Anteile_MFH_v2.csv") , row.names=F,fileEncoding = "UTF-8")
 ```
 
+
+
+```{r}
+aes_mfh_prop
+```
+
+```{r}
+aes_sfh_prop
+```
+
+```{r}
+aes_all_prop
+```
+
+```{r}
+plot_reqdColumns <- function(input_data,   # data frame
+                             xVar,         # column name of "input_data" to be plotted on the x-axis
+                             cols_to_plot, #column names of "input_data" to be plotted on the y-axis
+                             yColsName,    # for eg. if cols_to_plot = c("Bonn","Berlin"), then this can be City
+                             yVar,        # for eg. "population" if the columns for "Berlin" etc. show population
+                             plot_title = NULL,
+                             xlabel = NULL,
+                             ylabel = NULL,
+                             regLine = TRUE,
+                             kt_to_mt = FALSE
+) {
+  
+  if (kt_to_mt) {
+    source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/convert_kilo_to_megaton.R")
+    input_data <- convert_kilo_to_megaton(input_data , "abrechnungsjahr")
+  }
+  
+  input_data <- input_data[ , c(xVar , cols_to_plot)]
+  #names(input_data) <- get_BezirkNames(names(input_data))
+  
+  #convert data to long format
+  require(reshape2)
+  input_data <- melt(input_data , id.vars = xVar )
+  names(input_data) <- c(xVar , yColsName , yVar)
+    
+  require(ggplot2)
+  return_object <- 
+    ggplot(input_data
+    )+geom_point(aes(x=get(xVar),y=get(yVar),col=get(yColsName))
+    ) + geom_smooth(method="lm",aes(x=get(xVar),y=get(yVar),col=get(yColsName)),se=FALSE
+    )+scale_color_discrete(name = yColsName
+    )+labs(x=xlabel,y=ylabel,title=plot_title)+ylim(0,max(input_data[[yVar]]))
+  
+  if (regLine==FALSE) {
+      return_object <- 
+    ggplot(input_data
+    )+geom_line(aes(x=get(xVar),y=get(yVar),col=get(yColsName)) 
+    )+geom_point(aes(x=get(xVar),y=get(yVar),col=get(yColsName))
+    )+scale_color_discrete(name = yColsName
+    )+labs(x=xlabel,y=ylabel,title=plot_title)+ylim(0,max(input_data[[yVar]]))
+  }
+  
+  detach("package:reshape2")
+  #detach("package:ggplot2")
+ 
+  return(return_object) 
+}
+```
+
+```{r}
+plot_reqdColumns(input_data = aes_all_prop,
+                 xVar = "Jahr",
+                 cols_to_plot = names(aes_all_prop)[!(names(aes_all_prop) %in% c("Jahr","Gesamt"))],
+                 yColsName = "ET",
+                 yVar = "percent",
+                 plot_title = "Alle Gebäude, Energieverbrauchsanteile nach ET in %",
+                 ylabel = "%",
+                 regLine = FALSE)
+```
+
+
+```{r}
+alltemp <- aes_all_prop[ , c("Jahr","Erdgas","Wärme","Heizöl")]
+alltemp$w2g <- alltemp$Wärme / alltemp$Erdgas
+alltemp$oil_by_w_plus_gas <- alltemp$Heizöl / (alltemp$Wärme + alltemp$Erdgas)
+alltemp
+```
+
+<img src="DataVonKrosigk.png" width="600">
