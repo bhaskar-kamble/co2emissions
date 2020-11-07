@@ -1,0 +1,193 @@
+---
+title: "Cologne CO2 Emissions"
+author: "Bhaskar Kamble"
+date: ' '
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message=FALSE,warning=FALSE)
+```
+
+# Get the data from co2online
+
+```{r}
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/energy_proportions_by_et.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/appendLinearTrend.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/area_proportions_by_et.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/find_proportions.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getTotalConsumption.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getAbsoluteEnergyShares.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getCO2Emissions.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getRowSums.R")
+source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/getCumSums.R")
+
+source("/home/kbhaskar/Github_Repos/co2emissions/Cologne/getSpecificConsumptionCologne.R")
+```
+
+```{r}
+source("/home/kbhaskar/Github_Repos/co2emissions/RheinNeckarKreis/getRegionData.R")
+source("/home/kbhaskar/Github_Repos/visualization-project2-smurfs/cleanData.R")
+gtype <- "SFH"
+region <- "KXln, Stadt"
+region_data_sfh <- getRegionData(gtype,region)
+
+gtype <- "MFH"
+region <- "KXln, Stadt"
+region_data_mfh <- getRegionData(gtype,region)
+#2019 is an outlier - remove it
+region_data_sfh <- region_data_sfh[region_data_sfh$abrechnungsjahr > 2000 , ]
+region_data_sfh <- region_data_sfh[region_data_sfh$abrechnungsjahr <= 2018 , ]
+```
+
+#  Area per building for each year
+
+
+```{r}
+require(dplyr)
+require(ggplot2)
+by_year <- group_by(region_data_sfh,abrechnungsjahr)
+avgAreaSFH <- as.data.frame(summarize(by_year,mean(gebaeude_nutzflaeche)))
+names(avgAreaSFH) <- c("abrechnungsjahr","meanArea")
+
+ggplot()+geom_point(data=avgAreaSFH,aes(x=abrechnungsjahr,y=meanArea))+scale_y_continuous(lim=c(0,200))+labs(x="Jahr",y="Flaeche (q.m.)",title="Fläche pro Gebäude, 1-2FH, Köln")
+```
+
+
+```{r}
+by_year <- group_by(region_data_mfh,abrechnungsjahr)
+avgAreaMFH <- as.data.frame(summarize(by_year,mean(gebaeude_nutzflaeche)))
+names(avgAreaMFH) <- c("abrechnungsjahr","meanArea")
+
+ggplot()+geom_point(data=avgAreaMFH,aes(x=abrechnungsjahr,y=meanArea))+scale_y_continuous(lim=c(0,3000))+labs(x="Jahr",y="Flaeche (q.m.)",title="Fläche pro Gebäude, MFH, Köln")
+```
+
+
+
+```{r}
+et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+
+energy_prop_table_mfh <- energy_proportions_by_et(region_data_mfh,et_list)
+
+energy_prop_table_sfh <- energy_proportions_by_et(region_data_sfh,et_list)
+```
+
+```{r}
+ET_shares_sfh <- getCumSums(energy_prop_table_sfh , "abrechnungsjahr")
+ET_shares_mfh <- getCumSums(energy_prop_table_mfh , "abrechnungsjahr")
+```
+
+```{r}
+col_list <- c("royalblue4","orangered1","gray59","orange","blue","olivedrab4")
+cols <- c(
+          "erdgas"      = "royalblue4",
+          "waerme"      = "orangered1",
+          "fluessiggas" = "gray59",
+          "heizoel"     = "orange",
+          "holzpellets" = "blue",
+          "strom"       = "olivedrab4"
+          )
+plot_title <- NULL
+order_legend <- rev(c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom"))
+order_labels <- rev(c("Erdgas","Wärme (N+F)","Flüssiggas","Heizöl","Holzpellets","Strom (D+WP)"))
+et_list <- c("erdgas","waerme","fluessiggas","heizoel","holzpellets","strom")
+plot_byET <- function(obj,xlabel,ylabel,plottitle,kt_to_mt=FALSE) {
+  if (kt_to_mt) {
+    source("/home/kbhaskar/Github_Repos/co2emissions/Berlin/BezirkAnalysis/convert_kilo_to_megaton.R")
+    obj <- convert_kilo_to_megaton(obj , "abrechnungsjahr")
+  }
+  ggplot()+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[1]),color=et_list[1]),size=5
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[2]),color=et_list[2])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[3]),color=et_list[3])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[4]),color=et_list[4])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[5]),color=et_list[5])
+  )+geom_line(data=obj,aes(x=abrechnungsjahr,y=get(et_list[6]),color=et_list[6])
+  )+scale_color_manual(labels=order_labels,name=" ",values=cols,breaks=order_legend
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[6])),fill=col_list[6]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[5])),fill=col_list[5]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[4])),fill=col_list[4]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[3])),fill=col_list[3]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[2])),fill=col_list[2]
+  )+geom_ribbon(data=obj,aes(x=abrechnungsjahr,ymin=0,ymax=get(et_list[1])),fill=col_list[1])+theme_bw()+ labs(x=xlabel,y=ylabel,title=plottitle) + theme(
+    plot.title=element_text(size=10), 
+    axis.title.x=element_text(size=15, face="bold"), 
+    axis.title.y = element_text(size=15, face="bold"), 
+    legend.text = element_text(size=12), 
+    axis.text.x=element_text(size=10,face="bold"), 
+    axis.text.y=element_text(size=10,face="bold"), 
+    legend.key.size=unit(2, "lines")
+  )+scale_x_continuous(breaks=seq(2002,2018,2))
+}
+```
+
+
+
+
+```{r}
+plot_byET(obj = ET_shares_sfh,
+          xlabel = "Jahr",
+          ylabel = "ET share in %",
+          plottitle = "1-2 FH")
+```
+
+
+  
+```{r}
+plot_byET(obj = ET_shares_mfh,
+          xlabel = "Jahr",
+          ylabel = "ET share in %",
+          plottitle = "MFH")
+```
+
+
+
+```{r}
+spz_verbrauch_mean_mfh <- getSpecificConsumptionCologne(region_data_mfh , FALSE)
+spz_verbrauch_mean_sfh <- getSpecificConsumptionCologne(region_data_sfh , FALSE)
+```
+
+
+
+```{r}
+ggplot(spz_verbrauch_mean_mfh , aes(x=abrechnungsjahr,y=mean_spzverbrauch))+geom_point()+ylim(c(0,190))
+```
+
+```{r}
+ggplot(spz_verbrauch_mean_sfh , aes(x=abrechnungsjahr,y=mean_spzverbrauch))+geom_point()+ylim(c(0,170))+labs(x="Jahr",y="Spz. Verbrauch ")
+```
+
+
+
+
+
+# Gebaeude Baujahr
+
+
+
+```{r}
+mfhbaujahr <- region_data_mfh$gebaeude_baujahr
+sfhbaujahr <- region_data_sfh$gebaeude_baujahr
+```
+
+```{r}
+as.data.frame(t(t(table(cut(mfhbaujahr,breaks=10)))))
+```
+
+
+```{r}
+as.data.frame(t(t(table(cut(mfhbaujahr,breaks=seq(from=min(mfhbaujahr),to=max(mfhbaujahr),
+                                                  length.out=10))))))
+```
+
+
+
+```{r}
+as.data.frame(t(t(table(cut(sfhbaujahr,breaks=10)))))
+```
+
+```{r}
+as.data.frame(t(t(table(cut(sfhbaujahr,breaks=seq(from=min(sfhbaujahr,na.rm=T),to=max(sfhbaujahr,na.rm=T),
+                                                  length.out=10))))))
+```
